@@ -1,0 +1,51 @@
+{% extends 'layouts/_base.html' -%}
+
+{% block title -%}
+Welcome page
+{% endblock -%}
+
+{% block main -%}
+<div class="container py-3">
+    <header class="pb-3 mb-4">
+        <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+            <a href="/" class="navbar-brand">Home</a>
+
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    {% if request.endpoint == 'security.change_password' -%}
+                        {% set active = 'active' -%}
+                    {% else -%}
+                        {% set active = '' -%}
+                    {% endif -%}
+                    <a href="/change" class="nav-link {{ active }}">Изменить пароль</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link">Выйти</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div>
+            {% from 'macroses/macros.html' import show_flash -%}
+            {{ show_flash() }}
+        </div>
+
+        <p>
+            Личный кабинет для сайта <a href="https://antonivtours.com/" class="link">Antonivtours.com</a>
+        </p>
+
+        <p>
+            <span class="text-info">Вы вошли на сайт, как авторизированный пользователь.</span>
+        </p>
+    </main>
+
+    <footer class="d-flex py-2 mt-4 border-top justify-content-end">
+        <div class="fs-6">
+            <small>designed by gdp</small>
+        </div>
+    </footer>
+</div>
+{% endblock %}

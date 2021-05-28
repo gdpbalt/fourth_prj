@@ -20,24 +20,6 @@
 </head>
 
 <body>
-    <div class="container py-3">
-        <header class="pb-3 mb-4">
-            <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
-                <a href="/" class="navbar-brand">Home</a>
-
-                {% block navbar -%}{% endblock -%}
-            </nav>
-        </header>
-
-        <main>
-            {% block body -%}{% endblock -%}
-        </main>
-
-        <footer class="d-flex py-2 mt-4 border-top justify-content-end">
-            <div class="fs-6">
-                <small>designed by gdp</small>
-            </div>
-        </footer>
-    </div>
+    {% block main -%}{% endblock -%}
 </body>
 </html>

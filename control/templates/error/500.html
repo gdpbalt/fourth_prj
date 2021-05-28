@@ -4,11 +4,6 @@
 Ошибка сервера
 {% endblock %}
 
-{% block body %}
-<h2>Ошибка сервера</h2>
-
-<div>
-{% from 'macros/macros.html' import show_flash -%}
-{{ show_flash() }}
-</div>
+{% block main %}
+<h3>Ошибка сервера</h3>
 {% endblock %}
