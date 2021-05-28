@@ -1,0 +1,86 @@
+{% macro show_flash() -%}
+    {% with messages = get_flashed_messages(with_categories=true) -%}
+        {% if messages -%}
+            {% for category, message in messages -%}
+
+                {% if category == "error" -%}
+                    <p class="text-danger"><strong>{{ message }}</strong></p>
+                {% else -%}
+                    <p class="text-primary"><strong>{{ message }}</strong></p>
+                {% endif -%}
+
+            {% endfor -%}
+        {% endif -%}
+    {% endwith -%}
+{% endmacro -%}
+
+
+{#{% macro show_form(form) -%}#}
+{#    {% for field in form if field.name not in ['csrf_token'] -%}#}
+{#    <div class="form-group my-1">#}
+{#        {{ field.label(class="my-1") }}#}
+{##}
+{#        {% if field.errors -%}#}
+{#          {{ field(class="form-control alert-danger my-1") }}#}
+{##}
+{#          <small class="text-danger">#}
+{#          {% for err in field.errors -%}#}
+{#            {{ err }}#}
+{#          {% endfor -%}#}
+{#          </small>#}
+{##}
+{#        {% else -%}#}
+{#          {{ field(class="form-control my-1") }}#}
+{#        {% endif -%}#}
+{#    </div>#}
+{#    {% endfor -%}#}
+{#{% endmacro -%}#}
+
+{#{% macro show_tours_info(tours) -%}#}
+{#    {% if tours|length -%}#}
+{#        {% for tour in tours -%}#}
+{#            <div class="card col-12 mb-2">#}
+{#                <img src="{{ tour.imgSrc }}" class="card-img-top mt-1" alt="{{ tour.fullHotelName }}">#}
+{#                <div class="card-body">#}
+{#                    <p class="mb-1 card-text">{{ tour.number }}. <a href="{{ tour.tourLink }}" target="_blank">{{ tour.fullHotelName }}, {{ tour.cityName }}, {{ tour.countryName }}</a></p>#}
+{#                    <p class="mb-1 card-text">{{ tour.dateDurationString }}</p>#}
+{#                    <p class="mb-1 card-text">{{ tour.locationFromString }}</p>#}
+{#                    <p class="mb-1 card-text">Питание: {{ tour.food|upper }}, Оператор: {{ tour.operatorName }}</p>#}
+{#                    <p class="mb-1 card-text"><strong>Стоимость за 1го: {{ tour.priceUahOne }} грн {{ ', promo' if tour.promo else '' }}</strong></p>#}
+{#                    <p class="mb-1 card-text">Стоимость за 2х: {{ tour.price }} {{ tour.currency }}, {{ tour.priceUah }} грн</p>#}
+{#                    <p class="mb-1 card-text">#}
+{#                        ID: {{ tour.tour_api_id }}#}
+{#                        {%  if tour.errors > 0 -%}#}
+{#                            , <strong>Ошибки: </strong><span class="badge badge-danger" data-toggle="tooltip" data-html="true" title="Последняя ошибка: {{ tour.errorLast }}">&nbsp;{{ tour.errors }}&nbsp;</span>#}
+{#                        {%  endif -%}#}
+{#                    </p>#}
+{#                    <p class="mb-1 card-text">Updated: {{ tour.updateTime }}</p>#}
+{#                </div>#}
+{#            </div>#}
+{#        {% endfor -%}#}
+{##}
+{#    {% else -%}#}
+{#        <p>&nbsp;</p>#}
+{#    {% endif -%}#}
+{#{% endmacro -%}#}
+
+{#{% macro show_tour_info_brief(tour) -%}#}
+{#    <p class="mb-1"><small>куда:</small>&nbsp;<span>{{ tour.destination }}</span></p>#}
+{#    <p class="mb-1"><small>начало:</small>&nbsp;<span>{{ tour.date_start }} - {{ tour.date_stop }}</span></p>#}
+{#    <p class="mb-1"><small>категоря отеля:</small>&nbsp;<span>{{ tour.category.name }}</span></p>#}
+{#    <p class="mb-1"><small>город вылета:</small>&nbsp;<span>{{ tour.from_city.name }}</span></p>#}
+{#    <p class="mb-1"><small>транспорт:</small>&nbsp;<span>{{ tour.transport.name }}</span></p>#}
+{#    <p class="mb-1"><small>питание:</small>&nbsp;<span>{{ tour.food.name }}</span></p>#}
+{#    <p class="mb-1"><small>длительность:</small>&nbsp;<span>{{ tour.length.name }}</span></p>#}
+{#{% endmacro -%}#}
+
+
+{#{% macro show_errors(field) -%}#}
+{#    {% if field.errors -%}#}
+{#    <small class="text-danger">#}
+{#        {% for err in field.errors -%}#}
+{#            {{ err }}#}
+{#        {% endfor -%}#}
+{#    </small>#}
+{#    {% endif -%}#}
+{#{% endmacro -%}#}

@@ -1,0 +1,14 @@
+{% extends 'layouts/_base.html' %}
+
+{% block title %}
+Ошибка сервера
+{% endblock %}
+
+{% block body %}
+<h2>Ошибка сервера</h2>
+
+<div>
+{% from 'macros/macros.html' import show_flash -%}
+{{ show_flash() }}
+</div>
+{% endblock %}

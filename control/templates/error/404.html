@@ -1,0 +1,14 @@
+{% extends 'layouts/_base.html' %}
+
+{% block title %}
+Указанная страница не найдена
+{% endblock %}
+
+{% block body %}
+<h2>Указанная страница не найдена</h2>
+
+<div>
+{% from 'macros/macros.html' import show_flash -%}
+{{ show_flash() }}
+</div>
+{% endblock %}

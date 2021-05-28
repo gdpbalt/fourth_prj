@@ -18,6 +18,16 @@ class Config:
     SECURITY_RECOVERABLE = True
     SECURITY_CHANGEABLE = True
     SECURITY_TRACKABLE = True
+    # TODO
+    # SECURITY_POST_LOGIN_VIEW - default /
+
+    MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'localhost'
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'test@localhost'
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'a secrete password'
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or 'test@localhost'
+    MAIL_PORT = os.environ.get('MAIL_PORT') or 25
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
 
     @staticmethod
     def init_app(app):

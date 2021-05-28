@@ -1,0 +1,22 @@
+{% extends 'layouts/noauth.html' -%}
+
+{% block title -%}
+Login Page
+{% endblock -%}
+
+{% block body -%}
+<div class="w-50">
+    {% from "security/_macros.html" import render_field_with_errors, render_field %}
+    {% include "security/_messages.html" %}
+    <h3>Введите имя и пароль для входа</h3>
+
+    <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+      {{ login_user_form.hidden_tag() }}
+      {{ render_field_with_errors(login_user_form.email, class="form-control", type="email") }}
+      {{ render_field_with_errors(login_user_form.password, class="form-control", type="password") }}
+      {{ render_field_with_errors(login_user_form.remember, class="", type="checkbox") }}
+      {{ render_field(login_user_form.next) }}
+      {{ render_field(login_user_form.submit, class="btn btn-primary", type="submit") }}
+    </form>
+</div>
+{% endblock -%}
