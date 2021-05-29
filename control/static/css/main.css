@@ -1,3 +1,8 @@
+html {
+    /* default is 1rem or 16px */
+    font-size: 14px;
+}
+
 .ui-autocomplete {
     max-height: 400px;
     overflow-y: scroll;

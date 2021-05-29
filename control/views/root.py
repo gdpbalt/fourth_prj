@@ -9,14 +9,17 @@ def index():
     if not current_user.is_authenticated:
         return redirect(url_for_security('login'))
 
-    elif current_user.has_role('staff'):
-        return render_template('welcome.html')
-
-    elif current_user.has_role('admin'):
-        return render_template('welcome.html')
-
     else:
-        return render_template('welcome.html')
+        roles = [role.name for role in current_user.roles]
+        app.logger.info("User '{}' is coming from '{}'. Count: {}. Roles: {}".format(
+            current_user.email, current_user.current_login_ip, current_user.login_count, roles))
+
+        if current_user.has_role('staff'):
+            return render_template('welcome.html')
+        if current_user.has_role('admin'):
+            return render_template('welcome.html')
+        else:
+            return render_template('welcome.html')
 
 
 @app.route('/welcome')

@@ -14,17 +14,27 @@ DATE_FORMAT = '%Y-%m-%d %H:%M'
 
 
 class Config:
+    WTF_CSRF_ENABLED = True
+
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'cii4theetoo7ChieweeH'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SECURITY_REGISTERABLE = True
     SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT') or 'om8foh9uoDeechiexe7k'
-    SECURITY_SEND_REGISTER_EMAIL = True
     SECURITY_RECOVERABLE = True
     SECURITY_CHANGEABLE = True
     SECURITY_TRACKABLE = True
+    SECURITY_SEND_REGISTER_EMAIL = True
+    SECURITY_SEND_PASSWORD_CHANGE_EMAIL = True
+    SECURITY_SEND_PASSWORD_RESET_EMAIL = True
 
+    RECAPTCHA_USE_SSL = False
+    RECAPTCHA_PUBLIC_KEY = '6LfSPfwaAAAAAG3XabESGyF0pEow0rlQfgpOpX9v'
+    RECAPTCHA_PRIVATE_KEY = '6LfSPfwaAAAAANufTxsA1ENwyVIBPCArUXQPXqV8'
+    RECAPTCHA_OPTIONS = {'theme': 'black'}
+
+    MAIL_DEBUG = False
     MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'localhost'
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'test@localhost'
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'a secrete password'
