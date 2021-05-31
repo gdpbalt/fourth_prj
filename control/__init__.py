@@ -9,7 +9,6 @@ from flask_security import SQLAlchemyUserDatastore, Security, user_registered, p
 from flask_security.signals import password_changed
 from flask_sqlalchemy import SQLAlchemy
 
-
 from config import config
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -32,12 +31,14 @@ from control.models import *
 from control.forms.users import ExtendedRegisterForm, ExtendedForgotPasswordForm, ExtendedResetPasswordForm, \
     ExtendedLoginForm
 
+
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore,
                     register_form=ExtendedRegisterForm,
                     forgot_password_form=ExtendedForgotPasswordForm,
                     reset_password_form=ExtendedResetPasswordForm,
                     login_form=ExtendedLoginForm)
+
 
 from control.views import *
 
