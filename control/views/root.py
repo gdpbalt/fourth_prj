@@ -10,10 +10,6 @@ def index():
         return redirect(url_for_security('login'))
 
     else:
-        roles = [role.name for role in current_user.roles]
-        app.logger.info("User '{}' is coming from '{}'. Count: {}. Roles: {}".format(
-            current_user.email, current_user.current_login_ip, current_user.login_count, roles))
-
         if current_user.has_role('staff'):
             return render_template('welcome.html')
         if current_user.has_role('admin'):

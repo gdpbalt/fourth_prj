@@ -1,8 +1,8 @@
-"""initial
+"""Initial
 
-Revision ID: bc107d45e574
+Revision ID: a5d78ee03a67
 Revises: 
-Create Date: 2021-05-27 23:50:47.834543
+Create Date: 2021-05-31 11:46:12.943637
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bc107d45e574'
+revision = 'a5d78ee03a67'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,6 +30,7 @@ def upgrade():
     sa.Column('email', sa.String(length=255), nullable=True),
     sa.Column('password', sa.String(length=255), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
+    sa.Column('fs_uniquifier', sa.String(length=255), nullable=False),
     sa.Column('confirmed_at', sa.DateTime(), nullable=True),
     sa.Column('last_login_at', sa.DateTime(), nullable=True),
     sa.Column('current_login_at', sa.DateTime(), nullable=True),
@@ -37,7 +38,8 @@ def upgrade():
     sa.Column('current_login_ip', sa.String(length=100), nullable=True),
     sa.Column('login_count', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('fs_uniquifier')
     )
     op.create_table('roles_users',
     sa.Column('id', sa.Integer(), nullable=False),

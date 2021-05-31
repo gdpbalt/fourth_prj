@@ -5,7 +5,7 @@ from flask import Flask, session
 from flask_babelex import Babel
 from flask_mail import Mail
 from flask_migrate import Migrate
-from flask_security import SQLAlchemyUserDatastore, Security, user_registered, password_reset
+from flask_security import SQLAlchemyUserDatastore, Security, user_registered, password_reset, user_authenticated
 from flask_security.signals import password_changed
 from flask_sqlalchemy import SQLAlchemy
 
@@ -29,21 +29,30 @@ babel = Babel(app)
 mail = Mail(app)
 
 from control.models import *
-from control.forms.users import ExtendedRegisterForm, ExtendedForgotPasswordForm, ExtendedResetPasswordForm
+from control.forms.users import ExtendedRegisterForm, ExtendedForgotPasswordForm, ExtendedResetPasswordForm, \
+    ExtendedLoginForm
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore,
                     register_form=ExtendedRegisterForm,
                     forgot_password_form=ExtendedForgotPasswordForm,
-                    reset_password_form=ExtendedResetPasswordForm)
+                    reset_password_form=ExtendedResetPasswordForm,
+                    login_form=ExtendedLoginForm)
 
 from control.views import *
+
+
+@user_authenticated.connect_via(app)
+def user_authenticated_sighandler(*args, **kwargs):
+    user = kwargs['user']
+    roles = [role.name for role in current_user.roles]
+    app.logger.info("User '{}' logged in ({}). Args: {}. Kwargs: {}".format(user.email, roles, args, kwargs))
 
 
 @user_registered.connect_via(app)
 def user_registered_sighandler(*args, **kwargs):
     user = kwargs['user']
-    app.logger.info("Create new user '{}'. Args: {}. Kwargs: {}".format(user.email, args, kwargs))
+    app.logger.info("New user created '{}'. Args: {}. Kwargs: {}".format(user.email, args, kwargs))
 
     default_role = user_datastore.find_role('guest')
     user_datastore.add_role_to_user(user, default_role)
