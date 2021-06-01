@@ -61,6 +61,12 @@ class Config:
     LOG_SENTRY_URL = "https://9742568ba7824d3aa5723e71171eaab5@o620982.ingest.sentry.io/5751742"
     LOG_SENTRY_IGNORE_ERRORS = [KeyboardInterrupt]
 
+    ROPAGATE_EXCEPTIONS = True
+    JSON_SORT_KEYS = False
+
+    CACHE_TYPE = 'SimpleCache'
+    CACHE_DEFAULT_TIMEOUT = 5
+
     @classmethod
     def init_app(cls, app):
         while app.logger.hasHandlers():
@@ -97,7 +103,7 @@ class DevelopmentConfig(Config):
     LOG_FILE_ROTATE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or 'proj_name.log')
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+                              'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 
 class ProductionConfig(Config):

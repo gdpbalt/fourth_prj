@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, session
 from flask_babelex import Babel
+from flask_caching import Cache
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_security import SQLAlchemyUserDatastore, Security, user_registered, password_reset, user_authenticated
@@ -27,6 +28,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 babel = Babel(app)
 mail = Mail(app)
+cache = Cache(app)
 
 from control.models import *
 from control.forms.users import ExtendedRegisterForm, ExtendedForgotPasswordForm, ExtendedResetPasswordForm, \

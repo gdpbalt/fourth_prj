@@ -8,12 +8,6 @@ if os.path.exists(dotenv_path):
 
 TOKEN = os.environ.get('API_TOKEN') or '12345'
 
-cache_config = {
-    "DEBUG": False,
-    "CACHE_TYPE": "SimpleCache",
-    "CACHE_DEFAULT_TIMEOUT": 5
-}
-
 LANGS = ['rus', 'ukr']
 
 OUR_SITE = 'https://antonivtours.com/tour'
