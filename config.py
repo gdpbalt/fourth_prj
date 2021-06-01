@@ -76,7 +76,8 @@ class Config:
         if cls.LOG_FILE_ROTATE_USE:
             file_handle = RotatingFileHandler(filename=cls.LOG_FILE_ROTATE_NAME,
                                               maxBytes=cls.LOG_FILE_ROTATE_SIZE,
-                                              backupCount=cls.LOG_FILE_ROTATE_COUNT)
+                                              backupCount=cls.LOG_FILE_ROTATE_COUNT,
+                                              encoding='utf-8')
             file_handle.setLevel(cls.LOG_FILE_ROTATE_LEVEL)
             file_handle.setFormatter(logging.Formatter(LOG_FORMAT, datefmt=DATE_FORMAT))
             app.logger.addHandler(file_handle)

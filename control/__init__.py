@@ -9,6 +9,7 @@ from flask_security import SQLAlchemyUserDatastore, Security, user_registered, p
 from flask_security.signals import password_changed
 from flask_sqlalchemy import SQLAlchemy
 
+import control.settings
 from config import config
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -41,6 +42,7 @@ security = Security(app, user_datastore,
 
 
 from control.views import *
+from control.admin.views import *
 
 
 @user_authenticated.connect_via(app)

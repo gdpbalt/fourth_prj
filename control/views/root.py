@@ -1,5 +1,5 @@
 from flask import render_template, redirect, make_response
-from flask_security import login_required, roles_accepted, current_user, url_for_security
+from flask_security import roles_accepted, current_user, url_for_security, auth_required
 
 from control import app
 
@@ -19,7 +19,7 @@ def index():
 
 
 @app.route('/welcome')
-@login_required
+@auth_required()
 def welcome():
     return render_template('welcome.html')
 
@@ -36,15 +36,15 @@ def role_staff():
     return '<h1>There is for staff only</h1>'
 
 
-@app.route('/admin')
-@roles_accepted('admin')
-def role_admin():
-    return '<h1>There is for admin only</h1>'
+# @app.route('/admin')
+# @roles_accepted('admin')
+# def role_admin():
+#     return '<h1>There is for admin only</h1>'
 
 
 @app.route("/status")
-@login_required
-def health_check():
+@auth_required()
+def status_check():
     app.logger.debug(f"debug log")
     app.logger.info("info log")
     app.logger.warning("warning log")
