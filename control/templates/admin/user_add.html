@@ -1,0 +1,43 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Добавить пользователя
+{% endblock %}
+
+{% block body %}
+<h2>Добавить пользователя</h2>
+
+<div class="w-50">
+  <form class="" method="post">
+    {{ form.csrf_token() }}
+
+    <div>
+      {% from 'macroses/macros.html' import show_flash %}
+      {{ show_flash() }}
+    </div>
+
+    {% for field in form if field.name not in ['csrf_token'] -%}
+    <div class="form-group mb-4">
+      {{ field.label(class="") }}
+
+      {% if field.errors %}
+        {{ field(class="form-control alert-danger") }}
+
+        <small class="text-danger">
+        {% for err in field.errors %}
+          {{ err }}
+        {% endfor %}
+        </small>
+
+      {% else%}
+        {{ field(class="form-control") }}
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="form-group mt-3">
+      <input type="submit" name="submit" class="btn btn-success btn" value="Добавить" />
+    </div>
+  </form>
+{% endblock %}
+</div>>

@@ -3,6 +3,7 @@ import json
 
 import requests
 
+from config import config
 from control import app
 from control.settings import API_URL_PRIMARY, LANGS, API
 
@@ -15,7 +16,7 @@ def get_method_link_prepend(method):
 def get_method_link_append(lang=LANGS[0]):
     params = list()
     params.append('{}={}'.format(API['lang_name'], lang))
-    params.append('{}={}'.format(API['token_name'], API['token_value']))
+    params.append('{}={}'.format(API['token_name'], app.config['TOKEN']))
     link = '&'.join(params)
     return link
 

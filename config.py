@@ -67,6 +67,8 @@ class Config:
     CACHE_TYPE = 'SimpleCache'
     CACHE_DEFAULT_TIMEOUT = 5
 
+    TOKEN = os.environ.get('API_TOKEN') or '12345'
+
     @classmethod
     def init_app(cls, app):
         while app.logger.hasHandlers():

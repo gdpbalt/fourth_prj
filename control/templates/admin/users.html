@@ -1,0 +1,41 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Пользователи
+{% endblock %}
+
+{% block body %}
+<h2>Пользователи</h2>
+
+<div>
+    {% from 'macroses/macros.html' import show_flash %}
+    {{ show_flash() }}
+</div>
+
+{% if users|length > 0 %}
+<table class="table w-50">
+    <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Имя для входа</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.login }}</td>
+            <td><a href="{{ url_for('user_update', idd=user.id)}}" class="btn btn-secondary">Изменить</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+    <p>Пользователи не найдены</p>
+{% endif %}
+
+<a href="{{ url_for('user_add')}}" class="btn btn-success">Добавить пользователя</a>
+{% endblock %}

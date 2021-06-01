@@ -1,0 +1,53 @@
+{% if tours|length > 0 -%}
+<table class="table">
+    <thead class="thead-light">
+        <tr class="border-bottom">
+          <th scope="col" class="text-center">#</th>
+          <th scope="col" class="text-center">ID</th>
+          <th scope="col" class="text-center">Наименование тура</th>
+          <th scope="col" class="text-center">Состояние</th>
+          <th></th>
+        </tr>
+    </thead>
+
+    {% from 'macroses/macros.html' import show_tour_info_brief -%}
+    <tbody>
+    {% for tour in tours -%}
+        {% if tour.active -%}
+            {% set tour_class = 'bg-success' -%}
+            {% set tour_state = 'включен' -%}
+        {% else -%}
+            {% set tour_class = 'bg-warning' -%}
+            {% set tour_state = 'отключен' -%}
+        {% endif -%}
+
+        {% set tour_active = 'not set' %}
+        {% if tour.id == tour_id %}
+            {% set tour_active = 'table-info' %}
+        {% endif %}
+
+      <tr class="{{ tour_active }} border-bottom">
+        <td class="text-center">{{ loop.index }}</td>
+        <th class="text-center">{{ tour.id }}</th>
+        <td>
+            <div>
+            {{ show_tour_info_brief(tour) }}
+            </div>
+        </td>
+        <td class="text-center"><span class="badge {{ tour_class }}">{{ tour_state }}</span></td>
+        <td class="text-center">
+            <a href="{{ url_for('tour_move', index=tour.id, cmd='up') }}" class="btn btn-secondary">Вверх</a>
+            <a href="{{ url_for('tour_move', index=tour.id, cmd='down') }}" class="btn btn-secondary mx-2">Вниз</a>
+            <a href="{{ url_for('tour_update', index=tour.id) }}" class="btn btn-secondary">Изменить</a>
+        </td>
+      </tr>
+    {% endfor -%}
+    </tbody>
+</table>
+
+{% else -%}
+    <p>Не найдено ни одного тура</p>
+{% endif -%}
+
+<a href="{{ url_for('tour_add', showcase_id=showcase.id) }}" class="btn btn-success my-2 mx-2">Добавить тур</a>
+<a href="{{ url_for('showcases', index=showcase.id) }}#{{ showcase.id }}" class="btn btn-secondary my-2">Вернуться</a>

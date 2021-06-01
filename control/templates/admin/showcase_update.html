@@ -1,0 +1,61 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Изменить витрину горящих туров
+{% endblock %}
+
+{% block body %}
+
+{% if get_flashed_messages(with_categories=true)|length > 0 -%}
+<h3>Уведомление об операции</h3>
+<div class="mb-5">
+  {% from 'macroses/macros.html' import show_flash -%}
+  {{ show_flash() }}
+</div>
+{% endif -%}
+
+
+<h3>Информация о турах</h3>
+<div class="w-80 mb-5">
+{% include 'admin/tours.html' -%}
+</div>
+
+
+<h3>Изменить витрину горящих туров</h3>
+
+<div>
+    <form method="post">
+    {{ form.csrf_token() }}
+
+    {% from 'macroses/macros.html' import show_form %}
+    {{ show_form(form) }}
+
+        <div class="form-group mt-3">
+            <input type="button" class="btn btn-danger my-2" data-toggle="modal" data-target="#deleteModal" value="Удалить">
+            <input type="submit" class="btn btn-success my-2 mx-2" value="Изменить">
+            <a href="{{ url_for('showcases', index=showcase.id)}}#{{ showcase.id }}" class="btn btn-secondary my-2">Вернуться</a>
+        </div>
+    </form>
+
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления записи</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+
+                <div class="modal-body">
+                    Вы уверены что хотите удалить запись о витрине {{ showcase.id }} ?
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+                    <a href="{{ url_for('showcase_del', index=showcase.id)}}" class="btn btn-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

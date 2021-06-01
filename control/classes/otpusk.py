@@ -1,4 +1,4 @@
-from control.utils.utils_request import get_data_from_request
+from control.utils.request import get_data_from_request
 
 
 class MethodError(Exception):

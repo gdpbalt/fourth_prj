@@ -1,0 +1,19 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Параметры системы
+{% endblock %}
+
+{% block body %}
+    <h4 class="text-center">Параметры системы</h4>
+
+    <ul class="list-group">
+    {% for param in info.values() %}
+        <li class="list-group-item">
+            <strong>{{ param['name'] }} =</strong> {{ param['value'] }} {{ param['dimension'] }}
+            <p class="my-2"><small>{{ param['comment'] }}</small></p>
+        </li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

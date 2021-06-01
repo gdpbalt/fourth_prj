@@ -1,0 +1,53 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Ошибки при формировании витрин горящих туров
+{% endblock %}
+
+{% block body %}
+    <h4 class="text-center">Ошибки при формировании витрин горящих туров</h4>
+
+    {% if errors|length > 0 -%}
+    <table class="table table-striped table-sm">
+        <thead class="thead-light">
+            <tr class="border-bottom">
+                <th scope="col" class="text-center">Наименование<br>витрины</th>
+                <th scope="col" class="text-center">Наименование тура</th>
+                <th scope="col" class="text-center">Ошибка</th>
+                <th scope="col" class="text-center">Дата<br>обновления</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% from 'macroses/macros.html' import show_tour_info_brief -%}
+        {% for error in errors -%}
+            <tr class="border-bottom">
+                <td class="text-center">
+                    {{ error.showcase.name }}
+                </td>
+                <td>
+                    {% for tour in error.showcase.tours -%}
+                        {% if tour.id == error.tour_id -%}
+                            {{ show_tour_info_brief(tour) }}
+                            <p class="mb-1"><small>всего ошибок: </small><span class="badge badge-danger">&nbsp;{{  error.errors }}&nbsp;</span></p>
+                        {% endif -%}
+                    {% endfor -%}
+                    <a href="{{ url_for('tour_update', index=error.tour_id) }}"><small>к туру...</small></a>
+                </td>
+                <td class="text-center">
+                    <p data-toggle="tooltip" data-html="true" title="{{ error.description }}">{{ error.name }}</p>
+                </td>
+                <td class="text-center">
+                    {{ error.update.date() }}<br>
+                    {{ error.update.time() }}
+                </td>
+        {% endfor -%}
+            </tr>
+        </tbody>
+    </table>
+
+    {% else -%}
+        <p>Не найдено ни одной ошибки</p>
+    {% endif -%}
+
+{% endblock %}

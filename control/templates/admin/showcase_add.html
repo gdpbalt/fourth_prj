@@ -1,0 +1,32 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Добавить витрину
+{% endblock %}
+
+{% block body %}
+<h3>Добавить витрину горящих туров</h3>
+
+<div>
+  <form class="" method="post">
+    {{ form.csrf_token() }}
+
+    <div>
+      {% from 'macroses/macros.html' import show_flash %}
+      {{ show_flash() }}
+    </div>
+
+    {% from 'macroses/macros.html' import show_form %}
+    {{ show_form(form) }}
+
+    <div class="form-group mt-3">
+        <input type="submit" name="submit" class="btn btn-success my-2" value="Добавить" />
+        <a href="{{ url_for('showcases')}}" class="btn btn-secondary mx-2 my-2">Вернуться</a>
+    </div>
+
+    <div class="form-group mt-3">
+
+    </div>
+  </form>
+{% endblock %}
+</div>>

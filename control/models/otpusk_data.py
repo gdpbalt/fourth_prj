@@ -35,6 +35,9 @@ class OtpuskCities(db.Model):
     name = db.Column(db.String(255), nullable=False)
     country = db.Column(db.Integer, nullable=False)
 
+    update = db.Column(db.DateTime, nullable=False,
+                       server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+
 
 class OtpuskOperators(db.Model):
     __tablename__ = 'otpusk_operators'

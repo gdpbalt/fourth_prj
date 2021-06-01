@@ -1,5 +1,6 @@
 from flask import request
 
+from control import app
 from control.settings import API, LANGS
 from control.utils.request import get_data_from_request
 
@@ -18,7 +19,7 @@ class GetHotBlock:
             request.host_url, self.METHOD,
             self.index,
             API['lang_name'], LANGS[self.lang_id],
-            API['token_name'], API['token_value'])
+            API['token_name'], app.config['TOKEN'])
 
     @staticmethod
     def parse_result(input_data: dict):

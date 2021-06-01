@@ -1,0 +1,162 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Изменить данные о туре
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-6">
+        <h3>Изменить данные о туре <small>id={{ tour_id }}</small></h3>
+
+        {% from 'macroses/macros.html' import show_flash %}
+        {% from 'macroses/macros.html' import show_errors %}
+        <div>
+            {{ show_flash() }}
+
+            <form method="post">
+            {{ form.csrf_token() }}
+
+                <div class="mt-4 mb-0 form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="active" name="{{ form.active.name }}" {{ "checked" if form.active.data else ""}}>
+                    <label class="form-check-label" for="active">{{ form.active.label }}</label>
+                </div>
+
+            {% set alert = 'alert-danger' if form.destination.errors else '' -%}
+                <div class="my-0">
+                    <label class="my-0" for="destination">{{ form.destination.label }}</label>
+                    <div class="input-group">
+                        <input id="destination" name="{{ form.destination.name }}" class="form-control {{ alert }} ui-autocomplete" value="{{ form.destination.data }}">
+
+                        <div class="input-group-append">
+                            <a class="btn btn-light" id="destination_all" href="#"><i class="fa fa-search"></i></a>
+                        </div>
+                    </div>
+                    {{ show_errors(form.destination) }}
+                </div>
+
+            {% for field in form if field.name not in ['csrf_token', 'date_start', 'date_stop', 'destination', 'active'] -%}
+                {% set alert = 'alert-danger' if field.errors else '' -%}
+                <div class="form-group my-0">
+                {{ field.label(class="my-1") }}
+                {{ field(class="form-control {}".format(alert)) }}
+                {{ show_errors(field) }}
+                </div>
+            {% endfor -%}
+
+            {% set alert_start = 'alert-danger' if form.date_start.errors else '' -%}
+            {% set alert_stop = 'alert-danger' if form.date_stop.errors else '' -%}
+                <div class="my-0">
+                    <span>Начало тура</span>
+                    <div class="my-0 row">
+                        <div class="col-6 input-group">
+                            <div class="input-group-prepend">
+                                <label for="date_start" class="input-group-text bg-light">c</label>
+                            </div>
+                            <input type="date" class="form-control {{ alert_start }}" id="date_start" name="{{ form.date_start.name }}" min="{{ form.date_start.default }}" value="{{ form.date_start.data }}">
+                        </div>
+
+                        <div class="col-6 input-group">
+                            <div class="input-group-prepend">
+                                <label for="date_stop" class="input-group-text bg-light">по</label>
+                            </div>
+                            <input type="date" class="form-control {{ alert_stop }}" id="date_stop" name="{{ form.date_stop.name }}" min="{{ form.date_start.default }}" value="{{ form.date_stop.data }}"><br>
+                        </div>
+                    </div>
+
+                {% if form.date_start.errors or form.date_stop.errors -%}
+                    <div class="my-1 row">
+                        <div class="col-6 input-group">
+                        {{ show_errors(form.date_start) }}
+                        </div>
+
+                        <div class="col-6 input-group">
+                        {{ show_errors(form.date_stop) }}
+                        </div>
+                    </div>
+                {% endif -%}
+
+                </div>
+
+                <div class="my-4">
+                    <input type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" value="Удалить" />
+                    <input type="submit" class="btn btn-success mx-2" value="Изменить" />
+                    <a href="{{ url_for('showcase_update', index=showcase_id, tour_id=tour_id) }}#{{ tour_id }}" class="btn btn-secondary">Вернуться</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="col-6">
+    {%  if tour -%}
+        <p class="mb-0"><small>tour_api_id = {{ tour.tour_api_id }}</small></p>
+        <p class="mb-0"><small>src_json = <a href="{{ url_for('tour_search_scr', index=tour_id) }}" target="_blank">source json</a></small></p>
+        {%  if tour_info.errors > 0 -%}
+            <p class="mb-0"><small>errors: </small><span class="badge badge-danger">&nbsp;{{ tour_info.errors }}&nbsp;</span><small>&nbsp;last error = {{ tour_info.errors_update }}</small></p>
+        {%  endif -%}
+        <p class="mb-0"><small>update = <strong>{{ tour.update }}</strong></small></p>
+
+        <img src="{{ tour.imgSrc }}" class="my-2" alt="{{ tour.fullHotelName }}">
+
+        <p class="mb-1"><small>hotelId = <a href="https://export.otpusk.com/api/tours/hotel?hotelId={{ tour.hotelId }}&{{ token }}" target="_blank">{{ tour.hotelId }}</a></small></p>
+        <p class="mb-1"><small>hotelName = "{{ tour.hotelName }}"</small></p>
+        <p class="mb-1"><small>hotelStars = "{{ tour.hotelStars }}"</small></p>
+        <p class="mb-1"><small>fullHotelName = "{{ tour.fullHotelName }}"</small></p>
+        <p class="mb-1"><small>countryId = <a href="https://export.otpusk.com/api/tours/countries?{{ token }}" target="_blank">{{ tour.countryId }}</a></small></p>
+        <p class="mb-1"><small>countryName = "{{ tour.countryName }}"</small></p>
+        <p class="mb-1"><small>cityId = <a href="https://export.otpusk.com/api/tours/cities?countryId={{ tour.countryId }}&{{ token }}" target="_blank">{{ tour.cityId }}</a></small></p>
+        <p class="mb-1"><small>cityName = "{{ tour.cityName }}"</small></p>
+        <p class="mb-1"><small>resortName = "{{ tour.resortName }}"</small></p>
+        <p class="mb-1"><small>dateString = "{{ tour.dateString }}"</small></p>
+        <p class="mb-1"><small>cityFromId = <a href="https://export.otpusk.com/api/tours/fromCities?{{ token }}" target="_blank">{{ tour.cityFromId }}</a></small></p>
+        <p class="mb-1"><small>cityFrom = "{{ tour.cityFrom }}"</small></p>
+        <p class="mb-1"><small>locationFromString = "{{ tour.locationFromString }}"</small></p>
+        <p class="mb-1"><small>food = "{{ tour.food }}"</small></p>
+        <p class="mb-1"><small>foodString = "{{ tour.foodString }}"</small></p>
+        <p class="mb-1"><small>dateDurationString = "{{ tour.dateDurationString }}"</small></p>
+        <p class="mb-1"><small>operatorId = <a href="https://export.otpusk.com/api/tours/operators?{{ token }}" target="_blank">{{ tour.operatorId }}</a></small></p>
+        <p class="mb-1"><small>operatorName = "{{ tour.operatorName }}"</small></p>
+        <p class="mb-1"><small>transport = "{{ tour.transport }}"</small></p>
+        <p class="mb-1"><small>length = {{ tour.length }}</small></p>
+        <p class="mb-1"><small>promo = {{ tour.promo }}</small></p>
+        <p class="mb-1"><small>currency = "{{ tour.currency }}"</small></p>
+        <p class="mb-1"><small>price = "{{ tour.price }}"</small></p>
+        <p class="mb-1"><small>priceUsd = "{{ tour.priceUsd }}"</small></p>
+        <p class="mb-1"><small>priceEuro = "{{ tour.priceEuro }}"</small></p>
+        <p class="mb-1"><small>priceUah = "{{ tour.priceUah }}"</small></p>
+        <p class="mb-1"><small>priceUahOne = "{{ tour.priceUahOne }}"</small></p>
+        <p class="mb-1"><small>tourLink = <a href="{{ tour.tourLink }}" target="_blank">link</a></small></p>
+    {%  else -%}
+        <h4>Нет данных для отображения</h4>
+    {%  endif -%}
+
+        <div class="my-4">
+            <a href="{{ url_for('tour_search', index=tour_id) }}" class="btn btn-success">Обновить данные о туре</a>
+        </div>
+    </div>
+</div>
+
+<div class="p-0 my-5 col-12">
+    <span>search: <a href="{{ link }}" target="_blank">{{ link }}</a></span>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Подтверждение удаления записи</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        Вы уверены что хотите удалить запись о туре id={{ tour_id }} ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+        <a href="{{ url_for('tour_del', index=tour_id)}}" class="btn btn-danger">Удалить</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

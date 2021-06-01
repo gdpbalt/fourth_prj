@@ -1,7 +1,8 @@
+import datetime
+
 from sqlalchemy import exc
 
-from control import app, db
-# from control.models import OtpuskCoutries, OtpuskFromCities, OtpuskCities, OtpuskOperators
+from control import app, db, OtpuskCoutries, OtpuskFromCities, OtpuskOperators, OtpuskCities
 from control.utils.convert import parse_int
 from control.utils.request import get_data_from_request
 
@@ -54,10 +55,10 @@ class MethodCountries(MethodOtpusk):
             if result is None:
                 result = OtpuskCoutries(otpusk_id=index, lang=self.lang_id, name=name)
                 db.session.add(result)
-                app.logger.info(f"[{number}] Add to otpusk_countris: {index} - {name}")
+                app.logger.debug(f"[{number}] Add to otpusk_countris: {index} - {name}")
             else:
                 result.name = name
-                app.logger.info(f"[{number}] Update otpusk_countris: {index} - {name}")
+                app.logger.debug(f"[{number}] Update otpusk_countris: {index} - {name}")
 
             try:
                 db.session.commit()
@@ -90,10 +91,10 @@ class MethodFromCities(MethodOtpusk):
             if result is None:
                 result = OtpuskFromCities(otpusk_id=index, lang=self.lang_id, name=name, rel=rel)
                 db.session.add(result)
-                app.logger.info(f"[{number}] Add to otpusk_from_cities: {index} - {name}")
+                app.logger.debug(f"[{number}] Add to otpusk_from_cities: {index} - {name}")
             else:
                 result.name = name
-                app.logger.info(f"[{number}] Update otpusk_from_cities: {index} - {name}")
+                app.logger.debug(f"[{number}] Update otpusk_from_cities: {index} - {name}")
 
             try:
                 db.session.commit()
@@ -125,10 +126,10 @@ class MethodOperators(MethodOtpusk):
             if result is None:
                 result = OtpuskOperators(otpusk_id=index, lang=self.lang_id, name=name)
                 db.session.add(result)
-                app.logger.info(f"[{number}] Add to otpusk_operators: {index} - {name}")
+                app.logger.debug(f"[{number}] Add to otpusk_operators: {index} - {name}")
             else:
                 result.name = name
-                app.logger.info(f"[{number}] Update otpusk_operators: {index} - {name}")
+                app.logger.debug(f"[{number}] Update otpusk_operators: {index} - {name}")
 
             try:
                 db.session.commit()
@@ -164,10 +165,11 @@ class MethodCities(MethodOtpusk):
             if result is None:
                 result = OtpuskCities(otpusk_id=index, lang=self.lang_id, name=name, country=self.country)
                 db.session.add(result)
-                app.logger.info(f"[{number}] Add to otpusk_cities: {index} - {name}")
+                app.logger.debug(f"[{number}] Add to otpusk_cities: {index} - {name}")
             else:
                 result.name = name
-                app.logger.info(f"[{number}] Update otpusk_cities: {index} - {name}")
+                result.update = datetime.datetime.now()
+                app.logger.debug(f"[{number}] Update otpusk_cities: {index} - {name}")
 
             try:
                 db.session.commit()

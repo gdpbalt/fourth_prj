@@ -45,6 +45,7 @@ security = Security(app, user_datastore,
 
 from control.views import *
 from control.admin.views import *
+from control.api.views import *
 
 
 @user_authenticated.connect_via(app)

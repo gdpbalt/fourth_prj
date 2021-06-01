@@ -1,4 +1,4 @@
-{% extends 'layouts/_base.html' -%}
+{% extends 'layouts/base.html' -%}
 
 {% block main -%}
 <div class="container py-3">
@@ -7,48 +7,38 @@
         <ul class="nav nav-pills justify-content-end">
 
           <li class="nav-item">
-{#            {% set active = '' -%}#}
-{#            {% if request.endpoint == 'show' -%}#}
-{#              {% set active = 'active' -%}#}
-{#            {% endif -%}#}
-{#            <a class="nav-link {{ active }}" href="{{ url_for('show') }}">Демонстрация витрин</a>#}
+            {% set active = '' -%}
+            {% if request.endpoint == 'show' -%}
+              {% set active = 'active' -%}
+            {% endif -%}
+            <a class="nav-link {{ active }}" href="{{ url_for('show') }}">Демонстрация витрин</a>
           </li>
 
           <li class="nav-item">
-{#            {% set active = '' %}#}
-{#            {% if request.endpoint == 'error' %}#}
-{#              {% set active = 'active' %}#}
-{#            {% endif %}#}
-{#            <a class="nav-link {{ active }}" href="{{ url_for('error') }}">Ошибки</a>#}
+            {% set active = '' %}
+            {% if request.endpoint == 'error' %}
+              {% set active = 'active' %}
+            {% endif %}
+            <a class="nav-link {{ active }}" href="{{ url_for('error') }}">Ошибки</a>
           </li>
 
           <li class="nav-item">
-{#            {% set active = '' %}#}
-{#            {% if request.endpoint == 'showcases' or#}
-{#                  request.endpoint == 'showcase_add' or#}
-{#                  request.endpoint == 'showcase_update' or#}
-{#                  request.endpoint == 'tour_update' %}#}
-{#              {% set active = 'active' %}#}
-{#            {% endif %}#}
-{#            <a class="nav-link {{ active }}" href="{{ url_for('showcases') }}">Витрины горящих туров</a>#}
+            {% set active = '' %}
+            {% if request.endpoint == 'showcases' or
+                  request.endpoint == 'showcase_add' or
+                  request.endpoint == 'showcase_update' or
+                  request.endpoint == 'tour_update' %}
+              {% set active = 'active' %}
+            {% endif %}
+            <a class="nav-link {{ active }}" href="{{ url_for('showcases') }}">Витрины горящих туров</a>
           </li>
 
           <li class="nav-item">
-{#            {% set active = '' %}#}
-{#            {% if request.endpoint == 'setting' %}#}
-{#              {% set active = 'active' %}#}
-{#            {% endif %}#}
-{#            <a class="nav-link {{ active }}" href="{{ url_for('setting') }}">О системе</a>#}
-          </li>
-
-          <li class="nav-item">
-{#            {% set active = '' %}#}
-{#            {% if request.endpoint == 'users' or#}
-{#                  request.endpoint == 'user_update' or#}
-{#                  request.endpoint == 'user_add' %}#}
-{#              {% set active = 'active' %}#}
-{#            {% endif %}#}
-{#            <a class="nav-link {{ active }}" href="{{ url_for('users') }}">Пользователи</a>#}
+            {% set active = '' %}
+            {% if request.endpoint == 'setting' %}
+              {% set active = 'active' %}
+            {% endif %}
+            <a class="nav-link {{ active }}" href="{{ url_for('setting') }}">О системе</a>
           </li>
 
           <li class="nav-item">

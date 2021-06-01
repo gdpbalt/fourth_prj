@@ -1,0 +1,69 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Витрины горящих туров
+{% endblock %}
+
+{% block body %}
+<div class="">
+    <h3>Витрины горящих туров</h3>
+
+    <div>
+    {% from 'macroses/macros.html' import show_flash -%}
+    {{ show_flash() }}
+    </div>
+
+    {% if showcases|length > 0 -%}
+    <table class="table">
+        <thead class="thead-light">
+            <tr class="border-bottom">
+                <th scope="col" class="text-center">#</th>
+                <th scope="col" class="text-center">ID</th>
+                <th scope="col" class="text-center">Наименование витрины</th>
+                <th scope="col" class="text-center">Описание</th>
+                <th scope="col" class="text-center"></th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for showcase in showcases -%}
+            {% set tours_all = showcase.tours|length -%}
+            {% set tours_active = namespace(value=0) -%}
+
+            {% for tour in showcase.tours -%}
+                {% if tour.active -%}
+                    {% set tours_active.value = tours_active.value + 1 -%}
+                {% endif -%}
+            {% endfor -%}
+
+            {% set active = '' -%}
+            {% if showcase.id == index -%}
+                {% set active = 'table-info' -%}
+            {% endif -%}
+
+            <tr id="{{ showcase.id }}" class="{{ active }} border-bottom">
+                <td class="text-center">{{ loop.index }}</td>
+                <th class="text-center">{{ showcase.id }}</th>
+                <td class="">{{ showcase.name }}</td>
+                <td class="">
+                    <div><small>всего туров:</small> <span class="badge bg-warning">{{ tours_all }}</span></div>
+                    <div><small>активных туров:</small> <span class="badge bg-warning">{{ tours_active.value }}</span></div>
+                </td>
+                <td class="text-center">
+                    <a href="{{ url_for('showcase_move', index=showcase.id, cmd='up') }}" class="btn btn-secondary">Вверх</a>
+                    <a href="{{ url_for('showcase_move', index=showcase.id, cmd='down') }}" class="btn btn-secondary mx-2">Вниз</a>
+                    <a href="{{ url_for('showcase_update', index=showcase.id) }}" class="btn btn-secondary">Изменить</a>
+                </td>
+            </tr>
+        {% endfor -%}
+        </tbody>
+    </table>
+    {% else -%}
+        <p>Не найдено ни одной витрины горящих туров</p>
+    {% endif -%}
+
+    <a href="{{ url_for('showcase_add')}}" class="btn btn-success my-2">Добавить витрину</a>
+</div>
+
+{% endblock %}

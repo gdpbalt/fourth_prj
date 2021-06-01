@@ -1,0 +1,72 @@
+{% extends 'layouts/admin.html' %}
+
+{% block title %}
+Готовые витрины горящих туров
+{% endblock %}
+
+{% from 'macroses/macros.html' import show_tours_info %}
+{% block body %}
+    <h4 class="text-center">Готовые витрины горящих туров. {{ description|capitalize }}</h4>
+
+    <div class="row">
+        <div class="col-3 px-2">
+            <div class="my-5">
+                <h6 class="text-center">витрины</h6>
+                {% if showcases|length -%}
+                    <ul class="list-group list-group-flush">
+
+                    {% for showcase in showcases -%}
+                        {% set active_showcase = '' -%}
+                        {%  if showcase.id == index -%}
+                            {% set active_showcase = 'active' -%}
+                        {%  endif -%}
+
+                        {% set tours_active = namespace(value=0) -%}
+                        {% for tour in showcase.tours -%}
+                            {% if tour.active -%}
+                                {% set tours_active.value = tours_active.value + 1 -%}
+                            {% endif -%}
+                        {% endfor -%}
+
+                        <a class="list-group-item list-group-item-action {{ active_showcase }} d-flex justify-content-between align-items-center" href="{{ url_for('show', index_in=showcase.id, lang_in=lang) }}">{{ showcase.name }}<span class="badge badge-light badge-pill">{{ tours_active.value }}</span></a>
+                    {% endfor -%}
+                    </ul>
+
+                {% else -%}
+                    <p>нет витрин</p>
+                {% endif -%}
+            </div>
+
+            <div>
+                <h6 class="text-center">языки</h6>
+                {% if langs|length -%}
+                    <ul class="list-group list-group-flush">
+                    {% for lang_name in langs -%}
+                        {% set active_lang = '' -%}
+                        {%  if lang_name == lang -%}
+                            {% set active_lang = 'active' -%}
+                        {%  endif -%}
+
+                        <a class="list-group-item list-group-item-action {{ active_lang }}" href="{{ url_for('show', index_in=index, lang_in=lang_name) }}">{{ lang_name }}</a>
+                    {% endfor -%}
+                    </ul>
+
+                {% else -%}
+                    <p>нет языков</p>
+                {% endif -%}
+            </div>
+        </div>
+
+        <div class="col-9 row px-2">
+            <div class="col-6 px-2">
+                {{ show_tours_info(tours_left) }}
+            </div>
+
+            <div class="col-6 px-2">
+                {{ show_tours_info(tours_right) }}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

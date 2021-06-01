@@ -1,4 +1,6 @@
+from control import MethodSuggests, Tour, TourFrom, TourCategory, TourTransport, TourFood, TourLength
 from control import app
+from control.classes.api_otpusk import MethodError
 from control.settings import API
 from control.utils.request import get_method_link_prepend, get_method_link_append
 
