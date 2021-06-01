@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from control import db
 
 
@@ -88,8 +87,8 @@ class TourSearch(db.Model):
     length = db.Column(db.Integer, nullable=False)
 
 
-class Error(db.Model):
-    __tablename__ = 'error'
+class TourError(db.Model):
+    __tablename__ = 'tour_error'
 
     id = db.Column(db.Integer, primary_key=True)
     showcase_id = db.Column(db.Integer, db.ForeignKey('showcase.id'), nullable=False)

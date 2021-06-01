@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 from sqlalchemy import exc
 
 from control import app, db
-from control.models import OtpuskCoutries, OtpuskFromCities, OtpuskCities, OtpuskOperators
+# from control.models import OtpuskCoutries, OtpuskFromCities, OtpuskCities, OtpuskOperators
+from control.utils.convert import parse_int
 from control.utils.request import get_data_from_request
-from control.utils.utils_convert import parse_int
 
 
 class MethodError(Exception):
