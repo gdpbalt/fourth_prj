@@ -9,24 +9,24 @@ from control.models import Showcase, Tour
 from control.utils.reorder import move_record_in_table, reorder_record_in_table
 
 
-@app.route("/admin/showcases")
+@app.route("/superuser/showcases")
 @app.route("/showcases/<int:index>")
-@roles_accepted('admin')
+@roles_accepted('superuser')
 def showcases(index=None):
     data = Showcase.query.order_by(Showcase.order_index).all()
-    return render_template("admin/showcases.html", showcases=data, index=index)
+    return render_template("superuser/showcases.html", showcases=data, index=index)
 
 
-@app.route("/admin/showcase/<int:index>/<string:cmd>")
-@roles_accepted('admin')
+@app.route("/superuser/showcase/<int:index>/<string:cmd>")
+@roles_accepted('superuser')
 def showcase_move(index, cmd):
     app.logger.debug(f"Move element id={index} '{cmd}'")
     move_record_in_table(dbase=db, table=Showcase, index=index, cmd=cmd)
     return redirect(url_for("showcases", index=index) + f"#{index}")
 
 
-@app.route("/admin/showcase/<int:index>/del")
-@roles_accepted('admin')
+@app.route("/superuser/showcase/<int:index>/del")
+@roles_accepted('superuser')
 def showcase_del(index):
     data = Showcase.query.get_or_404(index)
     app.logger.debug(f"Delete element id={index}")
@@ -52,8 +52,8 @@ def showcase_del(index):
     return redirect(url_for("showcases"))
 
 
-@app.route("/admin/showcase_add", methods=["POST", "GET"])
-@roles_accepted('admin')
+@app.route("/superuser/showcase_add", methods=["POST", "GET"])
+@roles_accepted('superuser')
 def showcase_add():
     form = ShowcaseForm()
     if form.validate_on_submit():
@@ -78,12 +78,12 @@ def showcase_add():
             app.logger.warning(f"{msg}. {e}")
             flash(msg, "error")
 
-    return render_template("admin/showcase_add.html", form=form)
+    return render_template("superuser/showcase_add.html", form=form)
 
 
-@app.route("/admin/showcase/<int:index>/update", methods=["POST", "GET"])
-@app.route("/admin/showcase/<int:index>/update/<int:tour_id>", methods=["POST", "GET"])
-@roles_accepted('admin')
+@app.route("/superuser/showcase/<int:index>/update", methods=["POST", "GET"])
+@app.route("/superuser/showcase/<int:index>/update/<int:tour_id>", methods=["POST", "GET"])
+@roles_accepted('superuser')
 def showcase_update(index, tour_id=None):
     data = Showcase.query.get_or_404(index)
     tour = Tour.query.filter_by(showcase_id=index).order_by(Tour.order_index).all()
@@ -106,4 +106,4 @@ def showcase_update(index, tour_id=None):
         form.index.data = data.id
         form.name.data = data.name
 
-    return render_template("admin/showcase_update.html", showcase=data, form=form, tours=tour, tour_id=tour_id)
+    return render_template("superuser/showcase_update.html", showcase=data, form=form, tours=tour, tour_id=tour_id)

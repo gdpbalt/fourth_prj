@@ -8,7 +8,7 @@ from control.classes.otpusk_suggests import MethodSuggests
 
 @app.route("/suggest")
 @app.route("/suggest/<string:term>")
-@roles_accepted('admin')
+@roles_accepted('superuser')
 def suggest(term=None):
     if term is None:
         input_string = request.args.get('term', '')

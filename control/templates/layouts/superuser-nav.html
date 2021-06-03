@@ -1,0 +1,38 @@
+{% set active_show = 'active' if request.endpoint == 'show' else '' -%}
+{% set active_error = 'active' if request.endpoint == 'error' else '' -%}
+{% set active_showcases = 'active' if request.endpoint in ['showcases', 'showcase_add', 'showcase_update', 'tour_update'] else '' -%}
+{% set active_setting = 'active' if request.endpoint == 'setting' else '' -%}
+{% set active_role = 'active' if request.endpoint in ['role.index_view', 'role.create_view', 'role.edit_view'] else '' -%}
+{% set active_user = 'active' if request.endpoint in ['user.index_view', 'user.create_view', 'user.edit_view'] else '' -%}
+
+<header class="pb-3 mb-4 border-bottom">
+    <nav class="navbar nav-pills justify-content-end navbar-dark">
+        <div class="nav-item">
+            <a class="nav-link {{ active_show }}" href="{{ url_for('show') }}">Демонстрация витрин</a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link {{ active_error }}" href="{{ url_for('error') }}">Ошибки</a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link {{ active_showcases }}" href="{{ url_for('showcases') }}">Витрины горящих туров</a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link {{ active_setting }}" href="{{ url_for('setting') }}">О системе</a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link {{ active_role }}" href="{{ url_for('role.index_view') }}">Роли</a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link {{ active_user }}" href="{{ url_for('user.index_view') }}">Пользователи</a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link" href="{{ url_for('security.logout') }}">Выйти</a>
+        </div>
+    </nav>
+</header>

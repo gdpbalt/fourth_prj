@@ -17,6 +17,9 @@ class Role(db.Model, RoleMixin):
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
+    def __repr__(self):
+        return "<Role %s>" % (self.name)
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'

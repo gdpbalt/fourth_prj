@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask, session
+from flask_admin import Admin
 from flask_babelex import Babel
 from flask_caching import Cache
 from flask_mail import Mail
@@ -12,6 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 import control.settings
 from config import config
+from control.admin.models import MyAdminIndexView, UserView, RoleView
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
@@ -30,9 +32,16 @@ babel = Babel(app)
 mail = Mail(app)
 cache = Cache(app)
 
+
 from control.models import *
 from control.forms.users import ExtendedRegisterForm, ExtendedForgotPasswordForm, ExtendedResetPasswordForm, \
     ExtendedLoginForm
+
+
+admin = Admin(app=app, name='AntonivTours', template_mode='bootstrap4', base_template='admin/admin-base.html',
+              index_view=MyAdminIndexView())
+admin.add_view(UserView(User, db.session, name='Пользователи'))
+admin.add_view(RoleView(Role, db.session, name='Роли'))
 
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
@@ -44,7 +53,7 @@ security = Security(app, user_datastore,
 
 
 from control.views import *
-from control.admin.views import *
+from control.superuser.views import *
 from control.api.views import *
 
 

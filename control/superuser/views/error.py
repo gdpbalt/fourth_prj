@@ -7,8 +7,8 @@ from control.models import TourError
 ERROR_LINE_LIMIT = 25
 
 
-@app.route("/admin/error")
+@app.route("/superuser/error")
 @login_required
 def error():
     errors = TourError.query.order_by(TourError.update.desc()).limit(ERROR_LINE_LIMIT).all()
-    return render_template("admin/errors.html", errors=errors)
+    return render_template("superuser/errors.html", errors=errors)

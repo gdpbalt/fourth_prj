@@ -1,4 +1,4 @@
-from flask import render_template, redirect, make_response
+from flask import render_template, redirect, make_response, url_for
 from flask_security import roles_accepted, current_user, url_for_security, auth_required
 
 from control import app
@@ -11,11 +11,11 @@ def index():
 
     else:
         if current_user.has_role('staff'):
-            return render_template('welcome.html')
-        if current_user.has_role('admin'):
-            return render_template('welcome.html')
+            return redirect(url_for('welcome'))
+        if current_user.has_role('superuser'):
+            return redirect(url_for('superuser'))
         else:
-            return render_template('welcome.html')
+            return redirect(url_for('welcome'))
 
 
 @app.route('/welcome')
@@ -34,12 +34,6 @@ def role_guest():
 @roles_accepted('staff')
 def role_staff():
     return '<h1>There is for staff only</h1>'
-
-
-# @app.route('/admin')
-# @roles_accepted('admin')
-# def role_admin():
-#     return '<h1>There is for admin only</h1>'
 
 
 @app.route("/status")

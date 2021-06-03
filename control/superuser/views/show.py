@@ -7,9 +7,9 @@ from control.classes.api_my import GetHotBlock, GetHotTour
 from control.settings import LANGS
 
 
-@app.route("/admin/show")
-@app.route("/admin/show/<int:index_in>/<string:lang_in>")
-@roles_accepted('admin')
+@app.route("/superuser/show")
+@app.route("/superuser/show/<int:index_in>/<string:lang_in>")
+@roles_accepted('superuser')
 def show(index_in=None, lang_in=None):
     lang = 'rus'
     if lang_in is not None and lang_in in LANGS:
@@ -46,6 +46,6 @@ def show(index_in=None, lang_in=None):
             tours_right.append(tour)
         number += 1
 
-    return render_template("admin/showroom.html",
+    return render_template("superuser/showroom.html",
                            showcases=showcases, tours_left=tours_left, tours_right=tours_right, langs=LANGS, lang=lang,
                            index=index, description=name)

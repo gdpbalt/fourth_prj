@@ -1,0 +1,14 @@
+{% extends 'layouts/base.html' -%}
+
+{% block main -%}
+
+<div class="container py-3">
+    {% include 'layouts/superuser-nav.html' -%}
+
+    <main>
+        {% block body %}{% endblock %}
+    </main>
+
+    {% include 'layouts/superuser-foot.html' -%}
+</div>
+{% endblock %}

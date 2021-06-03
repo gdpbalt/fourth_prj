@@ -62,7 +62,7 @@ info = {
 }
 
 
-@app.route("/admin/setting")
-@roles_accepted('admin')
+@app.route("/superuser/setting")
+@roles_accepted('superuser')
 def setting():
-    return render_template("admin/settings.html", info=info)
+    return render_template("superuser/settings.html", info=info)

@@ -1,0 +1,23 @@
+{% extends 'admin/base.html' %}
+
+{% block head_meta -%}
+{{ super() }}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}">
+{%- endblock %}
+
+
+{% block page_body %}
+    <div class="container py-3">
+        {% include 'layouts/superuser-nav.html' -%}
+
+        {% block messages %}
+            {{ layout.messages() }}
+        {% endblock %}
+
+        {% set render_ctx = h.resolve_ctx() %}
+
+        {% block body %}{% endblock %}
+
+        {% include 'layouts/superuser-foot.html' -%}
+    </div>
+{% endblock %}

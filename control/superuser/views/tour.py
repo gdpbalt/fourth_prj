@@ -15,8 +15,8 @@ from control.utils.reorder import move_record_in_table, reorder_record_in_table
 from control.utils.request import get_method_link_append
 
 
-@app.route("/admin/tour_add/<int:showcase_id>")
-@roles_accepted('admin')
+@app.route("/superuser/tour_add/<int:showcase_id>")
+@roles_accepted('superuser')
 def tour_add(showcase_id):
     app.logger.debug(f"Add element showcase={showcase_id}")
     data = Tour()
@@ -40,11 +40,11 @@ def tour_add(showcase_id):
         app.logger.warning(f"{msg}. {e}")
         flash(msg, "error")
 
-    return render_template("admin/showcase_add.html")
+    return render_template("superuser/showcase_add.html")
 
 
-@app.route("/admin/tour/<int:index>/<string:cmd>")
-@roles_accepted('admin')
+@app.route("/superuser/tour/<int:index>/<string:cmd>")
+@roles_accepted('superuser')
 def tour_move(index, cmd):
     app.logger.debug(f"Move element id={index} '{cmd}'")
     data_current = Tour.query.get_or_404(index)
@@ -53,8 +53,8 @@ def tour_move(index, cmd):
     return redirect(url_for("showcase_update", index=showcase_id, tour_id=index) + f"#{index}")
 
 
-@app.route("/admin/tour/<int:index>/del")
-@roles_accepted('admin')
+@app.route("/superuser/tour/<int:index>/del")
+@roles_accepted('superuser')
 def tour_del(index):
     data = Tour.query.get_or_404(index)
     app.logger.debug(f"Delete element id={index}")
@@ -94,8 +94,8 @@ def tour_del(index):
     return redirect(url_for("showcase_update", index=data.showcase_id))
 
 
-@app.route("/admin/tour/<int:index>/update", methods=["POST", "GET"])
-@roles_accepted('admin')
+@app.route("/superuser/tour/<int:index>/update", methods=["POST", "GET"])
+@roles_accepted('superuser')
 def tour_update(index):
     data: Tour = Tour.query.get_or_404(index)
     app.logger.debug(f"Chg element id={index}")
@@ -150,20 +150,20 @@ def tour_update(index):
             flash(msg, "error")
 
     tour_search_data = TourSearch.query.filter_by(tour_id=index, lang=1).first()
-    return render_template("admin/tour_update.html", showcase_id=data.showcase_id, tour_id=index, form=form,
+    return render_template("superuser/tour_update.html", showcase_id=data.showcase_id, tour_id=index, form=form,
                            tour=tour_search_data, link=data.link, token=get_method_link_append(), tour_info=data)
 
 
-@app.route("/admin/tour/<int:index>/src")
-@roles_accepted('admin')
+@app.route("/superuser/tour/<int:index>/src")
+@roles_accepted('superuser')
 def tour_search_scr(index):
     tour_search_data = TourSearch.query.filter_by(tour_id=index).first()
     data_str = json.loads(tour_search_data.src_json)
     return jsonify(data_str)
 
 
-@app.route("/admin/tour/<int:index>/search")
-@roles_accepted('admin')
+@app.route("/superuser/tour/<int:index>/search")
+@roles_accepted('superuser')
 def tour_search(index):
     data_tour: Tour = Tour.query.get(index)
     data = MethodSearch(index=index, url_link=data_tour.link)

@@ -69,6 +69,8 @@ class Config:
 
     TOKEN = os.environ.get('API_TOKEN') or '12345'
 
+    FLASK_ADMIN_SWATCH = 'cerulean'
+
     @classmethod
     def init_app(cls, app):
         while app.logger.hasHandlers():

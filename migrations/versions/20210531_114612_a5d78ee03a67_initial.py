@@ -53,7 +53,7 @@ def upgrade():
     conn = op.get_bind()
     conn.execute("INSERT INTO role (name) VALUES('guest')")
     conn.execute("INSERT INTO role (name) VALUES('staff')")
-    conn.execute("INSERT INTO role (name) VALUES('admin')")
+    conn.execute("INSERT INTO role (name) VALUES('superuser')")
     # ### end Alembic commands ###
 
 
