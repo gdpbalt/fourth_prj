@@ -64,17 +64,17 @@ if __name__ == "__main__":
                      help="Sync otpusk.countries with dbase")
     cmd.add_argument('--from', dest='from_cities', action='store_const', const=True,
                      help="Sync otpusk.from_cities with dbase")
-    cmd.add_argument('--cities', dest='cities', action='store_const', const=True,
-                     help="Sync otpusk.cities with dbase")
     cmd.add_argument('--operators', dest='operators', action='store_const', const=True,
                      help="Sync otpusk.operators with dbase")
+    cmd.add_argument('--cities', dest='cities', action='store_const', const=True,
+                     help="Sync otpusk.cities with dbase")
 
     args = cmd.parse_args()
     if args.countries:
         sync_countries()
     elif args.from_cities:
         sync_from_cities()
-    elif args.cities:
-        sync_cities()
     elif args.operators:
         sync_operators()
+    elif args.cities:
+        sync_cities()

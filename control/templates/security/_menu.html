@@ -1,12 +1,16 @@
-{% if security.registerable or security.recoverable or security.confirmable -%}
+{% if security.registerable or security.recoverable or security.confirmable or security.unified_signin %}
     {% if request.endpoint == 'security.login' -%}
-    <div class="mb-2">
-        <a href="{{ url_for_security('forgot_password') }}">Забыли пароль ?</a><br/>
-    </div>
+        {% if security.recoverable %}
+        <div class="mb-2">
+            <a href="{{ url_for_security('forgot_password') }}">Забыли пароль ?</a><br/>
+        </div>
+        {%  endif -%}
 
-    <div class="mb-2">
-        <a href="{{ url_for_security('register') }}{% if 'next' in request.args -%}?next={{ request.args.next|urlencode }}{% endif -%}">Регистрация</a><br/>
-    </div>
+        {% if security.registerable %}
+        <div class="mb-2">
+            <a href="{{ url_for_security('register') }}{% if 'next' in request.args -%}?next={{ request.args.next|urlencode }}{% endif -%}">Регистрация</a><br/>
+        </div>
+        {%  endif -%}
     {% endif -%}
 
     {% if request.endpoint == 'security.forgot_password' or

@@ -16,11 +16,15 @@ DATE_FORMAT = '%Y-%m-%d %H:%M'
 class Config:
     WTF_CSRF_ENABLED = True
 
+    DEFAULT_ADMIN_EMAIL = os.environ.get('DEFAULT_ADMIN_EMAIL') or 'gdp@odev.io'
+    DEFAULT_ADMIN_PASSWORD = os.environ.get('DEFAULT_ADMIN_PASSWORD') or '00000000'
+    DEFAULT_ADMIN_ROLE = os.environ.get('DEFAULT_ADMIN_ROLE') or 'staff'
+
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'cii4theetoo7ChieweeH'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    SECURITY_REGISTERABLE = True
+    SECURITY_REGISTERABLE = False
     SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT') or 'om8foh9uoDeechiexe7k'
     SECURITY_RECOVERABLE = True
     SECURITY_CHANGEABLE = True
@@ -46,7 +50,10 @@ class Config:
     LOG_LEVEL = logging.DEBUG
     LOG_SCREAM_USE = True
     LOG_SCREAM_LEVEL = LOG_LEVEL
-    LOG_FILE_ROTATE_USE = True
+    LOG_FILE_USE = True
+    LOG_FILE_LEVEL = LOG_LEVEL
+    LOG_FILE_NAME = 'proj_name.log'
+    LOG_FILE_ROTATE_USE = False
     LOG_FILE_ROTATE_LEVEL = LOG_LEVEL
     LOG_FILE_ROTATE_NAME = 'proj_name.log'
     LOG_FILE_ROTATE_SIZE = int(os.environ.get('LOG_FILE_SIZE')) or 1000000
@@ -69,8 +76,6 @@ class Config:
 
     TOKEN = os.environ.get('API_TOKEN') or '12345'
 
-    FLASK_ADMIN_SWATCH = 'cerulean'
-
     @classmethod
     def init_app(cls, app):
         while app.logger.hasHandlers():
@@ -82,6 +87,12 @@ class Config:
             stream_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
             stream_handler.setLevel(cls.LOG_SCREAM_LEVEL)
             app.logger.addHandler(stream_handler)
+
+        if cls.LOG_FILE_USE:
+            file_handle = RotatingFileHandler(filename=cls.LOG_FILE_NAME, encoding='utf-8')
+            file_handle.setLevel(cls.LOG_FILE_LEVEL)
+            file_handle.setFormatter(logging.Formatter(LOG_FORMAT, datefmt=DATE_FORMAT))
+            app.logger.addHandler(file_handle)
 
         if cls.LOG_FILE_ROTATE_USE:
             file_handle = RotatingFileHandler(filename=cls.LOG_FILE_ROTATE_NAME,
@@ -103,11 +114,12 @@ class DevelopmentConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
     LOG_SCREAM_USE = True
-    LOG_FILE_ROTATE_USE = True
-    LOG_FILE_ROTATE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or 'proj_name.log')
+    LOG_FILE_USE = True
+    LOG_FILE_ROTATE_USE = False
+    LOG_FILE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or 'proj_name.log')
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-                              'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 
 class ProductionConfig(Config):

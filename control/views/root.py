@@ -1,7 +1,7 @@
-from flask import render_template, redirect, make_response, url_for
-from flask_security import roles_accepted, current_user, url_for_security, auth_required
+from flask import render_template, redirect, url_for
+from flask_security import roles_accepted, current_user, url_for_security, auth_required, login_user
 
-from control import app
+from control import app, user_datastore, db
 
 
 @app.route('/')
@@ -45,4 +45,17 @@ def status_check():
     app.logger.warning("warning log")
     app.logger.error("error log")
 
-    return make_response("OK", 200)
+    return render_template('status.html')
+
+
+@app.before_first_request
+def login_admin():
+    app.logger.info("Run: before_first_request")
+    user = user_datastore.find_user(email=app.config['DEFAULT_ADMIN_EMAIL'], case_insensitive=True)
+    if user is None:
+        role = user_datastore.find_role(app.config['DEFAULT_ADMIN_ROLE'])
+        admin = user_datastore.create_user(email=app.config['DEFAULT_ADMIN_EMAIL'],
+                                           password=app.config['DEFAULT_ADMIN_PASSWORD'],
+                                           roles=[role])
+        db.session.commit()
+        login_user(admin)

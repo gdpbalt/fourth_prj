@@ -50,7 +50,11 @@
         </div>
 
         <div class="nav-item">
-            <a class="nav-link" href="{{ url_for('security.logout') }}">Выйти</a>
+            <a href="{{ url_for_security('change_password') }}" class="nav-link">Изменить пароль</a>
+        </div>
+
+        <div class="nav-item">
+            <a class="nav-link" href="{{ url_for_security('logout') }}">Выйти</a>
         </div>
     </nav>
 </header>
