@@ -17,11 +17,6 @@
             <form method="post">
             {{ form.csrf_token() }}
 
-                <div class="mt-4 mb-0 form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="active" name="{{ form.active.name }}" {{ "checked" if form.active.data else ""}}>
-                    <label class="form-check-label" for="active">{{ form.active.label }}</label>
-                </div>
-
             {% set alert = 'alert-danger' if form.destination.errors else '' -%}
                 <div class="my-0">
                     <label class="my-0" for="destination">{{ form.destination.label }}</label>
@@ -53,14 +48,14 @@
                             <div class="input-group-prepend">
                                 <label for="date_start" class="input-group-text bg-light">c</label>
                             </div>
-                            <input type="date" class="form-control {{ alert_start }}" id="date_start" name="{{ form.date_start.name }}" min="{{ form.date_start.default }}" value="{{ form.date_start.data }}">
+                            <input type="date" class="form-control {{ alert_start }}" id="tour_date_start" name="{{ form.date_start.name }}" min="{{ form.date_start.default }}" value="{{ form.date_start.data }}">
                         </div>
 
                         <div class="col-6 input-group">
                             <div class="input-group-prepend">
                                 <label for="date_stop" class="input-group-text bg-light">по</label>
                             </div>
-                            <input type="date" class="form-control {{ alert_stop }}" id="date_stop" name="{{ form.date_stop.name }}" min="{{ form.date_start.default }}" value="{{ form.date_stop.data }}"><br>
+                            <input type="date" class="form-control {{ alert_stop }}" id="tour_date_stop" name="{{ form.date_stop.name }}" min="{{ form.date_start.default }}" value="{{ form.date_stop.data }}"><br>
                         </div>
                     </div>
 
@@ -77,6 +72,13 @@
                 {% endif -%}
 
                 </div>
+
+
+                <div class="mt-4 mb-0 form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="active" name="{{ form.active.name }}" {{ "checked" if form.active.data else ""}}>
+                    <label class="form-check-label" for="active">{{ form.active.label }}</label>
+                </div>
+
 
                 <div class="my-4">
                     <input type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" value="Удалить" />
