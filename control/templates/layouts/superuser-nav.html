@@ -34,10 +34,10 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item {{ active_lang }}" href="{{ url_for('lang.index_view') }}">Языки</a>
-                <a class="dropdown-item {{ active_category }}" href="{{ url_for('tourcategory.index_view') }}">Категории</a>
-                <a class="dropdown-item {{ active_transport }}" href="{{ url_for('tourtransport.index_view') }}">Транспорт</a>
-                <a class="dropdown-item {{ active_food }}" href="{{ url_for('tourfood.index_view') }}">Питание</a>
-                <a class="dropdown-item {{ active_length }}" href="{{ url_for('tourlength.index_view') }}">Длительность</a>
+                <a class="dropdown-item {{ active_category }}" href="{{ url_for('tourcategory.index_view') }}">Категории отелей</a>
+                <a class="dropdown-item {{ active_transport }}" href="{{ url_for('tourtransport.index_view') }}">Тип транспорта</a>
+                <a class="dropdown-item {{ active_food }}" href="{{ url_for('tourfood.index_view') }}">Тип питания</a>
+                <a class="dropdown-item {{ active_length }}" href="{{ url_for('tourlength.index_view') }}">Длительность тура</a>
                 <a class="dropdown-item {{ active_from }}" href="{{ url_for('tourfrom.index_view') }}">Город отправления</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item {{ active_role }}" href="{{ url_for('role.index_view') }}">Роли</a>

@@ -9,9 +9,9 @@
 {% if request.endpoint in ['lang.index_view', 'lang.create_view', 'lang.edit_view'] -%}
     {% set title = 'Языки' %}
 {% elif request.endpoint in ['tourcategory.index_view', 'tourcategory.create_view', 'tourcategory.edit_view'] -%}
-    {% set title = 'Категории' %}
+    {% set title = 'Категории (звездность) отелей' %}
 {% elif request.endpoint in ['tourtransport.index_view', 'tourtransport.create_view', 'tourtransport.edit_view'] -%}
-    {% set title = 'Транспорт' %}
+    {% set title = 'Тип транспорта' %}
 {% elif request.endpoint in ['tourfood.index_view', 'tourfood.create_view', 'tourfood.edit_view'] -%}
     {% set title = 'Тип питания' %}
 {% elif request.endpoint in ['tourlength.index_view', 'tourlength.create_view', 'tourlength.edit_view'] -%}

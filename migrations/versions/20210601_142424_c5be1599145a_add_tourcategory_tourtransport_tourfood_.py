@@ -121,7 +121,7 @@ def upgrade():
     conn.execute("INSERT INTO tour_transport (id, name, order_index, selected, value) VALUES (2, 'Авиаперелет', 2, 1, 'air')")
     conn.execute("INSERT INTO tour_transport (id, name, order_index, selected, value) VALUES (3, 'Автобус', 3, 0, 'bus')")
     conn.execute("INSERT INTO tour_transport (id, name, order_index, selected, value) VALUES (4, 'Поезд', 4, 0, 'train')")
-    conn.execute("INSERT INTO tour_transport (id, name, order_index, selected, value) VALUES (5, 'Судно', 5, 0, 'train')")
+    conn.execute("INSERT INTO tour_transport (id, name, order_index, selected, value) VALUES (5, 'Судно', 5, 0, 'ship')")
     conn.execute("INSERT INTO tour_transport (id, name, order_index, selected, value) VALUES (6, 'Транспорт не включён', 6, 0, 'no')")
     # ### end Alembic commands ###
 
