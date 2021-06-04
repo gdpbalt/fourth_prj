@@ -5,8 +5,7 @@ from time import sleep
 
 from sqlalchemy import exc
 
-from control import app, db, TourSearch, TourError
-from control import Tour
+from control import app, db, TourSearch, TourError, Tour
 from control.settings import LANGS, STATIC_DATA, OUR_SITE, SEARCH_SLEEP_WAIT_LASTRESULT_SECOND
 from control.utils.convert import parse_float, parse_date, decimal2str_with_space
 from control.utils.dictionary import get_country_name, get_city_name, get_from_city_name, get_operators

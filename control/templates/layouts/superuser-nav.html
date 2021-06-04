@@ -1,9 +1,22 @@
 {% set active_show = 'active' if request.endpoint == 'show' else '' -%}
-{% set active_error = 'active' if request.endpoint == 'error' else '' -%}
 {% set active_showcases = 'active' if request.endpoint in ['showcases', 'showcase_add', 'showcase_update', 'tour_update'] else '' -%}
-{% set active_setting = 'active' if request.endpoint == 'setting' else '' -%}
+
+{% set active_error = 'active' if request.endpoint == 'error' else '' -%}
+
 {% set active_role = 'active' if request.endpoint in ['role.index_view', 'role.create_view', 'role.edit_view'] else '' -%}
 {% set active_user = 'active' if request.endpoint in ['user.index_view', 'user.create_view', 'user.edit_view'] else '' -%}
+
+{% set active_lang = 'active' if request.endpoint == 'lang.index_view' else '' -%}
+{% set active_setting = 'active' if request.endpoint == 'setting' else '' -%}
+{% set active_category = 'active' if request.endpoint == 'tourcategory.index_view' else '' -%}
+{% set active_transport = 'active' if request.endpoint == 'tourtransport.index_view' else '' -%}
+{% set active_food = 'active' if request.endpoint == 'tourfood.index_view' else '' -%}
+{% set active_length = 'active' if request.endpoint == 'tourlength.index_view' else '' -%}
+{% set active_from = 'active' if request.endpoint == 'tourfrom.index_view' else '' -%}
+
+{% set active_sub = 'active' if 'active' in [active_role, active_user, active_lang, active_setting, active_category, active_transport, active_food, active_length, active_from, active_error] else '' -%}
+
+
 
 <header class="pb-3 mb-4 border-bottom">
     <nav class="navbar nav-pills justify-content-end navbar-dark">
@@ -12,23 +25,28 @@
         </div>
 
         <div class="nav-item">
-            <a class="nav-link {{ active_error }}" href="{{ url_for('error') }}">Ошибки</a>
-        </div>
-
-        <div class="nav-item">
             <a class="nav-link {{ active_showcases }}" href="{{ url_for('showcases') }}">Витрины горящих туров</a>
         </div>
 
-        <div class="nav-item">
-            <a class="nav-link {{ active_setting }}" href="{{ url_for('setting') }}">О системе</a>
-        </div>
-
-        <div class="nav-item">
-            <a class="nav-link {{ active_role }}" href="{{ url_for('role.index_view') }}">Роли</a>
-        </div>
-
-        <div class="nav-item">
-            <a class="nav-link {{ active_user }}" href="{{ url_for('user.index_view') }}">Пользователи</a>
+        <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle {{ active_sub }}" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Справочники
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item {{ active_lang }}" href="{{ url_for('lang.index_view') }}">Языки</a>
+                <a class="dropdown-item {{ active_category }}" href="{{ url_for('tourcategory.index_view') }}">Категории</a>
+                <a class="dropdown-item {{ active_transport }}" href="{{ url_for('tourtransport.index_view') }}">Транспорт</a>
+                <a class="dropdown-item {{ active_food }}" href="{{ url_for('tourfood.index_view') }}">Питание</a>
+                <a class="dropdown-item {{ active_length }}" href="{{ url_for('tourlength.index_view') }}">Длительность</a>
+                <a class="dropdown-item {{ active_from }}" href="{{ url_for('tourfrom.index_view') }}">Город отправления</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item {{ active_role }}" href="{{ url_for('role.index_view') }}">Роли</a>
+                <a class="dropdown-item {{ active_user }}" href="{{ url_for('user.index_view') }}">Пользователи</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item {{ active_error }}" href="{{ url_for('error') }}">Ошибки</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item {{ active_setting }}" href="{{ url_for('setting') }}">О системе</a>
+            </div>
         </div>
 
         <div class="nav-item">

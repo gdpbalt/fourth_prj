@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 
 from flask import flash, url_for, render_template, jsonify, request
@@ -7,7 +6,7 @@ from sqlalchemy import func, exc
 from werkzeug.utils import redirect
 
 from control import app, db
-from control import Tour, TourSearch, TourError
+from control.models import Tour, TourSearch, TourError
 from control.classes.api_otpusk_search import MethodSearch
 from control.classes.mk_link import MakeSearchLink
 from control.forms.forms import TourForm

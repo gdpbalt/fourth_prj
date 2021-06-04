@@ -6,9 +6,31 @@
 {%- endblock %}
 
 
+{% if request.endpoint in ['lang.index_view', 'lang.create_view', 'lang.edit_view'] -%}
+    {% set title = 'Языки' %}
+{% elif request.endpoint in ['tourcategory.index_view', 'tourcategory.create_view', 'tourcategory.edit_view'] -%}
+    {% set title = 'Категории' %}
+{% elif request.endpoint in ['tourtransport.index_view', 'tourtransport.create_view', 'tourtransport.edit_view'] -%}
+    {% set title = 'Транспорт' %}
+{% elif request.endpoint in ['tourfood.index_view', 'tourfood.create_view', 'tourfood.edit_view'] -%}
+    {% set title = 'Тип питания' %}
+{% elif request.endpoint in ['tourlength.index_view', 'tourlength.create_view', 'tourlength.edit_view'] -%}
+    {% set title = 'Длительность тура' %}
+{% elif request.endpoint in ['tourfrom.index_view', 'tourfrom.create_view', 'tourfrom.edit_view'] -%}
+    {% set title = 'Город отправления' %}
+{% elif request.endpoint in ['role.index_view', 'role.create_view', 'role.edit_view'] -%}
+    {% set title = 'Роли пользователей' %}
+{% elif request.endpoint in ['user.index_view', 'user.create_view', 'user.edit_view'] -%}
+    {% set title = 'Пользователи' %}
+{% else -%}
+    {% set title = '' %}
+{% endif -%}
+
 {% block page_body %}
     <div class="container py-3">
         {% include 'layouts/superuser-nav.html' -%}
+
+        <h4 class="text-center">{{ title }}</h4>
 
         {% block messages %}
             {{ layout.messages() }}
@@ -21,3 +43,9 @@
         {% include 'layouts/superuser-foot.html' -%}
     </div>
 {% endblock %}
+
+{#{% block tail %}#}
+{#    <div class="container py-3">#}
+{#{{ request.endpoint }}#}
+{#    </div>#}
+{#{% endblock %}#}

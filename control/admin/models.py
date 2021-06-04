@@ -52,3 +52,33 @@ class RoleView(ModelView):
         if result:
             self.can_create, self.can_edit, self.can_delete, self.can_export = True, True, True, False
         return result
+
+
+class LangView(ModelView):
+    column_list = ('id', 'name')
+    column_sortable_list = column_list
+
+
+class TourCategoryView(ModelView):
+    column_list = ('id', 'name', 'order_index', 'selected', 'value')
+    column_sortable_list = column_list
+
+
+class TourTransportView(ModelView):
+    column_list = ('id', 'name', 'order_index', 'selected', 'value')
+    column_sortable_list = column_list
+
+
+class TourFoodView(ModelView):
+    column_list = ('id', 'name', 'order_index', 'selected', 'value')
+    column_sortable_list = column_list
+
+
+class TourLengthView(ModelView):
+    column_list = ('id', 'name', 'order_index', 'selected', 'nights_from', 'nights_to')
+    column_sortable_list = column_list
+
+
+class TourFromView(ModelView):
+    column_list = ('id', 'name', 'order_index', 'selected', 'value')
+    column_sortable_list = column_list

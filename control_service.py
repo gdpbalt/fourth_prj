@@ -3,6 +3,12 @@ import argparse
 import datetime
 from time import sleep
 
+from control import db, app
+from control.classes.api_otpusk_search import MethodSearch
+from control.models import Tour, TourSearch
+from control.settings import SEARCH_UPDATE_MINUTES, SEARCH_TRY_AFTER_ERROR_HOURS, LANGS, SEARCH_STOP_AFTER_ERRORS, \
+    SEARCH_PAUSE_BETWEEN_REQUEST_SECOND, SEARCH_STOP_AFTER_SECOND
+
 
 def run_search():
     datetime_format = '%Y-%m-%d %H:%M:%S'

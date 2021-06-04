@@ -1,6 +1,6 @@
 from flask import jsonify, request, make_response
 
-from control import app, LANGS, cache
+from control import app, cache, LANGS
 from control.classes.mk_hot_block import HotBlock
 from control.classes.mk_hot_tour import TourBlock
 from control.models import Showcase, Tour

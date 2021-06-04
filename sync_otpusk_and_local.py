@@ -2,8 +2,8 @@
 import argparse
 from time import sleep
 
-from control import OtpuskCoutries, OtpuskCities
 from control.classes.api_otpusk import MethodCountries, MethodFromCities, MethodCities, MethodOperators
+from control.models import OtpuskCities, OtpuskCoutries
 from control.settings import API, LANGS
 from control.utils.request import get_method_link_prepend, get_method_link_append
 

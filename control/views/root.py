@@ -10,12 +10,13 @@ def index():
         return redirect(url_for_security('login'))
 
     else:
-        if current_user.has_role('staff'):
-            return redirect(url_for('welcome'))
         if current_user.has_role('superuser'):
             return redirect(url_for('superuser'))
-        else:
+
+        if current_user.has_role('staff'):
             return redirect(url_for('welcome'))
+
+    return redirect(url_for('welcome'))
 
 
 @app.route('/welcome')

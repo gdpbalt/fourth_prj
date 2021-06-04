@@ -2,8 +2,8 @@ from flask import render_template
 from flask_security import roles_accepted
 
 from control import app
-from control import Showcase
 from control.classes.api_my import GetHotBlock, GetHotTour
+from control.models import Showcase
 from control.settings import LANGS
 
 

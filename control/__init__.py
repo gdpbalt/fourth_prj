@@ -11,9 +11,9 @@ from flask_security import SQLAlchemyUserDatastore, Security, user_registered, p
 from flask_security.signals import password_changed
 from flask_sqlalchemy import SQLAlchemy
 
-import control.settings
 from config import config
-from control.admin.models import MyAdminIndexView, UserView, RoleView
+from control.admin.models import MyAdminIndexView, UserView, RoleView, LangView, TourCategoryView, TourTransportView, \
+    TourFoodView, TourLengthView, TourFromView
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
@@ -34,15 +34,21 @@ cache = Cache(app)
 
 
 from control.models import *
-from control.forms.users import ExtendedRegisterForm, ExtendedForgotPasswordForm, ExtendedResetPasswordForm, \
-    ExtendedLoginForm
-
 
 admin = Admin(app=app, name='AntonivTours', template_mode='bootstrap4', base_template='admin/admin-base.html',
               index_view=MyAdminIndexView())
 admin.add_view(UserView(User, db.session, name='Пользователи'))
 admin.add_view(RoleView(Role, db.session, name='Роли'))
+admin.add_view(LangView(Lang, db.session, name='Языки'))
+admin.add_view(TourCategoryView(TourCategory, db.session, name='Категория отеля'))
+admin.add_view(TourTransportView(TourTransport, db.session, name='Транспорт'))
+admin.add_view(TourFoodView(TourFood, db.session, name='Питание'))
+admin.add_view(TourLengthView(TourLength, db.session, name='Длительность'))
+admin.add_view(TourFromView(TourFrom, db.session, name='Город отправления'))
 
+
+from control.forms.users import ExtendedRegisterForm, ExtendedForgotPasswordForm, ExtendedResetPasswordForm, \
+    ExtendedLoginForm
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore,

@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import redirect, url_for
 from flask_security import roles_accepted
 
 from control import app
@@ -7,4 +7,4 @@ from control import app
 @app.route("/superuser/")
 @roles_accepted('superuser')
 def superuser():
-    return render_template('superuser/index.html')
+    return redirect(url_for('show'))

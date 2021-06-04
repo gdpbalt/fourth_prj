@@ -1,6 +1,6 @@
 from flask import jsonify
 from flask import request
-from flask_security import roles_accepted
+from flask_security import auth_required
 
 from control import app
 from control.classes.otpusk_suggests import MethodSuggests
@@ -8,7 +8,7 @@ from control.classes.otpusk_suggests import MethodSuggests
 
 @app.route("/suggest")
 @app.route("/suggest/<string:term>")
-@roles_accepted('superuser')
+@auth_required()
 def suggest(term=None):
     if term is None:
         input_string = request.args.get('term', '')
