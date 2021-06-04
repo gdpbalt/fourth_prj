@@ -17,9 +17,8 @@
 {% set active_sub = 'active' if 'active' in [active_role, active_user, active_lang, active_setting, active_category, active_transport, active_food, active_length, active_from, active_error] else '' -%}
 
 
-
 <header class="pb-3 mb-4 border-bottom">
-    <nav class="navbar nav-pills justify-content-end navbar-dark">
+    <nav class="navbar justify-content-end navbar-dark">
         <div class="nav-item">
             <a class="nav-link {{ active_show }}" href="{{ url_for('show') }}">Демонстрация витрин</a>
         </div>
