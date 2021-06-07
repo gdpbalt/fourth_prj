@@ -44,8 +44,13 @@ def status_check():
     app.logger.debug(f"app.config.__class__.__name__={app.config.__class__.__name__}")
     app.logger.debug(f"config_name={config_name}")
     app.logger.debug(f"basedir={basedir}")
-    app.logger.debug(f"LOG_FILE_ROTATE_NAME={app.config['LOG_FILE_ROTATE_NAME']}")
-    app.logger.debug(f"LOG_FILE_NAME={app.config['LOG_FILE_NAME']}")
+
+    app.logger.debug(f"LOG_LEVEL={app.config['LOG_LEVEL']}")
+    app.logger.debug(f"LOG_SCREAM_USE={app.config['LOG_SCREAM_USE']}")
+    app.logger.debug(f"LOG_FILE_USE={app.config['LOG_FILE_USE']}, LOG_FILE_NAME={app.config['LOG_FILE_NAME']}")
+    app.logger.debug(f"LOG_FILE_ROTATE_USE={app.config['LOG_FILE_ROTATE_USE']}, "
+                     f"LOG_FILE_ROTATE_NAME={app.config['LOG_FILE_ROTATE_NAME']}")
+    app.logger.debug(f"LOG_SYSLOG_USE={app.config['LOG_SYSLOG_USE']}, LOG_SYSLOG_ADDR={app.config['LOG_SYSLOG_ADDR']}")
 
     app.logger.debug("debug log")
     app.logger.info("info log")
