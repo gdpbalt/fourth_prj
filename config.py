@@ -127,7 +127,7 @@ class ProductionConfig(Config):
     LOG_LEVEL = logging.DEBUG
     LOG_SCREAM_USE = True
     LOG_FILE_USE = False
-    LOG_FILE_ROTATE_USE = False
+    LOG_FILE_ROTATE_USE = True
     LOG_FILE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
