@@ -114,7 +114,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
     LOG_SCREAM_USE = True
-    LOG_FILE_USE = True
+    LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = False
     LOG_FILE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or
                                  '/efs/var/www/control/log/error.log')
@@ -126,9 +126,9 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
-    LOG_SCREAM_USE = False
+    LOG_SCREAM_USE = True
     LOG_FILE_USE = False
-    LOG_FILE_ROTATE_USE = True
+    LOG_FILE_ROTATE_USE = False
     LOG_FILE_NAME = os.environ.get('LOG_FILE_NAME') or '/efs/var/www/control/log/error.log'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
