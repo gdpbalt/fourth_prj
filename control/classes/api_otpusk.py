@@ -17,9 +17,6 @@ class MethodOtpusk:
         self.lang_id = lang_id
         self.data = None
 
-    def get_data_from_api(self):
-        return get_data_from_request(self.link)
-
     @staticmethod
     def parse_result(input_data: dict):
         return input_data
@@ -28,7 +25,7 @@ class MethodOtpusk:
         pass
 
     def run(self):
-        reuslt = self.get_data_from_api()
+        reuslt = get_data_from_request(self.link)
         self.data = self.parse_result(input_data=reuslt)
         self.save_data2dbase()
 

@@ -16,8 +16,7 @@ class GetHotBlock:
 
     def get_link(self):
         return '{}{}?blockId={}&{}={}&{}={}'.format(
-            request.host_url, self.METHOD,
-            self.index,
+            request.host_url, self.METHOD, self.index,
             API['lang_name'], LANGS[self.lang_id],
             API['token_name'], app.config['TOKEN'])
 
