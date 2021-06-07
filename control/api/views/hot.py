@@ -63,16 +63,16 @@ def get_hot_tour(index, lang_id):
     return tour.response
 
 
-@app.route("/hotBlock")
-@app.route("/hotblock")
+@app.route("/api/hotBlock")
+@app.route("/api/hotblock")
 def hot_block():
     array = form_response(endpoint=request.endpoint, params=request.args)
     response = make_response(jsonify(array), MYAPI_HEADERS)
     return response
 
 
-@app.route("/hotTour")
-@app.route("/hottour")
+@app.route("/api/hotTour")
+@app.route("/api/hottour")
 def hot_tour():
     array = form_response(endpoint=request.endpoint, params=request.args)
     response = make_response(jsonify(array), MYAPI_HEADERS)

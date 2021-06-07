@@ -6,7 +6,7 @@ from control.utils.request import get_data_from_request
 
 
 class GetHotBlock:
-    METHOD = 'hotblock'
+    METHOD = 'api/hotblock'
 
     def __init__(self, index, lang_id):
         self.index = index
@@ -31,7 +31,7 @@ class GetHotBlock:
 
 
 class GetHotTour(GetHotBlock):
-    METHOD = 'hotTour'
+    METHOD = 'api/hotTour'
 
     @staticmethod
     def parse_result(input_data: dict):
