@@ -2,6 +2,8 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler, SysLogHandler
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -23,6 +25,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'cii4theetoo7ChieweeH'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
     SECURITY_REGISTERABLE = False
     SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT') or 'om8foh9uoDeechiexe7k'
@@ -62,11 +65,6 @@ class Config:
     LOG_SYSLOG_LEVEL = LOG_LEVEL
     LOG_SYSLOG_ADDR = os.environ.get('SYSLOG_LOG_ADDR') or '127.0.0.1'
     LOG_SYSLOG_PORT = os.environ.get('SYSLOG_LOG_PORT') or 514
-
-    LOG_SENTRY_USE = False
-    LOG_SENTRY_RATE = 1.0
-    LOG_SENTRY_URL = "https://9742568ba7824d3aa5723e71171eaab5@o620982.ingest.sentry.io/5751742"
-    LOG_SENTRY_IGNORE_ERRORS = [KeyboardInterrupt]
 
     ROPAGATE_EXCEPTIONS = True
     JSON_SORT_KEYS = False
@@ -118,9 +116,6 @@ class DevelopmentConfig(Config):
     LOG_FILE_ROTATE_USE = False
     LOG_FILE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log')
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
-
 
 class ProductionConfig(Config):
     DEBUG = True
@@ -129,9 +124,21 @@ class ProductionConfig(Config):
     LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = True
     LOG_FILE_ROTATE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
+    LOG_SYSLOG_USE = False
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+    LOG_SENTRY_USE = False
+    LOG_SENTRY_RATE = 1.0
+    LOG_SENTRY_URL = os.environ.get('SENTRY_URL') or "https://zzz@o620982.ingest.sentry.io/5751742"
+    LOG_SENTRY_IGNORE_ERRORS = [KeyboardInterrupt]
+
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+        if cls.LOG_SENTRY_USE:
+            sentry_sdk.init(dsn=cls.LOG_SENTRY_URL, integrations=[FlaskIntegration()],
+                            ignore_errors=cls.LOG_SENTRY_IGNORE_ERRORS,
+                            traces_sample_rate=cls.LOG_SENTRY_RATE)
 
 
 config = {
