@@ -74,6 +74,11 @@ class Config:
 
     TOKEN = os.environ.get('API_TOKEN') or '12345'
 
+    LOG_SENTRY_USE = False
+    LOG_SENTRY_RATE = 1.0
+    LOG_SENTRY_URL = os.environ.get('SENTRY_URL') or "https://zzz@o620982.ingest.sentry.io/5751742"
+    LOG_SENTRY_IGNORE_ERRORS = [KeyboardInterrupt]
+
     @classmethod
     def init_app(cls, app):
         while app.logger.hasHandlers():
@@ -125,20 +130,7 @@ class ProductionConfig(Config):
     LOG_FILE_ROTATE_USE = True
     LOG_FILE_ROTATE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
     LOG_SYSLOG_USE = True
-
     LOG_SENTRY_USE = True
-    LOG_SENTRY_RATE = 1.0
-    LOG_SENTRY_URL = os.environ.get('SENTRY_URL') or "https://zzz@o620982.ingest.sentry.io/5751742"
-    LOG_SENTRY_IGNORE_ERRORS = [KeyboardInterrupt]
-
-    @classmethod
-    def init_app(cls, app):
-        Config.init_app(app)
-
-        if cls.LOG_SENTRY_USE:
-            sentry_sdk.init(dsn=cls.LOG_SENTRY_URL, integrations=[FlaskIntegration()],
-                            ignore_errors=cls.LOG_SENTRY_IGNORE_ERRORS,
-                            traces_sample_rate=cls.LOG_SENTRY_RATE)
 
 
 config = {
