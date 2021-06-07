@@ -44,7 +44,7 @@ def status_check():
     app.logger.debug(f"app.config.__class__.__name__={app.config.__class__.__name__}")
     app.logger.debug(f"config_name={config_name}")
     app.logger.debug(f"basedir={basedir}")
-    app.logger.debug(f"basedir={app.config['LOG_FILE_NAME']}")
+    app.logger.debug(f"LOG_FILE_NAME={app.config['LOG_FILE_NAME']}")
 
     app.logger.debug("debug log")
     app.logger.info("info log")
