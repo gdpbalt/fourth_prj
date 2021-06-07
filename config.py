@@ -128,7 +128,7 @@ class ProductionConfig(Config):
     LOG_SCREAM_USE = False
     LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = True
-    LOG_FILE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
+    LOG_FILE_ROTATE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
