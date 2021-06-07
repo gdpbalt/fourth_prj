@@ -112,6 +112,11 @@ class Config:
             syslog_handler.setLevel(cls.LOG_SYSLOG_LEVEL)
             app.logger.addHandler(syslog_handler)
 
+        if cls.LOG_SENTRY_USE:
+            sentry_sdk.init(dsn=cls.LOG_SENTRY_URL, integrations=[FlaskIntegration()],
+                            ignore_errors=cls.LOG_SENTRY_IGNORE_ERRORS,
+                            traces_sample_rate=cls.LOG_SENTRY_RATE)
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
