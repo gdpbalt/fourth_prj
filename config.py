@@ -52,10 +52,10 @@ class Config:
     LOG_SCREAM_LEVEL = LOG_LEVEL
     LOG_FILE_USE = True
     LOG_FILE_LEVEL = LOG_LEVEL
-    LOG_FILE_NAME = 'proj_name.log'
+    LOG_FILE_NAME = '/var/log/flask/test.log'
     LOG_FILE_ROTATE_USE = False
     LOG_FILE_ROTATE_LEVEL = LOG_LEVEL
-    LOG_FILE_ROTATE_NAME = 'proj_name.log'
+    LOG_FILE_ROTATE_NAME = '/var/log/flask/test.log'
     LOG_FILE_ROTATE_SIZE = int(os.environ.get('LOG_FILE_SIZE')) or 1000000
     LOG_FILE_ROTATE_COUNT = int(os.environ.get('LOG_FILE_COUNT')) or 10
     LOG_SYSLOG_USE = False
@@ -116,8 +116,7 @@ class DevelopmentConfig(Config):
     LOG_SCREAM_USE = True
     LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = False
-    LOG_FILE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or
-                                 '/efs/var/www/control/log/error.log')
+    LOG_FILE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log')
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
@@ -129,7 +128,7 @@ class ProductionConfig(Config):
     LOG_SCREAM_USE = True
     LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = False
-    LOG_FILE_NAME = os.environ.get('LOG_FILE_NAME') or '/efs/var/www/control/log/error.log'
+    LOG_FILE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
