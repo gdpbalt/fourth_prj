@@ -116,7 +116,8 @@ class DevelopmentConfig(Config):
     LOG_SCREAM_USE = True
     LOG_FILE_USE = True
     LOG_FILE_ROTATE_USE = False
-    LOG_FILE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or 'proj_name.log')
+    LOG_FILE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or
+                                 '/efs/var/www/control/log/error.log')
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
@@ -128,7 +129,7 @@ class ProductionConfig(Config):
     LOG_SCREAM_USE = False
     LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = True
-    LOG_FILE_NAME = os.environ.get('LOG_FILE_NAME') or '/efs/var/www/control/log'
+    LOG_FILE_NAME = os.environ.get('LOG_FILE_NAME') or '/efs/var/www/control/log/error.log'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
