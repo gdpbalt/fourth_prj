@@ -17,7 +17,6 @@ Flask-Caching==1.10.1
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
 Flask-Migrate==3.0.0
-Flask-OAuthlib==0.9.6
 Flask-Principal==0.4.0
 Flask-Security-Too==4.0.1
 Flask-SQLAlchemy==2.5.1
