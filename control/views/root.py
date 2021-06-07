@@ -52,6 +52,7 @@ def status_check():
                      f"LOG_FILE_ROTATE_NAME={app.config['LOG_FILE_ROTATE_NAME']}")
     app.logger.debug(f"LOG_SYSLOG_USE={app.config['LOG_SYSLOG_USE']}, LOG_SYSLOG_ADDR={app.config['LOG_SYSLOG_ADDR']}, "
                      f"LOG_SYSLOG_PORT={app.config['LOG_SYSLOG_PORT']}")
+    app.logger.debug(f"LOGS={app.logger.handlers}")
 
     app.logger.debug("debug log")
     app.logger.info("info log")
