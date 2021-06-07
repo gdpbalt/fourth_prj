@@ -125,17 +125,13 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = True
     LOG_LEVEL = logging.DEBUG
-    LOG_SCREAM_USE = True
+    LOG_SCREAM_USE = False
     LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = True
     LOG_FILE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
-
-    @classmethod
-    def init_app(cls, app):
-        Config.init_app(app)
 
 
 config = {
