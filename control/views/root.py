@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for
 from flask_security import roles_accepted, current_user, url_for_security, auth_required, login_user
 
-from control import app, user_datastore, db
+from config import basedir
+from control import app, user_datastore, db, config_name
 
 
 @app.route('/')
@@ -40,11 +41,14 @@ def role_staff():
 @app.route("/status")
 @auth_required()
 def status_check():
-    app.logger.debug(f"debug log")
+    app.logger.debug(f"app.config.__class__.__name__={app.config.__class__.__name__}")
+    app.logger.debug(f"config_name={config_name}")
+    app.logger.debug(f"basedir={basedir}")
+
+    app.logger.debug("debug log")
     app.logger.info("info log")
     app.logger.warning("warning log")
     app.logger.error("error log")
-
     return render_template('status.html')
 
 
