@@ -64,7 +64,7 @@ class Config:
     LOG_SYSLOG_USE = False
     LOG_SYSLOG_LEVEL = LOG_LEVEL
     LOG_SYSLOG_ADDR = os.environ.get('SYSLOG_LOG_ADDR') or '127.0.0.1'
-    LOG_SYSLOG_PORT = os.environ.get('SYSLOG_LOG_PORT') or 514
+    LOG_SYSLOG_PORT = int(os.environ.get('SYSLOG_LOG_PORT')) or 514
 
     ROPAGATE_EXCEPTIONS = True
     JSON_SORT_KEYS = False
