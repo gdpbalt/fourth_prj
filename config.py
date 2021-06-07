@@ -53,7 +53,7 @@ class Config:
     LOG_LEVEL = logging.DEBUG
     LOG_SCREAM_USE = True
     LOG_SCREAM_LEVEL = LOG_LEVEL
-    LOG_FILE_USE = True
+    LOG_FILE_USE = False
     LOG_FILE_LEVEL = LOG_LEVEL
     LOG_FILE_NAME = '/var/log/flask/test.log'
     LOG_FILE_ROTATE_USE = False
