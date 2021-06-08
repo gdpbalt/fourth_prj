@@ -66,12 +66,12 @@
 
 {% macro show_tour_info_brief(tour) -%}
     <p class="mb-1"><small>куда:</small>&nbsp;<span>{{ tour.destination }}</span></p>
-    <p class="mb-1"><small>начало:</small>&nbsp;<span>{{ tour.date_start }} - {{ tour.date_stop }}</span></p>
     <p class="mb-1"><small>категоря отеля:</small>&nbsp;<span>{{ tour.category.name }}</span></p>
     <p class="mb-1"><small>город вылета:</small>&nbsp;<span>{{ tour.from_city.name }}</span></p>
     <p class="mb-1"><small>транспорт:</small>&nbsp;<span>{{ tour.transport.name }}</span></p>
     <p class="mb-1"><small>питание:</small>&nbsp;<span>{{ tour.food.name }}</span></p>
     <p class="mb-1"><small>длительность:</small>&nbsp;<span>{{ tour.length.name }}</span></p>
+    <p class="mb-1"><small>начало:</small>&nbsp;<span>{{ tour.date_start }} - {{ tour.date_stop }}</span></p>
 {% endmacro -%}
 
 
