@@ -126,6 +126,10 @@ class DevelopmentConfig(Config):
     LOG_FILE_ROTATE_USE = False
     LOG_FILE_NAME = os.path.join(basedir, 'logs', os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log')
 
+    @classmethod
+    def init_app(cls, app):
+        super().init_app(app)
+
 
 class ProductionConfig(Config):
     DEBUG = True
@@ -136,6 +140,10 @@ class ProductionConfig(Config):
     LOG_FILE_ROTATE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
     LOG_SYSLOG_USE = True
     LOG_SENTRY_USE = True
+
+    @classmethod
+    def init_app(cls, app):
+        super().init_app(app)
 
 
 config = {
