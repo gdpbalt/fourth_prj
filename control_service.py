@@ -76,14 +76,14 @@ def run_correct():
     date_now = datetime.datetime.now().date()
     date_start = date_now + datetime.timedelta(days=1)
     date_stop = date_start + datetime.timedelta(days=SEARCH_INTERVAL_DAYS)
-    app.logger.debug(f'*** Сегодня: {date_now}, Завтра: {date_start}, Интервал: {SEARCH_INTERVAL_DAYS} дней, '
-                     f'Конечная дата: {date_stop}')
 
     sql = db.session.query(Tour)
     sql = sql.filter(Tour.active == True)
     sql = sql.filter(Tour.date_start <= date_now)
     sql = sql.all()
 
+    app.logger.debug(f'*** Сегодня: {date_now}, Завтра: {date_start}, Интервал: {SEARCH_INTERVAL_DAYS} дней, '
+                     f'Конечная дата: {date_stop}, Найдено: {len(sql)} туров')
     for tour in sql:
         app.logger.debug(f'Витрина={tour.showcase_id}, Тур={tour.id}, Активный={tour.active}')
         app.logger.debug(f'СТАРОЕ ЗНАЧЕНИЕ: start={tour.date_start}, stop={tour.date_stop}')
