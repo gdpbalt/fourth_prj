@@ -18,3 +18,9 @@ SEARCH_STOP_AFTER_ERRORS = 3
 SEARCH_TRY_AFTER_ERROR_HOURS = 12
 
 SEARCH_INTERVAL_DAYS = 14
+
+REQUEST_HEADER = {
+    'referer': 'https://antonivtours.com/',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/91.0.4472.77 Safari/537.36'
+}
