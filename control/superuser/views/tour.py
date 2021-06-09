@@ -142,7 +142,7 @@ def tour_update(index, order):
             msg = f"Данные о туре id={index} успешно обновлены"
             app.logger.info(msg)
             flash(msg, "info")
-            return redirect(url_for("tour_update", index=index))
+            return redirect(url_for("tour_update", index=index, order=order))
         except exc.SQLAlchemyError as e:
             msg = f"При изменении тура id={index} произошла ошибка"
             app.logger.warning(f"{msg}. {e}")
@@ -162,9 +162,9 @@ def tour_search_scr(index):
     return jsonify(data_str)
 
 
-@app.route("/superuser/tour/<int:index>/search")
+@app.route("/superuser/tour/<int:index>/<int:order>/search")
 @roles_accepted('superuser')
-def tour_search(index):
+def tour_search(index, order):
     data_tour: Tour = Tour.query.get(index)
     data = MethodSearch(index=index, url_link=data_tour.link)
     try:
@@ -175,4 +175,4 @@ def tour_search(index):
     else:
         if result is None:
             flash("Ошибка получения данных от сервера", 'error')
-    return redirect(url_for("tour_update", index=index))
+    return redirect(url_for("tour_update", index=index, order=order))
