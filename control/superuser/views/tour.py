@@ -96,7 +96,7 @@ def tour_del(index):
 @app.route("/superuser/tour/<int:index>/update", methods=["POST", "GET"])
 @app.route("/superuser/tour/<int:index>/<int:order>/update", methods=["POST", "GET"])
 @roles_accepted('superuser')
-def tour_update(index, order=None):
+def tour_update(index, order=False):
     data: Tour = Tour.query.get_or_404(index)
     app.logger.debug(f"Chg element id={index}")
     form = TourForm()
