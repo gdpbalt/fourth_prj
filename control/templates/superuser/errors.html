@@ -32,7 +32,7 @@
                             <p class="mb-1"><small>всего ошибок: </small><span class="badge badge-danger">&nbsp;{{  error.errors }}&nbsp;</span></p>
                         {% endif -%}
                     {% endfor -%}
-                    <a href="{{ url_for('tour_update', index=error.tour_id, order=1) }}"><small>к туру...</small></a>
+                    <a href="{{ url_for('tour_update', index=error.tour_id) }}"><small>к туру...</small></a>
                 </td>
                 <td class="text-center">
                     <p data-toggle="tooltip" data-html="true" title="{{ error.description }}">{{ error.name }}</p>
