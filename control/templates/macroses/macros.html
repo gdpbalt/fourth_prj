@@ -39,7 +39,7 @@
 {% macro show_tours_info(tours) -%}
     {% if tours|length -%}
         {% for tour in tours -%}
-            <div class="card col-12 mb-2">
+            <div class="card col-12 mb-2 h-50">
                 <img src="{{ tour.imgSrc }}" class="card-img-top mt-1" alt="{{ tour.fullHotelName }}">
                 <div class="card-body">
                     <p class="mb-1 card-text">{{ tour.number }}. <a href="{{ tour.tourLink }}" target="_blank">{{ tour.fullHotelName }}, {{ tour.cityName }}, {{ tour.countryName }}</a></p>
