@@ -16,6 +16,8 @@ DATE_FORMAT = '%Y-%m-%d %H:%M'
 
 
 class Config:
+    PROPAGATE_EXCEPTIONS = True
+
     WTF_CSRF_ENABLED = True
 
     DEFAULT_ADMIN_EMAIL = os.environ.get('DEFAULT_ADMIN_EMAIL') or 'gdp@odev.io'
