@@ -58,6 +58,7 @@ def status_check():
     app.logger.info("info log")
     app.logger.warning("warning log")
     app.logger.error("error log")
+    test
     return render_template('status.html')
 
 
