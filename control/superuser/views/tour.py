@@ -93,9 +93,9 @@ def tour_del(index):
     return redirect(url_for("showcase_update", index=data.showcase_id))
 
 
-@app.route("/superuser/tour/<int:index>/update", methods=["POST", "GET"])
+@app.route("/superuser/tour/<int:index>/<int:order>/update", methods=["POST", "GET"])
 @roles_accepted('superuser')
-def tour_update(index):
+def tour_update(index, order):
     data: Tour = Tour.query.get_or_404(index)
     app.logger.debug(f"Chg element id={index}")
     form = TourForm()
@@ -150,7 +150,8 @@ def tour_update(index):
 
     tour_search_data = TourSearch.query.filter_by(tour_id=index, lang=1).first()
     return render_template("superuser/tour_update.html", showcase_id=data.showcase_id, tour_id=index, form=form,
-                           tour=tour_search_data, link=data.link, token=get_method_link_append(), tour_info=data)
+                           tour=tour_search_data, link=data.link, token=get_method_link_append(), tour_info=data,
+                           order=order)
 
 
 @app.route("/superuser/tour/<int:index>/src")

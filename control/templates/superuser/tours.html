@@ -38,7 +38,7 @@
         <td class="text-center">
             <a href="{{ url_for('tour_move', index=tour.id, cmd='up') }}" class="btn btn-secondary">Вверх</a>
             <a href="{{ url_for('tour_move', index=tour.id, cmd='down') }}" class="btn btn-secondary mx-2">Вниз</a>
-            <a href="{{ url_for('tour_update', index=tour.id) }}" class="btn btn-secondary">Изменить</a>
+            <a href="{{ url_for('tour_update', index=tour.id, order=loop.index) }}" class="btn btn-secondary">Изменить</a>
         </td>
       </tr>
     {% endfor -%}
