@@ -134,8 +134,8 @@ class DevelopmentConfig(Config):
 
 
 class ProductionConfig(Config):
-    DEBUG = True
-    LOG_LEVEL = logging.DEBUG
+    DEBUG = False
+    LOG_LEVEL = logging.INFO
     LOG_SCREAM_USE = False
     LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = True
