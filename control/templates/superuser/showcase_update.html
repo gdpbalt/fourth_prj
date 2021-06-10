@@ -15,7 +15,7 @@
 {% endif -%}
 
 
-<h3>Информация о турах</h3>
+<h3>Информация о турах. {{ form.name.data }} (id={{ form.index.data }})</h3>
 <div class="w-80 mb-5">
 {% include 'superuser/tours.html' -%}
 </div>
