@@ -10,7 +10,7 @@ from control.classes.api_otpusk_search import MethodSearch
 from control.models import Tour, TourSearch
 from control.settings import SEARCH_UPDATE_MINUTES, SEARCH_TRY_AFTER_ERROR_HOURS, LANGS, SEARCH_STOP_AFTER_ERRORS, \
     SEARCH_PAUSE_BETWEEN_REQUEST_SECOND, SEARCH_STOP_AFTER_SECOND, SEARCH_INTERVAL_DAYS, \
-    SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS
+    SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS, SEARCH_DISABLE_AFTER_ERRORS
 
 datetime_format = '%Y-%m-%d %H:%M:%S'
 
@@ -121,6 +121,7 @@ def disable_failed_tour():
 
     sql = sql.filter(Tour.active == True)
     sql = sql.filter(db.or_(TourSearch.update == None, TourSearch.update <= date_stop_try))
+    sql = sql.filter(Tour.errors > SEARCH_DISABLE_AFTER_ERRORS)
 
     sql = sql.order_by(TourSearch.update.desc())
     sql = sql.all()
