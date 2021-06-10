@@ -105,6 +105,21 @@ def run_correct():
             app.logger.error(f"{msg}. {e}")
 
 
+def disable_failed_tour():
+    """
+
+    :return: None
+    """
+    sql = db.session.query(Tour.showcase_id, Tour.id, Tour.errors, TourSearch.update)
+    sql = sql.outerjoin(TourSearch, Tour.id == TourSearch.tour_id)
+    sql = sql.filter(Tour.active == True)
+    sql = sql.order_by(TourSearch.update.desc())
+    sql = sql.all()
+    print(sql)
+    for tour in sql:
+        print("Showcase={}, Tour={}, Errors={}, Update={}".format(*tour))
+
+
 if __name__ == "__main__":
     cmd = argparse.ArgumentParser()
     cmd.add_argument('--run', dest='run', action='store_const',
@@ -113,9 +128,14 @@ if __name__ == "__main__":
     cmd.add_argument('--correct', dest='correct', action='store_const',
                      const=True,
                      help="Correct start/stop of search tour")
+    cmd.add_argument('--error', dest='error', action='store_const',
+                     const=True,
+                     help="Disable tours if they have errors last 3 days ")
 
     args = cmd.parse_args()
     if args.run:
         run_search()
-    if args.correct:
+    elif args.correct:
         run_correct()
+    elif args.error:
+        disable_failed_tour()
