@@ -9,7 +9,8 @@ from control import db, app, MakeSearchLink
 from control.classes.api_otpusk_search import MethodSearch
 from control.models import Tour, TourSearch
 from control.settings import SEARCH_UPDATE_MINUTES, SEARCH_TRY_AFTER_ERROR_HOURS, LANGS, SEARCH_STOP_AFTER_ERRORS, \
-    SEARCH_PAUSE_BETWEEN_REQUEST_SECOND, SEARCH_STOP_AFTER_SECOND, SEARCH_INTERVAL_DAYS
+    SEARCH_PAUSE_BETWEEN_REQUEST_SECOND, SEARCH_STOP_AFTER_SECOND, SEARCH_INTERVAL_DAYS, \
+    SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS
 
 datetime_format = '%Y-%m-%d %H:%M:%S'
 
@@ -64,7 +65,7 @@ def run_search():
     stop_time = datetime.datetime.now()
     delay = stop_time - start_time
     app.logger.info('*** Stop searching at {}. Proccessing {} records in {:.2f} minutes ***'.
-                    format(stop_time.strftime(datetime_format), number, delay.total_seconds()/60))
+                    format(stop_time.strftime(datetime_format), number, delay.total_seconds() / 60))
 
 
 def run_correct():
@@ -110,12 +111,19 @@ def disable_failed_tour():
 
     :return: None
     """
+    date_now = datetime.datetime.now().date()
+    date_stop_try = date_now - datetime.timedelta(days=SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS)
+    app.logger.debug(f'*** Сегодня: {date_now}, '
+                     f'Не обрабатыватьтуры старше: {date_stop_try} ({SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS} дня)')
+
     sql = db.session.query(Tour.showcase_id, Tour.id, Tour.errors, TourSearch.update)
     sql = sql.outerjoin(TourSearch, Tour.id == TourSearch.tour_id)
+
     sql = sql.filter(Tour.active == True)
+    sql = sql.filter(db.or_(TourSearch.update == None, TourSearch.update <= date_stop_try))
+
     sql = sql.order_by(TourSearch.update.desc())
     sql = sql.all()
-    print(sql)
     for tour in sql:
         print("Showcase={}, Tour={}, Errors={}, Update={}".format(*tour))
 
