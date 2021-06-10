@@ -16,10 +16,7 @@
                     <ul class="list-group list-group-flush">
 
                     {% for showcase in showcases -%}
-                        {% set active_showcase = '' -%}
-                        {%  if showcase.id == index -%}
-                            {% set active_showcase = 'active' -%}
-                        {%  endif -%}
+                        {% set active_showcase = 'active' if showcase.id == index else '' -%}
 
                         {% set tours_active = namespace(value=0) -%}
                         {% for tour in showcase.tours -%}
