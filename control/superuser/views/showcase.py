@@ -22,7 +22,7 @@ def showcases(index=None):
 def showcase_move(index, cmd):
     app.logger.debug(f"Move element id={index} '{cmd}'")
     move_record_in_table(dbase=db, table=Showcase, index=index, cmd=cmd)
-    return redirect(url_for("showcases", index=index) + f"#{index}")
+    return redirect(url_for("showcases", index=index))
 
 
 @app.route("/superuser/showcase/<int:index>/del")

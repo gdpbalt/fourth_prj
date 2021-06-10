@@ -49,7 +49,7 @@ def tour_move(index, cmd):
     data_current = Tour.query.get_or_404(index)
     showcase_id = data_current.showcase_id
     move_record_in_table(dbase=db, table=Tour, index=index, cmd=cmd)
-    return redirect(url_for("showcase_update", index=showcase_id, tour_id=index) + f"#{index}")
+    return redirect(url_for("showcase_update", index=showcase_id, tour_id=index))
 
 
 @app.route("/superuser/tour/<int:index>/del")
