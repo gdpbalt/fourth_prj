@@ -78,7 +78,7 @@ class TourBlock:
         data_view["tour_api_id"] = self.data.tour_api_id
 
         # TODO в эту структуру надо налить предложений по турам
-        self.response['searchedTour']['offers'][0] = data_view
+        # self.response['searchedTour']['offers'][0] = data_view
 
     def run(self):
         self.get_data_from_db()
