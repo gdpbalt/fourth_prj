@@ -75,7 +75,7 @@ class TourBlock:
         data_view["transport"] = self.data.transport
         data_view["food"] = self.data.food
         data_view["length"] = self.data.length
-        data_view["tour_api_id"] = self.data.tour_api_id
+        data_view["offerId"] = self.data.tour_api_id
 
         # TODO в эту структуру надо налить предложений по турам
         # self.response['searchedTour']['offers'][0] = data_view
