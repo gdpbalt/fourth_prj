@@ -97,7 +97,7 @@
         {%  if tour_info.errors > 0 -%}
             <p class="mb-0"><small>errors: </small><span class="badge badge-danger">&nbsp;{{ tour_info.errors }}&nbsp;</span><small>&nbsp;last error = {{ tour_info.errors_update }}</small></p>
         {%  endif -%}
-        <p class="mb-0"><small>update = <strong>{{ tour.update }}</strong></small></p>
+        <p class="mb-0"><small>updated = <strong>{{ tour.updated }}</strong></small></p>
 
         <img src="{{ tour.imgSrc }}" class="my-2" alt="{{ tour.fullHotelName }}">
 

@@ -43,7 +43,7 @@ class TourBlock:
         self.response["errors"] = self.tour.errors
         self.response["errorLast"] = self.tour.errors_update.strftime(self.format_datetime)
 
-        self.response["updateTime"] = self.data.update.strftime(self.format_datetime)
+        self.response["updateTime"] = self.data.updated.strftime(self.format_datetime)
 
         data_view = self.response['searchedTour']['data_view']
         data_view["hotelId"] = self.data.hotelId

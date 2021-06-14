@@ -40,6 +40,8 @@ class Tour(db.Model):
     errors = db.Column(db.Integer, nullable=False, server_default=db.text("0"))
     errors_update = db.Column(db.DateTime, nullable=False,
                               server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    updated = db.Column(db.DateTime, nullable=False,
+                        server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
 
 
 class TourSearch(db.Model):
@@ -51,8 +53,8 @@ class TourSearch(db.Model):
     lang = db.Column(db.Integer, db.ForeignKey('lang.id'), nullable=False)
     src_json = db.Column(db.Text, nullable=False)
     tour_api_id = db.Column(db.String(255), nullable=False)
-    update = db.Column(db.DateTime, nullable=False,
-                       server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    updated = db.Column(db.DateTime, nullable=False,
+                        server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
 
     hotelId = db.Column(db.Integer, nullable=False)
     imgSrc = db.Column(db.String(255), nullable=False)
