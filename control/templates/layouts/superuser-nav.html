@@ -2,6 +2,7 @@
 {% set active_showcases = 'active' if request.endpoint in ['showcases', 'showcase_add', 'showcase_update', 'tour_update'] else '' -%}
 
 {% set active_error = 'active' if request.endpoint == 'error' else '' -%}
+{% set active_success = 'active' if request.endpoint == 'success' else '' -%}
 
 {% set active_role = 'active' if request.endpoint in ['role.index_view', 'role.create_view', 'role.edit_view'] else '' -%}
 {% set active_user = 'active' if request.endpoint in ['user.index_view', 'user.create_view', 'user.edit_view'] else '' -%}
@@ -43,6 +44,7 @@
                 <a class="dropdown-item {{ active_user }}" href="{{ url_for('user.index_view') }}">Пользователи</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item {{ active_error }}" href="{{ url_for('error') }}">Ошибки</a>
+                <a class="dropdown-item {{ active_success }}" href="{{ url_for('success') }}">Успешные обновления</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item {{ active_setting }}" href="{{ url_for('setting') }}">О системе</a>
             </div>

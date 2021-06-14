@@ -61,10 +61,11 @@ def run_search(force_flag: bool = False):
             msg = f'Some error occured. {e}'
             app.logger.error(msg)
 
-        stop_time = datetime.datetime.now()
-        delay = stop_time - start_time
-        if delay.total_seconds() > SEARCH_STOP_AFTER_SECOND:
-            break
+        if force_flag is True:
+            stop_time = datetime.datetime.now()
+            delay = stop_time - start_time
+            if delay.total_seconds() > SEARCH_STOP_AFTER_SECOND:
+                break
 
     stop_time = datetime.datetime.now()
     delay = stop_time - start_time

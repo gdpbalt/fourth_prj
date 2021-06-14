@@ -1,15 +1,6 @@
 from control import db
 
 
-class Showcase(db.Model):
-    __tablename__ = 'showcase'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
-    order_index = db.Column(db.Integer, server_default=db.text("1"), nullable=False)
-    tours = db.relationship('Tour', backref='tour', lazy='joined', order_by=order_index)
-
-
 class Tour(db.Model):
     __tablename__ = 'tour'
 
@@ -42,6 +33,15 @@ class Tour(db.Model):
                               server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     updated = db.Column(db.DateTime, nullable=False,
                         server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+
+
+class Showcase(db.Model):
+    __tablename__ = 'showcase'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    order_index = db.Column(db.Integer, server_default=db.text("1"), nullable=False)
+    tours = db.relationship('Tour', backref='tour', lazy='joined', order_by=Tour.order_index)
 
 
 class TourSearch(db.Model):
