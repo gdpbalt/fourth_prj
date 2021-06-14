@@ -15,7 +15,7 @@ from control.settings import SEARCH_UPDATE_MINUTES, SEARCH_TRY_AFTER_ERROR_HOURS
 datetime_format = '%Y-%m-%d %H:%M:%S'
 
 
-def run_search():
+def run_search(force_flag: bool = False):
     """
         Выбрать туры, которые трубуется обновить
         В первую очередь запросить информацию по новым турам
@@ -26,13 +26,17 @@ def run_search():
     date_search = start_time - datetime.timedelta(minutes=SEARCH_UPDATE_MINUTES)
     date_search_after_error = start_time - datetime.timedelta(hours=SEARCH_TRY_AFTER_ERROR_HOURS)
 
-    sql = db.session.query(Tour.showcase_id, Tour.id, TourSearch.update, Tour.link)
+    sql = db.session.query(Tour.showcase_id, Tour.id, TourSearch.updated, Tour.link)
     sql = sql.outerjoin(TourSearch, Tour.id == TourSearch.tour_id)
     sql = sql.filter(Tour.active == True)
     sql = sql.filter(db.or_(TourSearch.lang == None, TourSearch.lang == lang_id))
-    sql = sql.filter(db.or_(Tour.errors < SEARCH_STOP_AFTER_ERRORS, Tour.errors_update <= date_search_after_error))
-    sql = sql.filter(db.or_(TourSearch.update == None, TourSearch.update <= date_search))
-    sql = sql.order_by(TourSearch.update)
+
+    if force_flag is False:
+        sql = sql.filter(db.or_(Tour.errors < SEARCH_STOP_AFTER_ERRORS, Tour.errors_update <= date_search_after_error))
+
+    if force_flag is False:
+        sql = sql.filter(db.or_(TourSearch.updated == None, TourSearch.updated <= date_search))
+    sql = sql.order_by(TourSearch.updated)
     sql = sql.all()
 
     app.logger.info('*** Start searching at {}. Total {} records'.format(
@@ -111,7 +115,7 @@ def disable_failed_tour():
 
     :return: None
     """
-    date_now = datetime.datetime.now().date()
+    date_now = datetime.datetime.now()
     date_stop_try = date_now - datetime.timedelta(days=SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS)
     app.logger.debug(f'*** Сегодня: {date_now}, '
                      f'Не обрабатыватьтуры старше: {date_stop_try} ({SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS} дня)')
@@ -123,7 +127,7 @@ def disable_failed_tour():
     sql = sql.filter(db.or_(TourSearch.updated == None, TourSearch.updated <= date_stop_try))
     sql = sql.filter(Tour.errors > SEARCH_DISABLE_AFTER_ERRORS)
 
-    sql = sql.order_by(TourSearch.updated.desc())
+    sql = sql.order_by(TourSearch.updated)
     print(sql)
     sql = sql.all()
     for tour in sql:
@@ -141,10 +145,17 @@ if __name__ == "__main__":
     cmd.add_argument('--error', dest='error', action='store_const',
                      const=True,
                      help="Disable tours if they have errors last 3 days ")
-
+    cmd.add_argument('--force', dest='force', action='store_const',
+                     const=True,
+                     help="Force operation")
     args = cmd.parse_args()
+    if args.force:
+        is_force = True
+    else:
+        is_force = False
+
     if args.run:
-        run_search()
+        run_search(force_flag=is_force)
     elif args.correct:
         run_correct()
     elif args.error:
