@@ -49,7 +49,7 @@
                     <p class="mb-1 card-text"><strong>Стоимость за 1го: {{ tour.priceUahOne }} грн {{ ', promo' if tour.promo else '' }}</strong></p>
                     <p class="mb-1 card-text">Стоимость за 2х: {{ tour.price }} {{ tour.currency }}, {{ tour.priceUah }} грн</p>
                     <p class="mb-1 card-text">
-                        ID: {{ tour.tour_api_id }}
+                        ID: {{ tour.offerId }}
                         {%  if tour.errors > 0 -%}
                             , <strong>Ошибки: </strong><span class="badge badge-danger" data-toggle="tooltip" data-html="true" title="Последняя ошибка: {{ tour.errorLast }}">&nbsp;{{ tour.errors }}&nbsp;</span>
                         {%  endif -%}
