@@ -119,18 +119,18 @@ def disable_failed_tour():
     date_now = datetime.datetime.now()
     date_stop_try = date_now - datetime.timedelta(days=SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS)
     app.logger.debug(f'*** Сегодня: {date_now}, '
-                     f'Не обрабатыватьтуры старше: {date_stop_try} ({SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS} дня)')
+                     f'не обрабатывать туры старше {date_stop_try} ({SEARCH_DISABLE_AFTER_FAILED_UPATE_DAYS} дня) '
+                     f'или больше чем {SEARCH_DISABLE_AFTER_ERRORS} ошибок')
 
-    sql = db.session.query(Tour.showcase_id, Tour.id, Tour.errors, TourSearch.updated)
+    sql = db.session.query(Tour.showcase_id, Tour.id, Tour.updated, Tour.errors, TourSearch.updated)
     sql = sql.outerjoin(TourSearch, Tour.id == TourSearch.tour_id)
-
     sql = sql.filter(Tour.active == True)
-    sql = sql.filter(db.or_(TourSearch.updated == None, TourSearch.updated <= date_stop_try))
-    sql = sql.filter(Tour.errors > SEARCH_DISABLE_AFTER_ERRORS)
-
+    sql = sql.filter(db.or_(TourSearch.updated <= date_stop_try, Tour.errors > SEARCH_DISABLE_AFTER_ERRORS))
     sql = sql.order_by(TourSearch.updated)
+
     print(sql)
     sql = sql.all()
+
     for tour in sql:
         print("Showcase={}, Tour={}, Errors={}, Update={}".format(*tour))
 
