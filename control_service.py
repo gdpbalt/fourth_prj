@@ -17,7 +17,7 @@ datetime_format = '%Y-%m-%d %H:%M:%S'
 
 def run_search(force_flag: bool = False):
     """
-        Выбрать туры, которые трубуется обновить
+        Выбрать туры, которые требуется обновить
         В первую очередь запросить информацию по новым турам
     :return: None
     """
@@ -75,7 +75,7 @@ def run_search(force_flag: bool = False):
 
 def run_correct():
     """
-    Выбрать туры, дата вылета в которые старше чем завтра и обновить дату вылета
+    Выбрать туры, дата вылета в которые старше чем завтра и обновить их date_start и date_stop
 
     :return: None
     """
@@ -111,7 +111,7 @@ def run_correct():
             app.logger.error(f"{msg}. {e}")
 
 
-def disable_failed_tour():
+def disable_failed_tours():
     """
 
     :return: None
@@ -139,16 +139,17 @@ if __name__ == "__main__":
     cmd = argparse.ArgumentParser()
     cmd.add_argument('--run', dest='run', action='store_const',
                      const=True,
-                     help="Run search request to old result")
+                     help="Run search request for old tours (can be used with --force)")
     cmd.add_argument('--correct', dest='correct', action='store_const',
                      const=True,
-                     help="Correct start/stop of search tour")
+                     help="Correct date_start/date_stop for search tour")
     cmd.add_argument('--error', dest='error', action='store_const',
                      const=True,
-                     help="Disable tours if they have errors last 3 days ")
+                     help="Disable tours if they have errors last a few days ")
+
     cmd.add_argument('--force', dest='force', action='store_const',
                      const=True,
-                     help="Force operation")
+                     help="Force some operations")
     args = cmd.parse_args()
     if args.force:
         is_force = True
@@ -160,4 +161,4 @@ if __name__ == "__main__":
     elif args.correct:
         run_correct()
     elif args.error:
-        disable_failed_tour()
+        disable_failed_tours()

@@ -71,7 +71,7 @@ class TourBlock:
         data_view["priceEuro"] = self.data.priceEuro
         data_view["priceUah"] = self.data.priceUah
         data_view["priceUahOne"] = self.data.priceUahOne
-        data_view["tourLink"] = "{}?page=tour&oid={}".format(self.data.tourLink, self.data.tour_api_id)
+        data_view["tourLink"] = self.data.tourLink
         data_view["transport"] = self.data.transport
         data_view["food"] = self.data.food
         data_view["length"] = self.data.length
