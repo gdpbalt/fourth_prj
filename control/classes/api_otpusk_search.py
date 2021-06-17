@@ -166,7 +166,7 @@ class MethodSearch:
         error.showcase_id = self.tour.showcase_id
         error.tour_id = self.tour.id
         error.name = error_text
-        error.description = error_description
+        error.description = error_description[:200]
         error.errors = self.tour.errors
 
         try:

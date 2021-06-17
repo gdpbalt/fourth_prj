@@ -58,7 +58,7 @@ def run_search(force_flag: bool = False):
             search_request = MethodSearch(index=tour, url_link=link)
             search_request.run()
         except Exception as e:
-            msg = f'Some error occured. {e}'
+            msg = f'Some error occurred. {e}'
             app.logger.error(msg)
 
         if force_flag is True:
