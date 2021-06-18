@@ -6,6 +6,7 @@ from sqlalchemy import func, exc
 from werkzeug.utils import redirect
 
 from control import app, db
+from control.classes.api_otpusk import MethodError
 from control.models import Tour, TourSearch, TourError
 from control.classes.api_otpusk_search import MethodSearch
 from control.classes.mk_link import MakeSearchLink
@@ -125,29 +126,37 @@ def tour_update(index, order=False):
         data.date_stop = form.date_stop.data
 
         data_link = MakeSearchLink(index=index)
-        data_link.run()
-        data.link = data_link.link
+        is_hotel_error = False
+        try:
+            data_link.run()
+        except MethodError:
+            is_hotel_error = True
+            flash(f'Отель "{data.destination}" не найден', "error")
 
-        tour_search_data = TourSearch.query.filter_by(tour_id=index).all()
-        for record in tour_search_data:
+        # TODO придумать другое решение этого кода
+        if is_hotel_error is False:
+            data.link = data_link.link
+
+            tour_search_data = TourSearch.query.filter_by(tour_id=index).all()
+            for record in tour_search_data:
+                try:
+                    db.session.delete(record)
+                    db.session.commit()
+                except exc.SQLAlchemyError as e:
+                    msg = f"При работе с базой произошла ошибка"
+                    app.logger.warning(f"{msg}. {e}")
+                    flash(msg, "error")
+
             try:
-                db.session.delete(record)
                 db.session.commit()
+                msg = f"Данные о туре id={index} успешно обновлены"
+                app.logger.info(msg)
+                flash(msg, "info")
+                return redirect(url_for("tour_update", index=index, order=order))
             except exc.SQLAlchemyError as e:
-                msg = f"При работе с базой произошла ошибка"
+                msg = f"При изменении тура id={index} произошла ошибка"
                 app.logger.warning(f"{msg}. {e}")
                 flash(msg, "error")
-
-        try:
-            db.session.commit()
-            msg = f"Данные о туре id={index} успешно обновлены"
-            app.logger.info(msg)
-            flash(msg, "info")
-            return redirect(url_for("tour_update", index=index, order=order))
-        except exc.SQLAlchemyError as e:
-            msg = f"При изменении тура id={index} произошла ошибка"
-            app.logger.warning(f"{msg}. {e}")
-            flash(msg, "error")
 
     tour_search_data = TourSearch.query.filter_by(tour_id=index, lang=1).first()
     return render_template("superuser/tour_update.html", showcase_id=data.showcase_id, tour_id=index, form=form,
