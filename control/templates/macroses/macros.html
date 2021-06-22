@@ -64,6 +64,30 @@
     {% endif -%}
 {% endmacro -%}
 
+
+{% macro show_tour_info(tour) -%}
+    {%  if tour %}
+        <div class="card col-12 mb-2">
+            <img src="{{ tour.imgSrc }}" class="card-img-top mt-1" alt="{{ tour.fullHotelName }}">
+            <div class="card-body">
+                <p class="mb-1 card-text">{{ tour.number }}. <a href="{{ tour.tourLink }}" target="_blank">{{ tour.fullHotelName }}, {{ tour.cityName }}, {{ tour.countryName }}</a></p>
+                <p class="mb-1 card-text">{{ tour.dateDurationString }}</p>
+                <p class="mb-1 card-text">{{ tour.locationFromString }}</p>
+                <p class="mb-1 card-text">Питание: {{ tour.food|upper }}, Оператор: {{ tour.operatorName }}</p>
+                <p class="mb-1 card-text"><strong>Стоимость за 1го: {{ tour.priceUahOne }} грн {{ ', promo' if tour.promo else '' }}</strong></p>
+                <p class="mb-1 card-text">Стоимость за 2х: {{ tour.price }} {{ tour.currency }}, {{ tour.priceUah }} грн</p>
+                <p class="mb-1 card-text">
+                    ID: {{ tour.offerId }}
+                    {%  if tour.errors > 0 -%}
+                        , <strong>Ошибки: </strong><span class="badge badge-danger" data-toggle="tooltip" data-html="true" title="Последняя ошибка: {{ tour.errorLast }}">&nbsp;{{ tour.errors }}&nbsp;</span>
+                    {%  endif -%}
+                </p>
+                <p class="mb-1 card-text">Updated: {{ tour.updateTime }}</p>
+            </div>
+        </div>
+    {% endif -%}
+{% endmacro -%}
+
 {% macro show_tour_info_brief(tour) -%}
     <p class="mb-1"><small>куда:</small>&nbsp;<span>{{ tour.destination }}</span></p>
     <p class="mb-1"><small>категоря отеля:</small>&nbsp;<span>{{ tour.category.name }}</span></p>

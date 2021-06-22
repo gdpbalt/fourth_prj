@@ -4,7 +4,6 @@
 Готовые витрины горящих туров
 {% endblock %}
 
-{% from 'macroses/macros.html' import show_tours_info %}
 {% block body %}
     <h4 class="text-center">Готовые витрины горящих туров. {{ description|capitalize }}</h4>
 
@@ -54,16 +53,20 @@
             </div>
         </div>
 
+        {% from 'macroses/macros.html' import show_tour_info %}
         <div class="col-9 row px-2">
-            <div class="col-6 px-2">
-                {{ show_tours_info(tours_left) }}
-            </div>
+        {% if tours|length -%}
+            {% for record in tours -%}
+                <div class="col-6 px-2">
+                    {{ show_tour_info(record[0]) }}
+                </div>
 
-            <div class="col-6 px-2">
-                {{ show_tours_info(tours_right) }}
-            </div>
+                <div class="col-6 px-2">
+                    {{ show_tour_info(record[1]) }}
+                </div>
+            {% endfor %}
+        {% endif -%}
         </div>
-
     </div>
 
 {% endblock %}

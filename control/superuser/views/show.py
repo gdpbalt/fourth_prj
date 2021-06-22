@@ -1,3 +1,5 @@
+import itertools
+
 from flask import render_template
 from flask_security import roles_accepted
 
@@ -30,22 +32,20 @@ def show(index_in=None, lang_in=None):
 
     tours_list = GetHotBlock(index=index, lang_id=lang_id)
     tours_list.run()
-    tours = list()
+    number, tours_left, tours_right = 0, list(), list()
     for tour_id in tours_list.data:
         tour = GetHotTour(index=tour_id, lang_id=lang_id)
         tour.run()
-        if tour.data is not None:
-            tours.append(tour.data)
+        if tour.data is None:
+            break
+        tour.data['number'] = number + 1
 
-    number, tours_left, tours_right = 0, list(), list()
-    for tour in tours:
-        tour['number'] = number + 1
         if (number % 2) == 0:
-            tours_left.append(tour)
+            tours_left.append(tour.data)
         else:
-            tours_right.append(tour)
+            tours_right.append(tour.data)
         number += 1
 
+    tours = list(itertools.zip_longest(tours_left, tours_right, fillvalue=False))
     return render_template("superuser/showroom.html",
-                           showcases=showcases, tours_left=tours_left, tours_right=tours_right, langs=LANGS, lang=lang,
-                           index=index, description=name)
+                           showcases=showcases, langs=LANGS, lang=lang, index=index, description=name, tours=tours)
