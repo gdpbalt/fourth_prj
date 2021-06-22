@@ -30,7 +30,7 @@ def form_response(endpoint, params):
 
     input_lang = params.get('lang', None)
     if input_id is None or input_lang not in LANGS:
-        input_lang = 0
+        input_lang = 1
     else:
         input_lang = LANGS.index(input_lang)
 
