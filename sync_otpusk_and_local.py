@@ -2,7 +2,7 @@
 import argparse
 from time import sleep
 
-from control.classes.api_otpusk import MethodCountries, MethodFromCities, MethodCities, MethodOperators
+from control.classes.api_otpusk import MethodCountries, MethodFromCities, MethodCities, MethodOperators, MethodPorts
 from control.models import OtpuskCities, OtpuskCoutries
 from control.settings import API, LANGS
 from control.utils.request import get_method_link_prepend, get_method_link_append
@@ -58,6 +58,19 @@ def sync_cities():
             sleep(5)
 
 
+def sync_ports():
+    base = get_method_link_prepend(method=API['method_ports'])
+    lang_rus = LANGS.index('rus')
+    countries = OtpuskCoutries.query.filter_by(lang=lang_rus).order_by(OtpuskCoutries.otpusk_id).all()
+    for country in countries:
+        for lang_id, lang_name in enumerate(LANGS):
+            url = "{}countryId={}&{}".format(base, country.otpusk_id, get_method_link_append(lang=lang_name))
+            print(url)
+            response = MethodPorts(link=url, lang_id=lang_id, country=country.otpusk_id)
+            response.run()
+            sleep(2)
+
+
 if __name__ == "__main__":
     cmd = argparse.ArgumentParser()
     cmd.add_argument('--countries', dest='countries', action='store_const', const=True,
@@ -68,6 +81,8 @@ if __name__ == "__main__":
                      help="Sync otpusk.operators with dbase")
     cmd.add_argument('--cities', dest='cities', action='store_const', const=True,
                      help="Sync otpusk.cities with dbase")
+    cmd.add_argument('--ports', dest='ports', action='store_const', const=True,
+                     help="Sync otpusk.ports with dbase")
 
     args = cmd.parse_args()
     if args.countries:
@@ -78,3 +93,5 @@ if __name__ == "__main__":
         sync_operators()
     elif args.cities:
         sync_cities()
+    elif args.ports:
+        sync_ports()

@@ -3,6 +3,7 @@ import datetime
 from sqlalchemy import exc
 
 from control import app, db, OtpuskCoutries, OtpuskFromCities, OtpuskOperators, OtpuskCities
+from control.models.otpusk_data import OtpuskPorts
 from control.utils.convert import parse_int
 from control.utils.request import get_data_from_request
 
@@ -167,6 +168,49 @@ class MethodCities(MethodOtpusk):
                 result.name = name
                 result.update = datetime.datetime.now()
                 app.logger.debug(f"[{number}] Update otpusk_cities: {index} - {name}")
+
+            try:
+                db.session.commit()
+            except exc.SQLAlchemyError as e:
+                msg = f'Error work with database. {e}'
+                app.logger.error(msg)
+                raise ConnectionError(msg)
+
+
+class MethodPorts(MethodOtpusk):
+    def __init__(self, link, lang_id, country):
+        super().__init__(link=link, lang_id=lang_id)
+        self.country = country
+
+    @staticmethod
+    def parse_result(input_data: dict):
+        output_list = list()
+        response = input_data.get('ports', dict())
+        if isinstance(response, dict):
+            for key, record in response.items():
+                if len(record['iata']) == 3:
+                    output = dict()
+                    output['id'] = record['id']
+                    output['iata'] = record['iata'].upper()
+                    output['name'] = record['name']
+                    output_list.append(output)
+        return output_list
+
+    def save_data2dbase(self):
+        number = 0
+        for record in self.data:
+            index, name, iata = record['id'], record['name'], record['iata']
+            number += 1
+
+            result: OtpuskCities = OtpuskPorts.query.filter_by(otpusk_id=index, lang=self.lang_id).first()
+            if result is None:
+                result = OtpuskPorts(otpusk_id=index, lang=self.lang_id, name=name, country=self.country, iata=iata)
+                db.session.add(result)
+                app.logger.debug(f"[{number}] Add to otpusk_ports: {index} - {iata} - {name}")
+            else:
+                result.name = name
+                result.iata = iata
+                app.logger.debug(f"[{number}] Update otpusk_ports: {index} - {iata} - {name}")
 
             try:
                 db.session.commit()
