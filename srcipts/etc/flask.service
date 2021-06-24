@@ -1,0 +1,21 @@
+[Unit]
+Description=Gunicorn instance for flask project
+After=network.target
+StartLimitIntervalSec=11
+
+
+[Service]
+User=ubuntu
+Group=www-data
+
+WorkingDirectory=/efs/var/www/control/flask
+Environment="PATH=cd"
+ExecStart=/efs/var/www/control/flask/venv/bin/gunicorn myapp:app
+Restart=always
+RestartSec=2
+StartLimitBurst=5
+
+
+[Install]
+WantedBy=multi-user.target
+
