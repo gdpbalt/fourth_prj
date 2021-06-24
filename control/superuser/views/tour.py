@@ -103,6 +103,7 @@ def tour_update(index, order=False):
     form = TourForm()
 
     if request.method != 'POST':
+        form.index.data = data.index
         form.destination.data = data.destination if data.destination is not None else form.destination.default
         form.active.data = data.active
         form.category.data = data.category_id if data.category_id is not None else form.category.default
@@ -114,6 +115,7 @@ def tour_update(index, order=False):
         form.date_stop.data = data.date_stop
 
     elif form.validate_on_submit():
+        data.index = form.index.data
         data.destination = form.destination.data
         data.active = form.active.data
         data.category_id = form.category.data

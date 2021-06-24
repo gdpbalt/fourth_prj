@@ -2,9 +2,17 @@ $(function() {
 
     $('#destination').autocomplete({
         source: '/suggest',
-        minLength: 0
+        minLength: 0,
+        focus: function( event, ui ) {
+            $( "#destination" ).val( ui.item.label );
+            return false;
+        },
+        select: function( event, ui ) {
+            $( "#destination" ).val( ui.item.label );
+            $("#index").val(ui.item.value);
+            return false;
+        }
     })
-
 
     $('#destination_all').click(function() {
         $('#destination').autocomplete("search");

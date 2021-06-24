@@ -29,13 +29,14 @@ def compare_date_start_stop(form, field):
 
 
 class TourForm(FlaskForm):
+    index = IntegerField('ID места назначения', validators=[DataRequired()], render_kw={'readonly': True})
     active = BooleanField('Тур участвует в формировании витрины горящих', validators=[], default=True)
     destination = StringField('Страна, курорт или отель',
                               validators=[Length(min=2, max=100), DataRequired()], default='')
     date_start = DateField('Начало тура (от)', validators=[DataRequired()], format='%Y-%m-%d')
     date_stop = DateField('Начало тура (до)', validators=[DataRequired(), compare_date_start_stop], format='%Y-%m-%d')
     category = SelectField("Категория отеля", validators=[DataRequired()], coerce=int)
-    city = SelectField("Город вылета", validators=[DataRequired()], coerce=int, )
+    city = SelectField("Город вылета", validators=[DataRequired()], coerce=int)
     transport = SelectField("Транспорт", validators=[DataRequired()], coerce=int)
     food = SelectField("Питание", validators=[DataRequired()], coerce=int)
     length = SelectField("Длительность", validators=[DataRequired()], coerce=int)

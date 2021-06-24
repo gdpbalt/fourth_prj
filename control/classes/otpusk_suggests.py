@@ -21,10 +21,12 @@ class MethodSuggests(MethodOtpusk):
     @staticmethod
     def parse_result(input_data: dict):
         output_list = list()
-        response = input_data.get('response')
+        if input_data is None:
+            return output_list
+        response = input_data.get('response', list())
         for record in response.values():
             output = dict()
-            output['id'] = record['id']
-            output['name'] = record['name']
+            output['label'] = record['name']
+            output['value'] = record['id']
             output_list.append(output)
         return output_list

@@ -9,6 +9,7 @@ class Tour(db.Model):
     order_index = db.Column(db.Integer, server_default=db.text("1"), nullable=False)
     active = db.Column(db.Boolean, server_default=db.text("false"), nullable=False)
 
+    index = db.Column(db.Integer, nullable=True)
     destination = db.Column(db.String(255))
 
     date_start = db.Column(db.Date)

@@ -17,8 +17,4 @@ def suggest(term=None):
 
     data = MethodSuggests(text=input_string)
     data.run()
-
-    output_list = list()
-    for record in data.data:
-        output_list.append(record['name'])
-    return jsonify(output_list)
+    return jsonify(data.data)

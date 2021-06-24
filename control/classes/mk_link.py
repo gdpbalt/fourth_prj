@@ -34,19 +34,21 @@ class MakeSearchLink:
         self.link += '{}&{}'.format('&'.join(self.params), get_method_link_append(lang=API['lang_value']))
 
     def get_destination(self):
-        destination = self.tour.destination
-        values = MethodSuggests(text=destination)
-        values.run()
-
-        found_id = None
-        for record in values.data:
-            if record['name'] == destination:
-                found_id = record['id']
+        if self.tour.index is not None:
+            found_id = self.tour.index
+        else:
+            found_id = None
+            destination = self.tour.destination
+            values = MethodSuggests(text=destination)
+            values.run()
+            for record in values.data:
+                if record['label'] == destination:
+                    found_id = record['value']
 
         if found_id is not None:
             self.params.append('to={}'.format(found_id))
         else:
-            msg = f"Not found '{destination}' in API suggests method"
+            msg = f"Not found '{self.tour.destination}'/{self.tour.index} in API suggests method"
             app.logger.error(msg)
             raise MethodError(msg)
 

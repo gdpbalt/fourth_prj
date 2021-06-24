@@ -37,7 +37,7 @@ def show(index_in=None, lang_in=None):
         tour = GetHotTour(index=tour_id, lang_id=lang_id)
         tour.run()
         if tour.data is None:
-            break
+            continue
         tour.data['number'] = number + 1
 
         if (number % 2) == 0:

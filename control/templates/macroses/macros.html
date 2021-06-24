@@ -89,6 +89,14 @@
 {% endmacro -%}
 
 {% macro show_tour_info_brief(tour) -%}
+    <p class="mb-1"><small>ID места назначения:</small>
+    {% if tour.index -%}
+        <span>{{ tour.index }}</span>
+    {% else -%}
+        <span class="badge badge-danger">не задано</span>
+    {% endif -%}
+    </p>
+
     <p class="mb-1"><small>куда:</small>&nbsp;<span>{{ tour.destination }}</span></p>
     <p class="mb-1"><small>категоря отеля:</small>&nbsp;<span>{{ tour.category.name }}</span></p>
     <p class="mb-1"><small>город вылета:</small>&nbsp;<span>{{ tour.from_city.name }}</span></p>
