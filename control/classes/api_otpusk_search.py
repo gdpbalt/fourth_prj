@@ -157,7 +157,7 @@ class MethodSearch:
                 raise ConnectionError(msg)
 
     def save_error(self, error_text, error_description):
-        msg = '{}. {}. {}'.format(error_text, self.msg, error_description)
+        msg = '{}. {}. {}'.format(error_text, self.msg, error_description[:200])
         app.logger.warning(msg)
 
         self.tour.errors += 1
