@@ -13,6 +13,45 @@ from control.utils.lang import location_from, date_duration
 from control.utils.request import get_data_from_request
 
 
+class MethodSearcQuery:
+    REQUESTS_MAX = 10
+
+    def __init__(self, url_link: str, log_msg: str):
+        self.link = url_link
+        self.msg = log_msg
+        self.error_text = None
+        self.error_description = None
+
+    def run(self):
+        is_ok, result = False, None
+
+        for attempt in range(self.REQUESTS_MAX):
+            if attempt > 0:
+                app.logger.info(f'Sleep {SEARCH_SLEEP_WAIT_LASTRESULT_SECOND} seconds between send requests')
+                sleep(SEARCH_SLEEP_WAIT_LASTRESULT_SECOND)
+
+            app.logger.info(f'{self.msg}. Try to get data (retry:{attempt + 1})')
+            result = get_data_from_request('{}&number={}'.format(self.link, attempt + 1))
+            if result is None:
+                self.error_text = 'Ошибка получения результа от сервера'
+                self.error_description = f'Error response from server. URL={self.link}'
+                return
+
+            response = result.get('lastResult')
+            if response is not None and result['lastResult']:
+                app.logger.info(f'{self.msg}. Return lastResult: True')
+                is_ok = True
+                break
+            else:
+                app.logger.info(f'{self.msg}. Return lastResult: False or not found')
+
+        if is_ok is False:
+            self.error_text = 'Ошибка получения результа от сервера'
+            self.error_description = f'Error response from server. URL={self.link} ' \
+                                     f'(lastResult=False or not found). JSON={result}'
+            return
+
+
 class MethodSearch:
     REQUESTS_MAX = 10
 
