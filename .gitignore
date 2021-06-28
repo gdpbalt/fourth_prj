@@ -114,3 +114,4 @@ venv.bak/
 .mypy_cache/
 /security.db
 /note.txt
+/control/static/gen/

@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, session
 from flask_admin import Admin
+from flask_assets import Environment
 from flask_babelex import Babel
 from flask_caching import Cache
 from flask_mail import Mail
@@ -14,6 +15,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from control.admin.models import MyAdminIndexView, UserView, RoleView, LangView, TourCategoryView, TourTransportView, \
     TourFoodView, TourLengthView, TourFromView
+from control.utils.assets import bundles
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 if os.path.exists(dotenv_path):
@@ -31,6 +33,9 @@ migrate = Migrate(app, db)
 babel = Babel(app)
 mail = Mail(app)
 cache = Cache(app)
+
+assets = Environment(app)
+assets.register(bundles)
 
 
 from control.models import *

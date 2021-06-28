@@ -2,9 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    {% include 'layouts/base-css.html' %}
-
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.png') }}">
+
+    {% assets "control_js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+    {% assets "control_css" -%}
+        <link rel="stylesheet" href="{{ ASSET_URL }}" />
+    {% endassets -%}
 
     <title>{%- block title -%}{%- endblock -%}</title>
 </head>
