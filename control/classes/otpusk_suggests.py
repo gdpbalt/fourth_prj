@@ -14,7 +14,7 @@ class MethodSuggests(MethodOtpusk):
         super().__init__(link=self.link, lang_id=self.lang_id)
 
     def get_method_url(self):
-        link = '{}text={}&{}&with=price'.format(
+        link = '{}text={}&{}&with=price&type=hotel'.format(
             get_method_link_prepend(self.METHOD), self.text, get_method_link_append(lang=self.lang_name))
         return link
 
