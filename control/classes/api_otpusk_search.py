@@ -1,65 +1,27 @@
 import datetime
 import json
 import math
-from time import sleep
+from typing import Optional
 
 from sqlalchemy import exc
 
 from control import app, db, TourSearch, TourError, Tour
-from control.settings import LANGS, STATIC_DATA, OUR_SITE, SEARCH_SLEEP_WAIT_LASTRESULT_SECOND
+from control.classes.api_otpusk_search_get import MethodSearchGet
+from control.settings import LANGS, STATIC_DATA, OUR_SITE
 from control.utils.convert import parse_float, parse_date, decimal2str_with_space
 from control.utils.dictionary import get_country_name, get_city_name, get_from_city_name, get_operators
 from control.utils.lang import location_from, date_duration
-from control.utils.request import get_data_from_request
-
-
-class MethodSearcQuery:
-    REQUESTS_MAX = 10
-
-    def __init__(self, url_link: str, log_msg: str):
-        self.link = url_link
-        self.msg = log_msg
-        self.error_text = None
-        self.error_description = None
-
-    def run(self):
-        is_ok, result = False, None
-
-        for attempt in range(self.REQUESTS_MAX):
-            if attempt > 0:
-                app.logger.info(f'Sleep {SEARCH_SLEEP_WAIT_LASTRESULT_SECOND} seconds between send requests')
-                sleep(SEARCH_SLEEP_WAIT_LASTRESULT_SECOND)
-
-            app.logger.info(f'{self.msg}. Try to get data (retry:{attempt + 1})')
-            result = get_data_from_request('{}&number={}'.format(self.link, attempt + 1))
-            if result is None:
-                self.error_text = 'Ошибка получения результа от сервера'
-                self.error_description = f'Error response from server. URL={self.link}'
-                return
-
-            response = result.get('lastResult')
-            if response is not None and result['lastResult']:
-                app.logger.info(f'{self.msg}. Return lastResult: True')
-                is_ok = True
-                break
-            else:
-                app.logger.info(f'{self.msg}. Return lastResult: False or not found')
-
-        if is_ok is False:
-            self.error_text = 'Ошибка получения результа от сервера'
-            self.error_description = f'Error response from server. URL={self.link} ' \
-                                     f'(lastResult=False or not found). JSON={result}'
-            return
 
 
 class MethodSearch:
-    REQUESTS_MAX = 10
-
     def __init__(self, url_link, index: int):
-        self.link = url_link
-        self.index = index
-        self.tour = None
-        self.msg = None
+        self.link: str = url_link
+        self.index: int = index
+        self.tour: Optional[Tour] = None
+        self.log_prefix: Optional[str] = None
+        self.error_name: str = 'Ошибка данных'
+        self.obj_search: Optional[MethodSearchGet] = None
+        self.hotel_min_offer: Optional[dict] = None
 
     def get_data_from_db(self):
         self.tour = Tour.query.get(self.index)
@@ -67,7 +29,7 @@ class MethodSearch:
             msg = f'Tour id={self.index} not found in database'
             app.logger.error(msg)
             raise ValueError(msg)
-        self.msg = 'Showcase={}, Tour={}'.format(self.tour.showcase_id, self.tour.id)
+        self.log_prefix = 'Tour {}/{}'.format(self.tour.showcase_id, self.tour.id)
 
     @staticmethod
     def get_best_offer(hotel_offers):
@@ -81,21 +43,14 @@ class MethodSearch:
         else:
             return dict()
 
-    def get_best_hotel(self, data_from_method):
-        city_from = data_from_method.get('dept')
-        if not isinstance(city_from, dict):
-            return dict()
-
-        hotels_list_get = data_from_method.get('hotels')
-        if not isinstance(hotels_list_get, dict):
-            return dict()
-
-        hotels = hotels_list_get.get('1', dict())
-        if hotels is None or not isinstance(hotels, dict):
-            return dict()
+    def get_best_hotel(self, hotels_record: dict, dept_record: dict):
+        hotels_first_record = dict()
+        for key, value in hotels_record.items():
+            hotels_first_record = value
+            break
 
         hotels_list = list()
-        for hotel_id, hotel_detail in hotels.items():
+        for hotel_id, hotel_detail in hotels_first_record.items():
             offers = hotel_detail.pop('offers', dict())
             hotel_detail['offer'] = self.get_best_offer(offers)
             hotel_detail['hotelId'] = hotel_id
@@ -103,7 +58,7 @@ class MethodSearch:
 
         if len(hotels_list) > 0:
             hotels_list.sort(key=lambda el: el['offer']['p'])
-            hotels_list[0]['dept'] = city_from
+            hotels_list[0]['dept'] = dept_record
             return hotels_list[0]
         else:
             return dict()
@@ -196,7 +151,7 @@ class MethodSearch:
                 raise ConnectionError(msg)
 
     def save_error(self, error_text, error_description):
-        msg = '{}. {}. {}'.format(error_text, self.msg, error_description[:200])
+        msg = '{}. {}. {}'.format(error_text, self.log_prefix, error_description[:200])
         app.logger.warning(msg)
 
         self.tour.errors += 1
@@ -216,45 +171,39 @@ class MethodSearch:
             app.logger.error(msg)
             raise ConnectionError(msg)
 
-    def run(self):
+    def get_data_from_api(self):
+        self.obj_search = MethodSearchGet(url_link=self.link, log_prefix=self.log_prefix)
+        return self.obj_search.run()
+
+    def run(self) -> bool:
         self.get_data_from_db()
 
-        is_ok, result = False, None
-        for attempt in range(self.REQUESTS_MAX):
-            if attempt > 0:
-                app.logger.info(f'Sleep {SEARCH_SLEEP_WAIT_LASTRESULT_SECOND} seconds between send requests')
-                sleep(SEARCH_SLEEP_WAIT_LASTRESULT_SECOND)
+        if self.get_data_from_api() is False:
+            self.save_error(error_text=self.obj_search.error_name,
+                            error_description=self.obj_search.error_full)
+            return False
 
-            app.logger.info(f'{self.msg}. Try to get data (retry:{attempt + 1})')
-            result = get_data_from_request('{}&number={}'.format(self.link, attempt + 1))
-            if result is None:
-                self.save_error(error_text='Ошибка получения результа от сервера',
-                                error_description=f'Error response from server. URL={self.link}')
-                return
+        dept_record = self.obj_search.result.get('dept')
+        if not isinstance(dept_record, dict):
+            self.save_error(error_text=self.error_name,
+                            error_description='Error get data from response. Dict dept is empty. JSON={}'.format(
+                                self.obj_search.result))
+            return False
 
-            response = result.get('lastResult')
-            if response is not None and result['lastResult']:
-                app.logger.info(f'{self.msg}. Return lastResult: True')
-                is_ok = True
-                break
-            else:
-                app.logger.info(f'{self.msg}. Return lastResult: False or not found')
+        hotels_record = self.obj_search.result.get('hotels')
+        if not isinstance(hotels_record, dict):
+            self.save_error(error_text=self.error_name,
+                            error_description='Error get data from response. Dict hotels is empty. JSON={}'.format(
+                                self.obj_search.result))
+            return False
 
-        if is_ok is False:
-            self.save_error(error_text='Ошибка получения результа от сервера',
-                            error_description=f'Error response from server. URL={self.link}' +
-                                              f' (lastResult=False or not found).' +
-                                              f'JSON={result}')
-            return
+        self.hotel_min_offer = self.get_best_hotel(hotels_record=hotels_record, dept_record=dept_record)
+        if bool(self.hotel_min_offer) is False:
+            self.save_error(error_text=self.error_name,
+                            error_description='Error get data from response. Result is empty. JSON={}'.format(
+                                self.obj_search.result))
+            return False
 
-        hotel_min_offer = self.get_best_hotel(data_from_method=result)
-        if bool(hotel_min_offer):
-            self.update_database(hotel_min_offer=hotel_min_offer)
-        else:
-            self.save_error(error_text='Ошибка данных',
-                            error_description=f'Error get data from response. URL={self.link}.' +
-                                              f' (result is empty).' +
-                                              f'JSON={result}')
-            return
+        self.update_database(hotel_min_offer=self.hotel_min_offer)
 
         return True

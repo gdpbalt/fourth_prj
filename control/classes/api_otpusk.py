@@ -182,18 +182,19 @@ class MethodPorts(MethodOtpusk):
         super().__init__(link=link, lang_id=lang_id)
         self.country = country
 
-    @staticmethod
-    def parse_result(input_data: dict):
+    def parse_result(self, input_data: dict):
         output_list = list()
         response = input_data.get('ports', dict())
         if isinstance(response, dict):
             for key, record in response.items():
-                if len(record['iata']) == 3:
+                if len(iata := record['iata']) == 3:
                     output = dict()
-                    output['id'] = record['id']
-                    output['iata'] = record['iata'].upper()
+                    output['id'] = record['airportId']
+                    output['iata'] = iata.upper()
                     output['name'] = record['name']
                     output_list.append(output)
+                else:
+                    app.logger.warn("Error length. Country: {}, IATA: {}".format(self.country, iata))
         return output_list
 
     def save_data2dbase(self):

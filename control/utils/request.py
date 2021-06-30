@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 import requests
 
@@ -19,7 +20,7 @@ def get_method_link_append(lang=LANGS[0]):
     return link
 
 
-def get_data_from_request(url):
+def get_data_from_request(url: str) -> Optional[dict]:
     try:
         app.logger.debug(f'GET {url}')
         r = requests.get(url, headers=REQUEST_HEADER)

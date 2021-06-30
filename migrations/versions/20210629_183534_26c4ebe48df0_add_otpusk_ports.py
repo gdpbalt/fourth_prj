@@ -1,8 +1,8 @@
 """add otpusk.ports
 
-Revision ID: 1fc63facc613
+Revision ID: 26c4ebe48df0
 Revises: 231938bde80c
-Create Date: 2021-06-24 18:27:37.480235
+Create Date: 2021-06-29 18:35:34.762504
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1fc63facc613'
+revision = '26c4ebe48df0'
 down_revision = '231938bde80c'
 branch_labels = None
 depends_on = None
