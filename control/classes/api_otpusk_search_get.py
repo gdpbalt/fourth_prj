@@ -25,7 +25,7 @@ class MethodSearchGet:
         self.error_name, self.error_full = (name, text)
 
     @staticmethod
-    def request(self, url):
+    def request(url):
         return get_data_from_request(url)
 
     @staticmethod
@@ -39,7 +39,7 @@ class MethodSearchGet:
             self.pause(count=attempt)
 
             app.logger.info('{}. Try to get data (retry: {})'.format(self.log_prefix, attempt))
-            self.result = self.request('{}&number={}'.format(self.link, attempt))
+            self.result = self.request(url=f'{self.link}&number={attempt}')
             if self.result is None:
                 self.set_error(self.ERR_RETURN_EMPTY)
                 return False

@@ -80,6 +80,7 @@ class ModelOffer(BaseModel):
 class ModelCountryTo(BaseModel):
     id: int = Field(alias='i')
     name: str = Field(alias='n')
+    country: str = Field(alias='c')
 
 
 class ModelCityFrom(BaseModel):
@@ -101,6 +102,7 @@ class ModelTourData(BaseModel):
 
     hotel_id: int = Field(alias='hotelId')
     hotel_name: str = Field(alias='n')
+    hotel_name_snake: str = Field(alias='h')
     hotel_stars: str = Field(alias='s')
     image: str = Field(alias='f')
 
@@ -124,6 +126,8 @@ class ModelTourData(BaseModel):
     op_port_from_name: str = None
     op_port_to_name: str = None
 
+    op_link: str = None
+
     op_update = datetime.now()
 
     # noinspection PyMethodParameters
@@ -144,7 +148,7 @@ class ModelTour:
         self.lang = LANGS[self.lang_id]
         self.data: Optional[ModelTourData] = None
 
-    def fill_fileds(self):
+    def fill_fields(self):
         self.data.op_full_hotel_name = "{} {}".format(self.data.hotel_name, self.data.hotel_stars)
 
         self.data.op_country_name = get_country_name(country_id=self.data.country_to.id, lang_id=self.lang_id)
@@ -186,10 +190,12 @@ class ModelTour:
         except ValidationError as error_msg:
             raise ValidationError(error_msg)
         else:
-            self.fill_fileds()
+            self.fill_fields()
 
 
 if __name__ == '__main__':
+    pprint(hotel_min_offer)
+    exit(1)
     lang_id = LANGS.index('ukr')
 
     try:

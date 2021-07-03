@@ -1,16 +1,10 @@
-import datetime
-import json
-import math
 from typing import Optional
 
 from sqlalchemy import exc
 
-from control import app, db, TourSearch, TourError, Tour
+from control import app, db, TourError, Tour
 from control.classes.api_otpusk_search_get import MethodSearchGet
-from control.settings import LANGS, STATIC_DATA, OUR_SITE
-from control.utils.convert import parse_float, parse_date, decimal2str_with_space
-from control.utils.dictionary import get_country_name, get_city_name, get_from_city_name, get_operators
-from control.utils.lang import location_from, date_duration
+from control.classes.api_otpusk_search_save import MethodSearchSave
 
 
 class MethodSearch:
@@ -21,6 +15,7 @@ class MethodSearch:
         self.log_prefix: Optional[str] = None
         self.error_name: str = 'Ошибка данных'
         self.obj_search: Optional[MethodSearchGet] = None
+        self.obj_save: Optional[MethodSearchSave] = None
         self.hotel_min_offer: Optional[dict] = None
 
     def get_data_from_db(self):
@@ -63,93 +58,6 @@ class MethodSearch:
         else:
             return dict()
 
-    @staticmethod
-    def set_database_table(table: TourSearch, hotel_min_offer: dict, lang):
-        lang_id = LANGS.index(lang)
-
-        offer_p_value = parse_float(hotel_min_offer['offer']['p'])
-        offer_pl_value = parse_float(hotel_min_offer['offer']['pl'])
-        tour_date_start = parse_date(hotel_min_offer['offer']['d'])
-        promo = hotel_min_offer['offer']['s'].lower() if 's' in hotel_min_offer['offer'] else ''
-
-        table.src_json = json.dumps(hotel_min_offer)
-        table.tour_api_id = hotel_min_offer['offer']['i']
-
-        table.hotelId = hotel_min_offer['hotelId']
-        table.imgSrc = 'https://newimg.otpusk.com/2/400x300/' + hotel_min_offer['f']
-        table.hotelName = hotel_min_offer['n']
-        table.hotelStars = hotel_min_offer['s'] + '*'
-        table.fullHotelName = table.hotelName + ' ' + table.hotelStars
-
-        table.countryId = hotel_min_offer['t']['i']
-        table.countryName = get_country_name(country_id=table.countryId, lang_id=lang_id)
-
-        table.cityId = hotel_min_offer['c']['i']
-        table.cityName = get_city_name(city_id=table.cityId, lang_id=lang_id)
-        table.resortName = table.cityName
-
-        table.cityFromId = hotel_min_offer['dept']['id']
-        table.cityFrom = get_from_city_name(city_from_id=table.cityFromId, lang_id=lang_id)
-
-        table.transport = hotel_min_offer['offer']['t']
-        table.locationFromString = location_from(STATIC_DATA[lang]['transport'][table.transport], table.cityFrom,
-                                                 lang=lang)
-
-        table.food = hotel_min_offer['offer']['f']
-        table.foodString = STATIC_DATA[lang]['food'][table.food].title()
-
-        table.operatorId = hotel_min_offer['offer']['oi']
-        table.operatorName = get_operators(operator_id=table.operatorId, lang_id=lang_id)
-
-        table.length = hotel_min_offer['offer']['l']
-        table.dateString = hotel_min_offer['offer']['d']
-        table.dateDurationString = date_duration(tour_date_start, table.length, lang=lang)
-
-        table.promo = True if promo == 'promo' else False
-        table.currency = hotel_min_offer['offer']['u'].lower()
-        table.price = decimal2str_with_space(math.ceil(offer_p_value))
-        table.priceUah = decimal2str_with_space(math.ceil(offer_pl_value))
-        table.priceUahOne = decimal2str_with_space(math.ceil(offer_pl_value / 2))
-        table.priceUsd = table.price if table.currency == 'usd' else None
-        table.priceEuro = table.price if table.currency == 'eur' else None
-
-        table.update = datetime.datetime.now()
-        return table
-
-    @staticmethod
-    def make_link_for_table(hotel_min_offer: dict):
-        link = OUR_SITE
-        link += '/' + hotel_min_offer['t']['c']
-        link += '/' + hotel_min_offer['h']
-        link += '/' + hotel_min_offer['hotelId']
-        link += '/' + str(hotel_min_offer['offer']['i'])
-        return link
-
-    def update_database(self, hotel_min_offer):
-        for lang_id, lang_name in enumerate(LANGS):
-            tour = TourSearch.query.filter_by(tour_id=self.index, lang=lang_id).first()
-            if tour is None:
-                is_update = False
-
-                tour = TourSearch()
-                tour.tour_id = self.index
-                tour.lang = lang_id
-            else:
-                is_update = True
-
-            tour.tourLink = self.make_link_for_table(hotel_min_offer=hotel_min_offer)
-            tour = self.set_database_table(table=tour, hotel_min_offer=hotel_min_offer, lang=lang_name)
-
-            self.tour.errors = 0
-            try:
-                if not is_update:
-                    db.session.add(tour)
-                db.session.commit()
-            except exc.SQLAlchemyError as e:
-                msg = f'Error work with database. {e}'
-                app.logger.error(msg)
-                raise ConnectionError(msg)
-
     def save_error(self, error_text, error_description):
         msg = '{}. {}. {}'.format(error_text, self.log_prefix, error_description[:200])
         app.logger.warning(msg)
@@ -174,6 +82,10 @@ class MethodSearch:
     def get_data_from_api(self):
         self.obj_search = MethodSearchGet(url_link=self.link, log_prefix=self.log_prefix)
         return self.obj_search.run()
+
+    def update_database(self, hotel_min_offer: dict):
+        self.obj_save = MethodSearchSave(input_data=hotel_min_offer, index=self.index)
+        return self.obj_save.run()
 
     def run(self) -> bool:
         self.get_data_from_db()
@@ -204,6 +116,9 @@ class MethodSearch:
                                 self.obj_search.result))
             return False
 
-        self.update_database(hotel_min_offer=self.hotel_min_offer)
+        if self.update_database(hotel_min_offer=self.hotel_min_offer) is False:
+            self.save_error(error_text=self.obj_save.error_name,
+                            error_description=self.obj_save.error_full)
+            return False
 
         return True
