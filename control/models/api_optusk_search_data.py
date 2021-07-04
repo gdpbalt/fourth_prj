@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel, Field, validator
 
@@ -20,7 +20,7 @@ class ModelOffer(BaseModel):
     tour_api_id: int = Field(alias='i')
     tour_start: date = Field(alias='d')
 
-    transport: ModelTransferFromTo = Field(alias='to')
+    transport: Union[ModelTransferFromTo, list] = Field(alias='to')
     transport_type: str = Field(alias='t')
 
     currency: str = Field(alias='u')

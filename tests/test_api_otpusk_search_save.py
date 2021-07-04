@@ -62,6 +62,58 @@ class TestMethodSearchSave(TestCase):
         'hotelId': '19455',
         'dept': {'id': '1397', 'name': 'Львов', 'nameDt': 'Львову', 'namePr': 'Львове', 'nameRd': 'Львова',
                  'nameTr': 'lvov', 'nameVn': 'Львов', 'latLng': {'lat': '49.84100', 'lng': '24.02400', 'zoom': '13'}}}
+    input_data_empty_transport = {
+        'c': {'i': 715, 'c': 'sharm_el_sheyh', 'n': 'Шарм эль Шейх', 'p': 'Шарм эль Шейхе'},
+        't': {'i': 43, 'c': 'egypt', 'cid': 'eg', 'n': 'Египет', 'vs': ''},
+        'i': 19455,
+        's': '4',
+        'p': 22498.89,
+        'po': 824.93,
+        'a': '',
+        'e': ['a_la_carte', 'aerobics', 'cafe', 'chairs', 'childpool', 'conversion', 'crib', 'diving', 'doctor',
+              'heated_pool', 'laundry', 'next_beach_line', 'non_smoking', 'outdoor_pool', 'own', 'parking', 'pontoon',
+              'restaurant', 'safe', 'sandy', 'surfing', 'table_tennis', 'towels', 'umbrella', 'visa', 'water_sports'],
+        'h': 'Palmyra_Amar_El_Zaman_Aqua_Park',
+        'f': '00/04/27/66/4276669.jpg',
+        'fc': 41,
+        'g': {'a': '28.01190', 'o': '34.43092', 'z': '18'},
+        'n': 'Palmyra Amar El Zaman Aqua Park',
+        'r': 7.1,
+        'v': 121,
+        'x': 7.7,
+        'pu': 'usd',
+        'offer': {'last': '2021-06-24 22:39:34',
+                  'i': 4161988820839484,
+                  'oi': 2835,
+                  'ti': 37455,
+                  'o': ['insurance', 'transfer'],
+                  's': '',
+                  'c': 1397,
+                  'd': '2021-07-18',
+                  'dt': '2021-07-25',
+                  'y': 'dbl',
+                  'a': 2,
+                  'h': 0,
+                  'ha': '',
+                  'hr': [],
+                  'l': 8,
+                  'n': 7,
+                  'f': 'ai',
+                  'ri': 12519,
+                  'r': 'Standard Room',
+                  'p': 824.93,
+                  'pl': 22498.89,
+                  'pto': 824.93,
+                  'u': 'usd',
+                  'ur': 27.2737,
+                  'uo': 27.2737,
+                  't': 'air',
+                  'to': [],
+                  'ss': {'hotel': 1, 'avia': 1, 'aviaBack': 1}
+                  },
+        'hotelId': '19455',
+        'dept': {'id': '1397', 'name': 'Львов', 'nameDt': 'Львову', 'namePr': 'Львове', 'nameRd': 'Львова',
+                 'nameTr': 'lvov', 'nameVn': 'Львов', 'latLng': {'lat': '49.84100', 'lng': '24.02400', 'zoom': '13'}}}
 
     def setUp(self):
         self.obj = MethodSearchSave(input_data=dict(), index=1)
@@ -87,6 +139,13 @@ class TestMethodSearchSave(TestCase):
         error = self.obj.error_name
         self.assertFalse(result)
         self.assertEqual(error, self.obj.ERR_VALIDATION)
+
+    def test_data_verify_empty_transport_ok(self):
+        self.obj.input_data = self.input_data_empty_transport
+
+        result = self.obj.run()
+        error = self.obj.error_name
+        self.assertTrue(result)
 
     def test_update_table_tour_search_failed(self):
         self.obj.input_data = self.input_data_ok

@@ -59,7 +59,7 @@ class MethodSearchSave:
 
         self.data.op_link = self.make_link_for_table()
 
-        if len(self.data.offer.transport.transport_from) > 0:
+        if self.data.offer.transport and len(self.data.offer.transport.transport_from) > 0:
             transport = self.data.offer.transport.transport_from[0]
             if len(transport.port_to) >= 3:
                 self.data.op_port_to_iata = transport.port_to
