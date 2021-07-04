@@ -2,8 +2,11 @@ from control.models import TourSearch, Tour
 
 HOT_TOUR = {
     "searchedTour": {
-        "data_view": {},
-        "offers": [{}]
+        "data_view": {
+            'location': {
+            }
+        },
+        "offers": [{}]  # TODO в эту структуру надо добавить другие предложеня
     },
     "api_version": "1",
     "time": 0,
@@ -53,9 +56,13 @@ class TourBlock:
         data_view["fullHotelName"] = self.data.fullHotelName
         data_view["countryId"] = self.data.countryId
         data_view["countryName"] = self.data.countryName
+
         data_view["cityId"] = self.data.cityId
         data_view["cityName"] = self.data.cityName
         data_view["resortName"] = self.data.resortName
+        data_view["cityPortName"] = self.data.cityPortName
+        data_view["cityPortIata"] = self.data.cityPortIata
+
         data_view["dateString"] = self.data.dateString.strftime('%Y-%m-%d')
         data_view["cityFromId"] = self.data.cityFromId
         data_view["cityFrom"] = self.data.cityFrom
@@ -77,8 +84,9 @@ class TourBlock:
         data_view["length"] = self.data.length
         data_view["offerId"] = self.data.tour_api_id
 
-        # TODO в эту структуру надо налить предложений по турам
-        # self.response['searchedTour']['offers'][0] = data_view
+        data_view["location"]['lat'] = self.data.locationLat
+        data_view["location"]['lng'] = self.data.locationLng
+        data_view["location"]['zoom'] = self.data.locationZoom
 
     def run(self):
         self.get_data_from_db()

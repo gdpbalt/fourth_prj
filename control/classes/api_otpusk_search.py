@@ -18,7 +18,7 @@ class MethodSearch:
         self.obj_save: Optional[MethodSearchSave] = None
         self.hotel_min_offer: Optional[dict] = None
 
-    def get_data_from_db(self):
+    def get_data_from_table_tour(self):
         self.tour = Tour.query.get(self.index)
         if self.tour is None:
             msg = f'Tour id={self.index} not found in database'
@@ -83,12 +83,24 @@ class MethodSearch:
         self.obj_search = MethodSearchGet(url_link=self.link, log_prefix=self.log_prefix)
         return self.obj_search.run()
 
-    def update_database(self, hotel_min_offer: dict):
+    def save_tour_search2db(self, hotel_min_offer: dict):
         self.obj_save = MethodSearchSave(input_data=hotel_min_offer, index=self.index)
         return self.obj_save.run()
 
+    def update_table_tour(self):
+        if self.tour.errors == 0:
+            return
+
+        self.tour.errors = 0
+        try:
+            db.session.commit()
+        except exc.SQLAlchemyError as e:
+            msg = f'Error work with database. {e}'
+            app.logger.error(msg)
+            raise ConnectionError(msg)
+
     def run(self) -> bool:
-        self.get_data_from_db()
+        self.get_data_from_table_tour()
 
         if self.get_data_from_api() is False:
             self.save_error(error_text=self.obj_search.error_name,
@@ -116,9 +128,11 @@ class MethodSearch:
                                 self.obj_search.result))
             return False
 
-        if self.update_database(hotel_min_offer=self.hotel_min_offer) is False:
+        if self.save_tour_search2db(hotel_min_offer=self.hotel_min_offer) is False:
             self.save_error(error_text=self.obj_save.error_name,
                             error_description=self.obj_save.error_full)
             return False
+
+        self.update_table_tour()
 
         return True

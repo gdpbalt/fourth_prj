@@ -51,10 +51,11 @@ class TestMethodSearch(TestCase):
 
     def setUp(self):
         self.obj = MethodSearch(url_link='', index=0)
-        self.obj.get_data_from_db = MagicMock()
+        self.obj.get_data_from_table_tour = MagicMock()
         self.obj.save_error = MagicMock()
         self.obj.get_data_from_api = MagicMock()
-        self.obj.update_database = MagicMock()
+        self.obj.save_tour_search2db = MagicMock()
+        self.obj.update_table_tour = MagicMock()
 
         self.obj.obj_search = MagicMock()
         self.obj.obj_search.error_name = ''

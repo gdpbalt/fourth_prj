@@ -89,6 +89,12 @@ class TourSearch(db.Model):
     food = db.Column(db.String(255), nullable=False)
     length = db.Column(db.Integer, nullable=False)
 
+    cityPortIata = db.Column(db.String(255), nullable=True)
+    cityPortName = db.Column(db.String(255), nullable=True)
+    locationLat = db.Column(db.Float, nullable=True)
+    locationLng = db.Column(db.Float, nullable=True)
+    locationZoom = db.Column(db.Integer, nullable=True)
+
 
 class TourError(db.Model):
     __tablename__ = 'tour_error'

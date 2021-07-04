@@ -109,6 +109,8 @@
         <p class="mb-1"><small>countryName = "{{ tour.countryName }}"</small></p>
         <p class="mb-1"><small>cityId = <a href="https://export.otpusk.com/api/tours/cities?countryId={{ tour.countryId }}&{{ token }}" target="_blank">{{ tour.cityId }}</a></small></p>
         <p class="mb-1"><small>cityName = "{{ tour.cityName }}"</small></p>
+        <p class="mb-1"><small>cityPort = "{{ tour.cityPortName }}" ("{{ tour.cityPortIata }}")</small></p>
+        <p class="mb-1"><small>location: (lat = {{ tour.locationLat }}, lng = {{ tour.locationLng }}, zoom = {{ tour.locationZoom }})</small></p>
         <p class="mb-1"><small>resortName = "{{ tour.resortName }}"</small></p>
         <p class="mb-1"><small>dateString = "{{ tour.dateString }}"</small></p>
         <p class="mb-1"><small>cityFromId = <a href="https://export.otpusk.com/api/tours/fromCities?{{ token }}" target="_blank">{{ tour.cityFromId }}</a></small></p>
@@ -129,6 +131,7 @@
         <p class="mb-1"><small>priceUah = "{{ tour.priceUah }}"</small></p>
         <p class="mb-1"><small>priceUahOne = "{{ tour.priceUahOne }}"</small></p>
         <p class="mb-1"><small>tourLink = <a href="{{ tour.tourLink }}" target="_blank">link</a></small></p>
+
     {%  else -%}
         <h4>Нет данных для отображения</h4>
     {%  endif -%}

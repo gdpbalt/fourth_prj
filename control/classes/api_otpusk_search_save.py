@@ -5,9 +5,10 @@ from typing import Optional
 from pydantic import ValidationError
 from sqlalchemy import exc
 
-from control import LANGS, TourSearch, db, app, Tour
+from control import app, db
+from control.models import TourSearch
 from control.models.api_optusk_search_data import ModelTourData
-from control.settings import OUR_SITE, STATIC_DATA
+from control.settings import OUR_SITE, STATIC_DATA, LANGS
 from control.utils.convert import decimal2str_with_space
 from control.utils.dictionary import get_country_name, get_city_name, get_from_city_name, get_operators, get_iata_city
 from control.utils.lang import location_from, date_duration
@@ -26,6 +27,10 @@ class MethodSearchSave:
 
     def set_error(self, name, text=''):
         self.error_name, self.error_full = (name, text)
+
+    def make_link_for_table(self):
+        return '{0}/{1}/{2}/{3}/{4}'.format(OUR_SITE, self.data.country_to.country, self.data.hotel_name_snake,
+                                            self.data.hotel_id, self.data.offer.tour_api_id)
 
     def fill_fields(self, lang_id: int, lang_name: str):
         self.data.op_full_hotel_name = "{} {}".format(self.data.hotel_name, self.data.hotel_stars)
@@ -56,23 +61,9 @@ class MethodSearchSave:
 
         if len(self.data.offer.transport.transport_from) > 0:
             transport = self.data.offer.transport.transport_from[0]
-            if len(transport.port_from) >= 3:
-                city = get_iata_city(iata_code=transport.port_from[:3], lang_id=lang_id)
-                if city is not None:
-                    self.data.op_port_from_name = city
-
             if len(transport.port_to) >= 3:
-                city = get_iata_city(iata_code=transport.port_to[:3], lang_id=lang_id)
-                if city is not None:
-                    self.data.op_port_to_name = city
-
-    def make_link_for_table(self):
-        data_list = (OUR_SITE,
-                     self.data.country_to.country,
-                     self.data.hotel_name_snake,
-                     self.data.hotel_id,
-                     str(self.data.offer.tour_api_id))
-        return '/'.join(data_list)
+                self.data.op_port_to_iata = transport.port_to
+                self.data.op_port_to_name = get_iata_city(iata_code=transport.port_to[:3], lang_id=lang_id)
 
     def set_database_table(self, table: TourSearch):
         table.src_json = json.dumps(self.input_data)
@@ -81,8 +72,8 @@ class MethodSearchSave:
         table.hotelId = self.data.hotel_id
         table.imgSrc = self.data.image
         table.hotelName = self.data.hotel_name
-        table.hotelStars = self.data.hotel_stars
         table.fullHotelName = self.data.op_full_hotel_name
+        table.hotelStars = self.data.hotel_stars
 
         table.countryId = self.data.country_to.id
         table.countryName = self.data.op_country_name
@@ -91,66 +82,61 @@ class MethodSearchSave:
         table.cityName = self.data.op_city_to_name
         table.resortName = self.data.op_city_to_name
 
+        table.dateString = self.data.offer.tour_start
+
         table.cityFromId = self.data.city_from.id
         table.cityFrom = self.data.op_city_from_name
 
-        table.transport = self.data.offer.transport_type
         table.locationFromString = self.data.op_location_from_string
-
-        table.food = self.data.offer.food
+        table.dateDurationString = self.data.op_date_duration_string
         table.foodString = self.data.op_food_string
 
         table.operatorId = self.data.offer.operator_id
         table.operatorName = self.data.op_operator_name
 
-        table.length = self.data.offer.length
-        table.dateString = self.data.offer.tour_start
-        table.dateDurationString = self.data.op_date_duration_string
-
         table.promo = self.data.op_promo
-        table.currency = self.data.offer.currency
         table.price = self.data.op_price
-        table.priceUah = self.data.op_price_uah
-        table.priceUahOne = self.data.op_price_uah_one
+        table.currency = self.data.offer.currency
         table.priceUsd = self.data.op_price_usd
         table.priceEuro = self.data.op_price_euro
+        table.priceUah = self.data.op_price_uah
+        table.priceUahOne = self.data.op_price_uah_one
+
+        table.tourLink = self.make_link_for_table()
+
+        table.transport = self.data.offer.transport_type
+        table.food = self.data.offer.food
+        table.length = self.data.offer.length
 
         table.update = self.data.op_update
 
-        table.tourLink = self.make_link_for_table()
+        table.cityPortIata = self.data.op_port_to_iata
+        table.cityPortName = self.data.op_port_to_name
+
+        table.locationLat = self.data.location.lat
+        table.locationLng = self.data.location.lng
+        table.locationZoom = self.data.location.zoom
+
         return table
 
     def update_table_tour_search(self, lang_id: int, lang_name: str) -> bool:
         tour_search = TourSearch.query.filter_by(tour_id=self.index, lang=lang_id).first()
-        is_update = True
-        if tour_search is None:
-            is_update = False
+        if tour_search is not None:
+            is_new_record = False
 
-            tour_search = TourSearch()
-            tour_search.tour_id = self.index
-            tour_search.lang = lang_id
+        else:
+            is_new_record = True
+            tour_search = TourSearch(tour_id=self.index, lang=lang_id)
 
         tour_search = self.set_database_table(table=tour_search)
         try:
-            if is_update is False:
+            if is_new_record:
                 db.session.add(tour_search)
             db.session.commit()
         except exc.SQLAlchemyError as e:
             msg = f'Error work with database. {e}'
             app.logger.error(msg)
-            self.set_error(name=self.ERR_DATABASE, text=str(e))
-            return False
-        return True
-
-    def update_table_tour(self) -> bool:
-        tour = Tour.query.get(self.index)
-        tour.errors = 0
-        try:
-            db.session.commit()
-        except exc.SQLAlchemyError as e:
-            msg = f'Error work with database. {e}'
-            app.logger.error(msg)
-            self.set_error(name=self.ERR_DATABASE, text=str(e))
+            self.error_full = str(e)
             return False
         return True
 
@@ -165,10 +151,7 @@ class MethodSearchSave:
             self.fill_fields(lang_id=lang_id, lang_name=lang_name)
             result = self.update_table_tour_search(lang_id=lang_id, lang_name=lang_name)
             if result is False:
+                self.set_error(name=self.ERR_DATABASE, text=self.error_full if self.error_full is not None else '')
                 return False
-
-        result = self.update_table_tour()
-        if result is False:
-            return False
 
         return True
