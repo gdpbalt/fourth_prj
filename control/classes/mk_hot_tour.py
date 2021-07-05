@@ -88,8 +88,10 @@ class TourBlock:
         data_view["location"]['lng'] = self.data.locationLng
         data_view["location"]['zoom'] = self.data.locationZoom
 
-        data_view["deptFrom"] = self.data.deptFrom.strftime('%Y-%m-%d %H:%M')
-        data_view["deptTo"] = self.data.deptTo.strftime('%Y-%m-%d %H:%M')
+        from_ = self.data.deptFrom.strftime('%Y-%m-%d %H:%M') if self.data.deptFrom is not None else None
+        to_ = self.data.deptTo.strftime('%Y-%m-%d %H:%M') if self.data.deptTo is not None else None
+        data_view["deptFrom"] = from_
+        data_view["deptTo"] = to_
 
     def run(self):
         self.get_data_from_db()
