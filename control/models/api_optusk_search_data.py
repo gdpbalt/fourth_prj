@@ -5,10 +5,10 @@ from pydantic import BaseModel, Field, validator
 
 
 class ModelTransferData(BaseModel):
-    begin: datetime
-    end: datetime
-    port_from: str = Field(alias='portFr')
-    port_to: str = Field(alias='portTo')
+    begin: datetime = None
+    end: datetime = None
+    port_from: str = Field(alias='portFr', default=None)
+    port_to: str = Field(alias='portTo', default=None)
 
 
 class ModelTransferFromTo(BaseModel):
@@ -20,7 +20,7 @@ class ModelOffer(BaseModel):
     tour_api_id: int = Field(alias='i')
     tour_start: date = Field(alias='d')
 
-    transport: Union[ModelTransferFromTo, list] = Field(alias='to')
+    transport: Union[ModelTransferFromTo, dict] = Field(alias='to')
     transport_type: str = Field(alias='t')
 
     currency: str = Field(alias='u')
@@ -41,6 +41,13 @@ class ModelOffer(BaseModel):
     @validator('currency')
     def transform_currency(cls, v):
         return v.lower()
+
+    # noinspection PyMethodParameters
+    @validator('transport')
+    def transform_transport(cls, v):
+        if isinstance(v, list):
+            return dict()
+        return v
 
 
 class ModelCountryTo(BaseModel):

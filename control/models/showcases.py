@@ -95,6 +95,9 @@ class TourSearch(db.Model):
     locationLng = db.Column(db.Float, nullable=True)
     locationZoom = db.Column(db.Integer, nullable=True)
 
+    deptFrom = db.Column(db.DateTime, nullable=True)
+    deptTo = db.Column(db.DateTime, nullable=True)
+
 
 class TourError(db.Model):
     __tablename__ = 'tour_error'

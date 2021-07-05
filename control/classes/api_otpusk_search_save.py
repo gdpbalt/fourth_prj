@@ -117,14 +117,19 @@ class MethodSearchSave:
         table.locationLng = self.data.location.lng
         table.locationZoom = self.data.location.zoom
 
+        if self.data.offer.transport:
+            if len(self.data.offer.transport.transport_from) > 0:
+                table.deptFrom = self.data.offer.transport.transport_from[0].begin
+            if len(self.data.offer.transport.transport_to) > 0:
+                table.deptTo = self.data.offer.transport.transport_to[0].begin
+
         return table
 
     def update_table_tour_search(self, lang_id: int, lang_name: str) -> bool:
-        tour_search = TourSearch.query.filter_by(tour_id=self.index, lang=lang_id).first()
-        if tour_search is not None:
-            is_new_record = False
-
-        else:
+        tour_search_sql = TourSearch.query.filter_by(tour_id=self.index, lang=lang_id)
+        tour_search = tour_search_sql.first()
+        is_new_record = False
+        if tour_search is None:
             is_new_record = True
             tour_search = TourSearch(tour_id=self.index, lang=lang_id)
 
@@ -134,7 +139,9 @@ class MethodSearchSave:
                 db.session.add(tour_search)
             db.session.commit()
         except exc.SQLAlchemyError as e:
-            msg = f'Error work with database. {e}'
+            app.logger.error(str(tour_search_sql))
+            create_txt = 'True' if is_new_record else 'False'
+            msg = f'Error work with database. Lang={lang_id}. Create record={create_txt}. {e}'
             app.logger.error(msg)
             self.error_full = str(e)
             return False

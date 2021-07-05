@@ -88,6 +88,9 @@ class TourBlock:
         data_view["location"]['lng'] = self.data.locationLng
         data_view["location"]['zoom'] = self.data.locationZoom
 
+        data_view["deptFrom"] = self.data.deptFrom.strftime('%Y-%m-%d %H:%M')
+        data_view["deptTo"] = self.data.deptTo.strftime('%Y-%m-%d %H:%M')
+
     def run(self):
         self.get_data_from_db()
         self.make_response()
