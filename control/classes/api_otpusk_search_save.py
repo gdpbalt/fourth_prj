@@ -126,12 +126,15 @@ class MethodSearchSave:
         return table
 
     def update_table_tour_search(self, lang_id: int, lang_name: str) -> bool:
-        tour_search_sql = TourSearch.query.filter_by(tour_id=self.index, lang=lang_id)
-        tour_search = tour_search_sql.first()
-        is_new_record = False
-        if tour_search is None:
+        sql = db.session.query(TourSearch.id).filter_by(tour_id=self.index, lang=lang_id)
+
+        result = sql.first()
+        if result is None:
             is_new_record = True
             tour_search = TourSearch(tour_id=self.index, lang=lang_id)
+        else:
+            is_new_record = False
+            tour_search = TourSearch(id=result.id, tour_id=self.index, lang=lang_id)
 
         tour_search = self.set_database_table(table=tour_search)
         try:
@@ -139,7 +142,7 @@ class MethodSearchSave:
                 db.session.add(tour_search)
             db.session.commit()
         except exc.SQLAlchemyError as e:
-            app.logger.error(str(tour_search_sql))
+            app.logger.warning(str(sql))
             create_txt = 'True' if is_new_record else 'False'
             msg = f'Error work with database. Lang={lang_id}. Create record={create_txt}. {e}'
             app.logger.error(msg)

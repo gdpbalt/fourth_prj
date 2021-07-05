@@ -185,6 +185,6 @@ def tour_search(index, order):
         flash("Ошибка получения данных от сервера", 'error')
         app.logger.info(f"Error get data. {e}")
     else:
-        if result is None:
+        if result is False:
             flash("Ошибка получения данных от сервера", 'error')
     return redirect(url_for("tour_update", index=index, order=order))
