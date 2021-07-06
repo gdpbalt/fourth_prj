@@ -79,19 +79,21 @@ def start_search(force_flag: bool = False):
     date_search_after_error = date_now - datetime.timedelta(hours=SEARCH_TRY_AFTER_ERROR_HOURS)
     sql = get_run_search_sql(force_flag=force_flag, date_search=date_search,
                              date_search_after_error=date_search_after_error)
+    all_records = len(sql)
 
     app.logger.info('*** Start searching at {}. Total {} records'.format(
-        date_now.strftime(datetime_format), len(sql)))
+        date_now.strftime(datetime_format), all_records))
     app.logger.info('*** Search tours where last updated less than {} and last error less than {}'.format(
         date_search.strftime(datetime_format), date_search_after_error))
 
     for showcase, tour, update, link in sql:
         if (number := number + 1) > 1:
-            app.logger.info(f'*** Sleep {SEARCH_PAUSE_BETWEEN_REQUEST_SECOND} seconds between Search')
+            app.logger.info(f'Sleep {SEARCH_PAUSE_BETWEEN_REQUEST_SECOND} seconds between Search')
             sleep(SEARCH_PAUSE_BETWEEN_REQUEST_SECOND)
 
-        app.logger.info("*** Record={}, showcase={}, tour={}, last updated={}".format(
-            number, showcase, tour, update.strftime(datetime_format) if update is not None else 'Null'))
+        app.logger.info("*** Record={}/{}, tour={}/{}, last updated={}".format(
+            number, all_records, showcase, tour,
+            update.strftime(datetime_format) if update is not None else 'Null'))
 
         do_run_search(tour_id=tour, url_link=link)
         if force_flag is False and get_delay_of_runnig(start_time=date_now) > SEARCH_STOP_AFTER_SECOND:
