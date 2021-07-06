@@ -126,26 +126,24 @@ class MethodSearchSave:
         return table
 
     def update_table_tour_search(self, lang_id: int, lang_name: str) -> bool:
-        sql = db.session.query(TourSearch.id).filter_by(tour_id=self.index, lang=lang_id)
+        tour_search_all = TourSearch.query.filter_by(tour_id=self.index, lang=lang_id).all()
+        for record in tour_search_all:
+            try:
+                db.session.delete(record)
+                db.session.commit()
+            except exc.SQLAlchemyError as e:
+                msg = f'Error work with database. {e}'
+                app.logger.error(msg)
+                self.error_full = str(e)
+                return False
 
-        result = sql.first()
-
-        if result is not None and len(result) > 0:
-            is_new_record = False
-            tour_search = TourSearch(id=result.id, tour_id=self.index, lang=lang_id)
-        else:
-            is_new_record = True
-            tour_search = TourSearch(tour_id=self.index, lang=lang_id)
-
+        tour_search = TourSearch(tour_id=self.index, lang=lang_id)
         tour_search = self.set_database_table(table=tour_search)
         try:
-            if is_new_record:
-                db.session.add(tour_search)
+            db.session.add(tour_search)
             db.session.commit()
         except exc.SQLAlchemyError as e:
-            app.logger.warning(str(sql))
-            create_txt = 'True' if is_new_record else 'False'
-            msg = f'Error work with database. Lang={lang_id}. Create record={create_txt}. {e}'
+            msg = f'Error work with database. {e}'
             app.logger.error(msg)
             self.error_full = str(e)
             return False
