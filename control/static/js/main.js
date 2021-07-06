@@ -39,7 +39,6 @@ $(function() {
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-        set_date_stop()
     })
 
 });
