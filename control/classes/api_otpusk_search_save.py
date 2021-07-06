@@ -129,12 +129,13 @@ class MethodSearchSave:
         sql = db.session.query(TourSearch.id).filter_by(tour_id=self.index, lang=lang_id)
 
         result = sql.first()
-        if result is None:
-            is_new_record = True
-            tour_search = TourSearch(tour_id=self.index, lang=lang_id)
-        else:
+
+        if result is not None and len(result) > 0:
             is_new_record = False
             tour_search = TourSearch(id=result.id, tour_id=self.index, lang=lang_id)
+        else:
+            is_new_record = True
+            tour_search = TourSearch(tour_id=self.index, lang=lang_id)
 
         tour_search = self.set_database_table(table=tour_search)
         try:
