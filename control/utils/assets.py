@@ -4,6 +4,7 @@ from flask_assets import Bundle
 bundles = {
     'control_js': Bundle(
         'js/jquery-3.6.0.min.js',
+        'js/bootstrap.bundle.min.js',
         'js/jquery-ui.js',
         'js/main.js',
         output='gen/control.js'),
