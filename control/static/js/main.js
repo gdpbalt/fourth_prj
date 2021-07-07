@@ -36,9 +36,15 @@ $(function() {
         set_date_stop()
     });
 
+    $("#update-tour-button").click(function (event) {
+        if ($(this).hasClass("disabled")) {
+            event.preventDefault();
+        }
+        $(this).addClass("disabled");
+    });
 
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
 
 });

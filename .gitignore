@@ -114,4 +114,5 @@ venv.bak/
 .mypy_cache/
 /security.db
 /note.txt
-/control/static/gen/
+/probe2.py
+/probe3.py

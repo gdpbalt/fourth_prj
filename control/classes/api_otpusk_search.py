@@ -63,6 +63,7 @@ class MethodSearch:
         app.logger.warning(msg)
 
         self.tour.errors += 1
+        app.logger.warning('{}. Errors: {}'.format(self.log_prefix, self.tour.errors))
 
         error = TourError()
         error.showcase_id = self.tour.showcase_id
