@@ -53,7 +53,7 @@ class MethodSearchSave:
         self.data.op_price_uah = decimal2str_with_space(math.ceil(self.data.offer.sum_uah))
         self.data.op_price_uah_one = decimal2str_with_space(math.ceil(self.data.offer.sum_uah / 2))
         self.data.op_price_usd = self.data.offer.sum_currency if self.data.offer.currency == 'usd' else None
-        self.data.op_price_euro = self.data.offer.sum_currency if self.data.offer.currency == 'usd' == 'eur' else None
+        self.data.op_price_euro = self.data.offer.sum_currency if self.data.offer.currency == 'eur' else None
 
         self.data.op_src_json = json.dumps(self.input_data)
 

@@ -1,4 +1,5 @@
 from control.models import TourSearch, Tour
+from datetime import timedelta
 
 HOT_TOUR = {
     "searchedTour": {
@@ -23,7 +24,9 @@ HOT_TOUR_EMPTY = {
 
 
 class TourBlock:
-    format_datetime = '%Y-%m-%d %H:%M:%S'
+    format_date = '%Y-%m-%d'
+    format_datetime_sec = f'{format_date} %H:%M:%S'
+    format_datetime_min = f'{format_date} %H:%M'
 
     def __init__(self, index, lang_id):
         self.index = index
@@ -44,9 +47,9 @@ class TourBlock:
         self.response = HOT_TOUR
 
         self.response["errors"] = self.tour.errors
-        self.response["errorLast"] = self.tour.errors_update.strftime(self.format_datetime)
+        self.response["errorLast"] = self.tour.errors_update.strftime(self.format_datetime_sec)
 
-        self.response["updateTime"] = self.data.updated.strftime(self.format_datetime)
+        self.response["updateTime"] = self.data.updated.strftime(self.format_datetime_sec)
 
         data_view = self.response['searchedTour']['data_view']
         data_view["hotelId"] = self.data.hotelId
@@ -60,10 +63,13 @@ class TourBlock:
         data_view["cityId"] = self.data.cityId
         data_view["cityName"] = self.data.cityName
         data_view["resortName"] = self.data.resortName
-        data_view["cityPortName"] = self.data.cityPortName
+        if self.data.cityPortName is not None:
+            data_view["cityPortName"] = self.data.cityPortName
+        else:
+            data_view["cityPortName"] = self.data.cityName
         data_view["cityPortIata"] = self.data.cityPortIata
 
-        data_view["dateString"] = self.data.dateString.strftime('%Y-%m-%d')
+        data_view["dateString"] = self.data.dateString.strftime(self.format_date)
         data_view["cityFromId"] = self.data.cityFromId
         data_view["cityFrom"] = self.data.cityFrom
         data_view["locationFromString"] = self.data.locationFromString
@@ -88,10 +94,16 @@ class TourBlock:
         data_view["location"]['lng'] = self.data.locationLng
         data_view["location"]['zoom'] = self.data.locationZoom
 
-        from_ = self.data.deptFrom.strftime('%Y-%m-%d %H:%M') if self.data.deptFrom is not None else None
-        to_ = self.data.deptTo.strftime('%Y-%m-%d %H:%M') if self.data.deptTo is not None else None
-        data_view["deptFrom"] = from_
-        data_view["deptTo"] = to_
+        if self.data.deptFrom is not None:
+            data_view["deptFrom"] = self.data.deptFrom.strftime(self.format_datetime_min)
+        else:
+            data_view["deptFrom"] = self.data.dateString.strftime(self.format_datetime_min)
+
+        if self.data.deptTo is not None:
+            data_view["deptTo"] = self.data.deptTo.strftime('%Y-%m-%d %H:%M')
+        else:
+            stop_date = self.data.dateString + timedelta(days=self.data.length) - timedelta(days=1)
+            data_view["deptTo"] = stop_date.strftime(self.format_datetime_min)
 
     def run(self):
         self.get_data_from_db()
