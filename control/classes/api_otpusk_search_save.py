@@ -18,9 +18,10 @@ class MethodSearchSave:
     ERR_VALIDATION = 'Error validation input data'
     ERR_DATABASE = 'Error work with database'
 
-    def __init__(self, input_data: dict, index: int):
+    def __init__(self, input_data: dict, index: int, log_prefix: str):
         self.input_data: dict = input_data
         self.index: int = index
+        self.log_prefix = log_prefix
         self.data: Optional[ModelTourData] = None
         self.error_name: Optional[str] = None
         self.error_full: Optional[str] = None
@@ -59,11 +60,15 @@ class MethodSearchSave:
 
         self.data.op_link = self.make_link_for_table()
 
-        if self.data.offer.transport and len(self.data.offer.transport.transport_from) > 0:
-            transport = self.data.offer.transport.transport_from[0]
-            if len(transport.port_to) >= 3:
-                self.data.op_port_to_iata = transport.port_to
-                self.data.op_port_to_name = get_iata_city(iata_code=transport.port_to[:3], lang_id=lang_id)
+        if isinstance(self.data.offer.transport, dict):
+            app.logger.warning("{}. Transport not found".format(self.log_prefix))
+            if len(self.data.offer.transport.transport_from) == 0:
+                app.logger.warning("{}. Transport is not full. Field transport_from is empty".format(self.log_prefix))
+            else:
+                transport = self.data.offer.transport.transport_from[0]
+                if len(transport.port_to) >= 3:
+                    self.data.op_port_to_iata = transport.port_to
+                    self.data.op_port_to_name = get_iata_city(iata_code=transport.port_to[:3], lang_id=lang_id)
 
     def set_database_table(self, table: TourSearch):
         table.src_json = json.dumps(self.input_data)

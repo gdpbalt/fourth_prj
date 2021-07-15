@@ -85,7 +85,7 @@ class MethodSearch:
         return self.obj_search.run()
 
     def save_tour_search2db(self, hotel_min_offer: dict):
-        self.obj_save = MethodSearchSave(input_data=hotel_min_offer, index=self.index)
+        self.obj_save = MethodSearchSave(input_data=hotel_min_offer, index=self.index, log_prefix=self.log_prefix)
         return self.obj_save.run()
 
     def update_table_tour(self):
