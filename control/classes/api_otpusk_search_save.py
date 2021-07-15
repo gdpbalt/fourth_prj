@@ -61,10 +61,11 @@ class MethodSearchSave:
         self.data.op_link = self.make_link_for_table()
 
         if isinstance(self.data.offer.transport, dict):
-            app.logger.warning("{}. Transport not found".format(self.log_prefix))
+            app.logger.info("{}. Transport didn't find. Lang={}".format(self.log_prefix, lang_name))
         else:
             if len(self.data.offer.transport.transport_from) == 0:
-                app.logger.warning("{}. Transport is not full. Field transport_from is empty".format(self.log_prefix))
+                app.logger.warning("{}. Transport is incorrect. List transport_from is empty. Lang={}".format(
+                    self.log_prefix, lang_name))
             else:
                 transport = self.data.offer.transport.transport_from[0]
                 if len(transport.port_to) >= 3:
