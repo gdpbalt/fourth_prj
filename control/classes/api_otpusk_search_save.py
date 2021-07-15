@@ -62,6 +62,7 @@ class MethodSearchSave:
 
         if isinstance(self.data.offer.transport, dict):
             app.logger.warning("{}. Transport not found".format(self.log_prefix))
+        else:
             if len(self.data.offer.transport.transport_from) == 0:
                 app.logger.warning("{}. Transport is not full. Field transport_from is empty".format(self.log_prefix))
             else:
