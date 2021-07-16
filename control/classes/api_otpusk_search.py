@@ -59,7 +59,7 @@ class MethodSearch:
             return dict()
 
     def save_error(self, error_text, error_description):
-        msg = '{}. {}. {}'.format(error_text, self.log_prefix, error_description[:200])
+        msg = '{}. {}. {}'.format(error_text, self.log_prefix, error_description[:400])
         app.logger.warning(msg)
 
         self.tour.errors += 1
@@ -69,7 +69,7 @@ class MethodSearch:
         error.showcase_id = self.tour.showcase_id
         error.tour_id = self.tour.id
         error.name = error_text
-        error.description = error_description[:200]
+        error.description = error_description[:400]
         error.errors = self.tour.errors
 
         try:

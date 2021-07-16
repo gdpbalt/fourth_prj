@@ -18,7 +18,7 @@ class MethodSearchSave:
     ERR_VALIDATION = 'Error validation input data'
     ERR_DATABASE = 'Error work with database'
 
-    def __init__(self, input_data: dict, index: int, log_prefix: str):
+    def __init__(self, input_data: dict, index: int, log_prefix: str = ''):
         self.input_data: dict = input_data
         self.index: int = index
         self.log_prefix = log_prefix
