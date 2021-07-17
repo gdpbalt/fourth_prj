@@ -124,7 +124,7 @@ class MethodSearchSave:
         table.locationLng = self.data.location.lng
         table.locationZoom = self.data.location.zoom
 
-        if self.data.offer.transport:
+        if not isinstance(self.data.offer.transport, dict):
             if len(self.data.offer.transport.transport_from) > 0:
                 table.deptFrom = self.data.offer.transport.transport_from[0].begin
             if len(self.data.offer.transport.transport_to) > 0:
