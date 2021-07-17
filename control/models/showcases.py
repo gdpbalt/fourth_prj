@@ -34,6 +34,9 @@ class Tour(db.Model):
                               server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     updated = db.Column(db.DateTime, nullable=False,
                         server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
+    manual_update_pid = db.Column(db.Integer, nullable=True)
+    manual_update_date = db.Column(db.DateTime, nullable=False,
+                                   server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
 
 
 class Showcase(db.Model):

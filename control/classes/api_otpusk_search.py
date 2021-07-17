@@ -1,3 +1,5 @@
+import datetime
+import os
 from typing import Optional
 
 from sqlalchemy import exc
@@ -8,8 +10,9 @@ from control.classes.api_otpusk_search_save import MethodSearchSave
 
 
 class MethodSearch:
-    def __init__(self, url_link, index: int):
+    def __init__(self, url_link, index: int, mode: str = 'auto'):
         self.link: str = url_link
+        self.mode: str = mode
         self.index: int = index
         self.tour: Optional[Tour] = None
         self.log_prefix: Optional[str] = None
@@ -24,7 +27,17 @@ class MethodSearch:
             msg = f'Tour id={self.index} not found in database'
             app.logger.error(msg)
             raise ValueError(msg)
-        self.log_prefix = 'Tour {}/{}'.format(self.tour.showcase_id, self.tour.id)
+        self.log_prefix = 'Tour {}/{}/{}'.format(self.tour.showcase_id, self.tour.id, self.mode)
+
+        if self.mode == 'manual':
+            self.tour.manual_update_pid = os.getpid()
+            self.tour.manual_update_date = datetime.datetime.now()
+            try:
+                db.session.commit()
+            except exc.SQLAlchemyError as e:
+                msg = f'Error work with database. {e}'
+                app.logger.error(msg)
+                raise ConnectionError(msg)
 
     @staticmethod
     def get_best_offer(hotel_offers):
@@ -81,7 +94,8 @@ class MethodSearch:
             raise ConnectionError(msg)
 
     def get_data_from_api(self):
-        self.obj_search = MethodSearchGet(url_link=self.link, log_prefix=self.log_prefix)
+        self.obj_search = MethodSearchGet(url_link=self.link, index=self.index, log_prefix=self.log_prefix,
+                                          mode=self.mode)
         return self.obj_search.run()
 
     def save_tour_search2db(self, hotel_min_offer: dict):

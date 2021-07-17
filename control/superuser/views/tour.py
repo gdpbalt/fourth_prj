@@ -178,7 +178,7 @@ def tour_search_scr(index):
 @roles_accepted('superuser')
 def tour_search(index, order):
     data_tour: Tour = Tour.query.get(index)
-    data = MethodSearch(index=index, url_link=data_tour.link)
+    data = MethodSearch(index=index, url_link=data_tour.link, mode='manual')
     try:
         result = data.run()
     except Exception as e:
