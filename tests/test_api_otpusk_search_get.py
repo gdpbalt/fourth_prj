@@ -23,8 +23,9 @@ class TestMethodSearchGet(TestCase):
     }
 
     def setUp(self):
-        self.obj = MethodSearchGet(url_link='', log_prefix='')
+        self.obj = MethodSearchGet(url_link='', index=0, log_prefix='')
         self.obj.pause = MagicMock()
+        self.obj.is_present_parallel_process = MagicMock()
 
         self.patcher_logger = patch('control.app.logger')
         self.mock_logger = self.patcher_logger.start()

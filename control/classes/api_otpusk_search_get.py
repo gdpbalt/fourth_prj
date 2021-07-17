@@ -1,5 +1,4 @@
 import datetime
-import os
 from time import sleep
 from typing import Optional
 
@@ -55,7 +54,7 @@ class MethodSearchGet:
 
         if tour.manual_update_date >= self.date_forbidden:
             app.logger.info('{}. Found parrallel process {}. Updated {}'.format(
-                tour.manual_update_pid, tour.manual_update_date))
+                self.log_prefix, tour.manual_update_pid, tour.manual_update_date))
             return True
 
         return False
