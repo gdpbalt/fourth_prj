@@ -43,7 +43,7 @@ class MethodSearchSave:
 
         self.data.op_location_from_string = location_from(
             STATIC_DATA[lang_name]['transport'][self.data.offer.transport_type],
-            self.data.op_city_from_name,
+            get_from_city_name(city_from_id=self.data.city_from.id, lang_id=lang_id, is_rel=True),
             lang=lang_name)
         self.data.op_food_string = STATIC_DATA[lang_name]['food'][self.data.offer.food].title()
         self.data.op_date_duration_string = date_duration(self.data.offer.tour_start,
