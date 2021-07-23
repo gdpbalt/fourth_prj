@@ -8,5 +8,6 @@ from .otpusk_data import OtpuskCoutries, OtpuskFromCities, OtpuskCities, OtpuskO
 
 from .showcases import Showcase, Tour, TourSearch, TourError
 
+from .pay import Pay
 
 pass
