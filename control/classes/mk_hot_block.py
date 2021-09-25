@@ -1,4 +1,5 @@
 from control.models import Showcase
+import copy
 
 HOT_BLOCK = {
     "block": {
@@ -31,7 +32,7 @@ class HotBlock:
         self.data: Showcase = Showcase.query.get(self.index)
 
     def make_response(self):
-        self.response = HOT_BLOCK
+        self.response = copy.deepcopy(HOT_BLOCK)
         self.response['block']['block_id'] = str(self.index)
         self.response['block']['caption'] = self.data.name
         self.response['block']['lang'] = 'ua' if self.lang_id == 1 else 'ru'
