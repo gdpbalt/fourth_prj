@@ -4,8 +4,6 @@ from datetime import timedelta
 HOT_TOUR = {
     "searchedTour": {
         "data_view": {
-            'location': {
-            }
         },
         "offers": [{}]  # TODO в эту структуру надо добавить другие предложеня
     },
@@ -90,9 +88,13 @@ class TourBlock:
         data_view["length"] = self.data.length
         data_view["offerId"] = self.data.tour_api_id
 
-        data_view["location"]['lat'] = self.data.locationLat
-        data_view["location"]['lng'] = self.data.locationLng
-        data_view["location"]['zoom'] = self.data.locationZoom
+        if self.data.locationLat is not None and \
+                self.data.locationLng is not None and \
+                self.data.locationZoom is not None:
+            data_view["location"] = dict()
+            data_view["location"]['lat'] = self.data.locationLat
+            data_view["location"]['lng'] = self.data.locationLng
+            data_view["location"]['zoom'] = self.data.locationZoom
 
         if self.data.deptFrom is not None:
             data_view["deptFrom"] = self.data.deptFrom.strftime(self.format_datetime_min)
