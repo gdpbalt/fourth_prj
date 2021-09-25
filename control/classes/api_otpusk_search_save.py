@@ -120,9 +120,12 @@ class MethodSearchSave:
         table.cityPortIata = self.data.op_port_to_iata
         table.cityPortName = self.data.op_port_to_name
 
-        table.locationLat = self.data.location.lat
-        table.locationLng = self.data.location.lng
-        table.locationZoom = self.data.location.zoom
+        if self.data.location is not None:
+            table.locationLat = self.data.location.lat
+            table.locationLng = self.data.location.lng
+            table.locationZoom = self.data.location.zoom
+        else:
+            table.locationLat = table.locationLng = table.locationZoom = None
 
         if not isinstance(self.data.offer.transport, dict):
             if len(self.data.offer.transport.transport_from) > 0:

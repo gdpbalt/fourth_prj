@@ -84,7 +84,7 @@ class ModelTourData(BaseModel):
     hotel_name_snake: str = Field(alias='h')
     hotel_stars: str = Field(alias='s')
     image: str = Field(alias='f')
-    location: ModelLocation = Field(alias='g')
+    location: Optional[ModelLocation] = Field(alias='g')
 
     op_src_json: str = None
     op_full_hotel_name: str = None
