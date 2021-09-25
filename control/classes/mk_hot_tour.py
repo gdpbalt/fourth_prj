@@ -88,10 +88,8 @@ class TourBlock:
         data_view["length"] = self.data.length
         data_view["offerId"] = self.data.tour_api_id
 
-        if self.data.locationLat is not None and \
-                self.data.locationLng is not None and \
-                self.data.locationZoom is not None:
-            data_view["location"] = dict()
+        data_view["location"] = dict()
+        if all([x is not None for x in [self.data.locationLat, self.data.locationLng, self.data.locationZoom]]):
             data_view["location"]['lat'] = self.data.locationLat
             data_view["location"]['lng'] = self.data.locationLng
             data_view["location"]['zoom'] = self.data.locationZoom
