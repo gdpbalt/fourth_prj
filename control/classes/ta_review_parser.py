@@ -187,7 +187,7 @@ if __name__ == "__main__":
           + "Hotel_Review-g297969-d1166801-Reviews-" + \
           "Pirate_s_Beach_Club-Tekirova_Kemer_Turkish_Mediterranean_Coast.html"
 
-    ta = TAParse(url=URL, page=0, usecache=True)
+    ta = TAParse(url=URL, page=0, usecache=False)
     try:
         tripadvisor = ta.run()
     except Exception as error:

@@ -1,7 +1,6 @@
 from flask import make_response
 
 from control import app
-from control.settings import MYAPI_HEADERS
 
 MSG_HOTEL_NOT_FOUND = "Hotel ID not found or wrong"
 MSG_GET_REVIEW_FAILED = "Getting review is failed"
@@ -18,5 +17,5 @@ RETURN_BLOCK = {
 @app.route("/api/review/<int:hotel>/<int:page>")
 def get_ta_review(hotel: int, page: int = 0):
     status_code = 200
-    response = make_response(f"ID: {hotel}, Page: {page}", status_code, MYAPI_HEADERS)
+    response = make_response(f"ID: {hotel}, Page: {page}", status_code)
     return response

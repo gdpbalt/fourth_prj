@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from flask import Flask, session
+from flask_cors import CORS
 from flask_admin import Admin
 from flask_assets import Environment
 from flask_babelex import Babel
@@ -28,6 +29,7 @@ app.config.from_object(config[config_name])
 config[config_name].init_app(app)
 
 
+cors = CORS(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 babel = Babel(app)

@@ -16,6 +16,8 @@ DATE_FORMAT = '%Y-%m-%d %H:%M'
 
 
 class Config:
+    CORS_ORIGINS = ['https://antonivtours.com', 'https://antonivtour.com']
+
     PROPAGATE_EXCEPTIONS = True
 
     WTF_CSRF_ENABLED = True
