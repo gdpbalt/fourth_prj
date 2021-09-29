@@ -23,21 +23,21 @@ class TAParsePattern:
             return text
 
         text = names[0]
-        text = re.sub(r'\d+\*', '', text).strip()
+        text = re.sub(r'\d.*\*', '', text).strip()
 
         return text
 
     @staticmethod
     def ta_parse_hotel_stars(key: str, text: str) -> Optional[int]:
-        results = re.findall(r'\s(\d+)\*', text)
+        results = re.findall(r'\s(\d.*)\*', text)
         if not results:
             app.logger.error(f"{key}: not found")
             return
 
         try:
-            number = int(results[0])
+            number = float(results[0])
         except Exception as e:
-            app.logger.error(f"{key}: can't convert to int ({e})")
+            app.logger.error(f"{key}: can't convert to float ({e})")
             return
 
         return number

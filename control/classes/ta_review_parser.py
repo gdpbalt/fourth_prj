@@ -130,6 +130,9 @@ class TAParse(TAParsePattern):
         if re.match(r"^/Hotel_Review", new_url):
             new_url = r"https://tripadvisor.ru" + new_url
 
+        if re.match(r"^http.*:/+Hotel_Review", new_url):
+            new_url = re.sub(r"http.*:/+Hotel_Review", r"https://tripadvisor.ru/Hotel_Review", url)
+
         if page > 1:
             pattern = '-Reviews-'
             new_url = re.sub(pattern, "{}or{}-".format(pattern, (page - 1) * self.NUM_POSTS_PER_PAGE), new_url)

@@ -22,7 +22,7 @@ class TAReviewsData(BaseModel):
     number: int
     name_full: str
     name: str
-    stars: Optional[int]
+    stars: Optional[float]
     rate: float
     page: int
     posts: list[TAPostData]
