@@ -7,29 +7,26 @@ from bs4 import BeautifulSoup
 from pydantic import ValidationError
 
 from control import app
+from control.classes.ta_review_pattern import TAParsePattern
 from control.models.ta_review_data import TAReviewsData
-from control.utils.ta_parse import ta_parse_number_reviews, ta_parse_rate, ta_parse_hotel_name_full, \
-    ta_parse_hotel_name, ta_parse_hotel_stars, ta_parse_post_index, ta_parse_post_author, ta_parse_post_author_geo, \
-    ta_parse_post_date, ta_parse_post_date_stay, ta_parse_post_rate, ta_parse_post_title, ta_parse_post_text
 
 
 class TAParseExeption(Exception):
     pass
 
 
-class TAParse:
+class TAParse(TAParsePattern):
     NUM_POSTS_PER_PAGE = 5
     RATE_TEXT = [None, "Ужасно", "Плохо", "Неплохо", "Очень хорошо", "Отлично"]
 
-    def __init__(self, url: str, page: int = 0, usecache: bool = False) -> None:
+    def __init__(self, url: str, page: int = 0) -> None:
         self.url = url
         self.page = page
-        self.usecache = usecache
 
         self.data = dict()
 
     @staticmethod
-    def get_html_content_request(url: str) -> Optional[str]:
+    def get_html_content(url: str) -> Optional[str]:
         header = {
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
             "accept-encoding": "gzip, deflate, br",
@@ -54,48 +51,21 @@ class TAParse:
 
         return r.text
 
-    def get_html_content(self, url: str, usecache: bool = False) -> Optional[str]:
-        filename = r'C:\Projects\fourth_prj\temp.html'
-        html = ''
-
-        is_need_to_request = True
-        if usecache:
-            try:
-                with open('temp.html', 'r', encoding='utf8') as f:
-                    print(f"Read content from {filename}")
-                    for line in f:
-                        html += line
-            except IOError:
-                is_need_to_request = True
-            else:
-                is_need_to_request = False
-
-        if is_need_to_request:
-            print(f"Read content from {url}")
-            html = self.get_html_content_request(url)
-            if html is None:
-                return
-            else:
-                with open(filename, 'w+', encoding='utf8') as f:
-                    f.write(html)
-
-        return html
-
     def parse_general(self, response: BeautifulSoup) -> None:
         key = 'number'
-        self.data[key] = ta_parse_number_reviews(key, response)
+        self.data[key] = self.ta_parse_number_reviews(key, response)
 
         key = 'rate'
-        self.data[key] = ta_parse_rate(key, response)
+        self.data[key] = self.ta_parse_rate(key, response)
 
         key = 'name_full'
-        self.data[key] = ta_parse_hotel_name_full(key, response)
+        self.data[key] = self.ta_parse_hotel_name_full(key, response)
 
         key = 'name'
-        self.data[key] = ta_parse_hotel_name(key, self.data['name_full'])
+        self.data[key] = self.ta_parse_hotel_name(key, self.data['name_full'])
 
         key = 'stars'
-        self.data[key] = ta_parse_hotel_stars(key, self.data['name_full'])
+        self.data[key] = self.ta_parse_hotel_stars(key, self.data['name_full'])
 
     def parse_posts(self, response: BeautifulSoup) -> None:
         list_of_posts = list()
@@ -104,29 +74,29 @@ class TAParse:
             post = dict()
 
             key = 'id'
-            post[key] = ta_parse_post_index(key, review)
+            post[key] = self.ta_parse_post_index(key, review)
 
             author_block = review.find("div", class_="xMxrO")
             if author_block is not None:
                 key = 'author'
-                post[key] = ta_parse_post_author(key, author_block)
+                post[key] = self.ta_parse_post_author(key, author_block)
 
                 key = 'author_geo'
-                post[key] = ta_parse_post_author_geo(key, author_block)
+                post[key] = self.ta_parse_post_author_geo(key, author_block)
 
                 key = 'date'
-                post[key] = ta_parse_post_date(key, author_block)
+                post[key] = self.ta_parse_post_date(key, author_block)
 
             key = 'date_stay'
-            post[key] = ta_parse_post_date_stay(key, review)
+            post[key] = self.ta_parse_post_date_stay(key, review)
 
             key = 'rate'
-            post[key] = ta_parse_post_rate(key, review)
+            post[key] = self.ta_parse_post_rate(key, review)
 
             key = 'title'
-            post[key] = ta_parse_post_title(key, review)
+            post[key] = self.ta_parse_post_title(key, review)
 
-            text_list = ta_parse_post_text(key, review)
+            text_list = self.ta_parse_post_text(key, review)
             if len(text_list) >= 1:
                 post["text_second"] = ''
                 for key, value in enumerate(text_list):
@@ -151,7 +121,7 @@ class TAParse:
         else:
             _url = self.url
 
-        if (html := self.get_html_content(_url, usecache=self.usecache)) is None:
+        if (html := self.get_html_content(url=_url)) is None:
             raise TAParseExeption(f"Error get data from {_url}")
 
         if (bs := BeautifulSoup(html, 'html.parser')) is None:
@@ -177,21 +147,15 @@ class TAParse:
 
 
 if __name__ == "__main__":
-    # URL = 'https://www.tripadvisor.ru/' + \
-    #       'Hotel_Review-g562819-d289642-Reviews-' + \
-    #       'Hotel_Caserio-Playa_del_Ingles_Maspalomas_Gran_Canaria_Canary_Islands.html'
-    # URL = 'https://www.tripadvisor.ru/' + \
-    #       'Hotel_Review-g297969-d508059-Reviews-' + \
-    #       'Rixos_Premium_Tekirova-Tekirova_Kemer_Turkish_Mediterranean_Coast.html'
     URL = "https://www.tripadvisor.ru/" \
           + "Hotel_Review-g297969-d1166801-Reviews-" + \
           "Pirate_s_Beach_Club-Tekirova_Kemer_Turkish_Mediterranean_Coast.html"
 
-    ta = TAParse(url=URL, page=0, usecache=False)
+    ta = TAParse(url=URL, page=0)
     try:
         tripadvisor = ta.run()
     except Exception as error:
-        print(f"Error get data ({error})")
+        print(f"Error get data: {error}")
     else:
         arr = tripadvisor.dict()
 
