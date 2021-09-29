@@ -58,6 +58,9 @@ class TAParse(TAParsePattern):
         key = 'rate'
         self.data[key] = self.ta_parse_rate(key, response)
 
+        key = 'page'
+        self.data[key] = self.ta_parse_page(key, response)
+
         key = 'name_full'
         self.data[key] = self.ta_parse_hotel_name_full(key, response)
 
@@ -93,6 +96,12 @@ class TAParse(TAParsePattern):
             key = 'rate'
             post[key] = self.ta_parse_post_rate(key, review)
 
+            rate = int(post['rate'])
+            if 5 >= rate >= 1:
+                post["rate_text"] = self.RATE_TEXT[rate]
+            else:
+                post["rate_text"] = None
+
             key = 'title'
             post[key] = self.ta_parse_post_title(key, review)
 
@@ -112,37 +121,39 @@ class TAParse(TAParsePattern):
 
         self.data['posts'] = sorted(list_of_posts, key=lambda x: x['id'], reverse=True)
 
+    def convert_url(self, url: str, page: int) -> str:
+        if url is None or len(url) == 1:
+            raise TAParseExeption(f"Url is too short ({url})")
+
+        new_url = re.sub("tripadvisor.com", "tripadvisor.ru", url)
+
+        if re.match(r"^/Hotel_Review", new_url):
+            new_url = r"https://tripadvisor.ru" + new_url
+
+        if page > 1:
+            pattern = '-Reviews-'
+            new_url = re.sub(pattern, "{}or{}-".format(pattern, (page - 1) * self.NUM_POSTS_PER_PAGE), new_url)
+        return new_url
+
     def run(self) -> TAReviewsData:
         time_start = time.time()
+        url = self.convert_url(url=self.url, page=self.page)
+        self.data['url'] = url
 
-        if self.page > 1:
-            pattern = '-Reviews-'
-            _url = re.sub(pattern, "{}or{}-".format(pattern, (self.page - 1) * self.NUM_POSTS_PER_PAGE), self.url)
-        else:
-            _url = self.url
-
-        if (html := self.get_html_content(url=_url)) is None:
-            raise TAParseExeption(f"Error get data from {_url}")
+        if (html := self.get_html_content(url=url)) is None:
+            raise TAParseExeption(f"Error get data from {url}")
 
         if (bs := BeautifulSoup(html, 'html.parser')) is None:
-            raise TAParseExeption(f"Error parse data from {_url}")
+            raise TAParseExeption(f"Error parse data from {url}")
 
         self.parse_general(bs)
         self.parse_posts(bs)
 
-        self.data['url'] = _url
         self.data['time'] = time.time() - time_start
-        for idx, post in enumerate(self.data["posts"]):
-            rate = int(post["rate"])
-            if 5 >= rate >= 1:
-                self.data["posts"][idx]["rate_text"] = self.RATE_TEXT[rate]
-            else:
-                self.data["posts"][idx]["rate_text"] = None
-
         try:
             data = TAReviewsData(**self.data)
         except ValidationError as e:
-            raise TAParseExeption(f"Error parse data from {_url}. Validation error ({e})")
+            raise TAParseExeption(f"Error parse data from {url}. Validation error ({e})")
         return data
 
 

@@ -74,7 +74,7 @@ class Config:
     JSON_SORT_KEYS = False
 
     CACHE_TYPE = 'SimpleCache'
-    CACHE_DEFAULT_TIMEOUT = 5
+    CACHE_DEFAULT_TIMEOUT = 15
 
     TOKEN = os.environ.get('API_TOKEN') or '12345'
 

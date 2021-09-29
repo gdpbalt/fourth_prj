@@ -86,6 +86,23 @@ class TAParsePattern:
         return number
 
     @staticmethod
+    def ta_parse_page(key: str, response: BeautifulSoup) -> Optional[float]:
+        tag = response.find("span", class_="pageNum current disabled")
+        if not tag:
+            app.logger.error(f"{key}: not found")
+            return
+
+        value = tag.text
+        value = value.replace(" ", "")
+
+        try:
+            number = int(value)
+        except Exception as e:
+            app.logger.error(f"{key}: can't convert to int ({e})")
+            return
+        return number
+
+    @staticmethod
     def ta_parse_post_index(key: str, response: BeautifulSoup) -> Optional[int]:
         tag = response.find("div", attrs={"data-reviewid": True})
         if not tag:

@@ -18,11 +18,12 @@ class TAPostData(BaseModel):
 
 
 class TAReviewsData(BaseModel):
-    url: str
+    # url: str
     time: float
     number: int
     name_full: str
     name: str
-    stars: int
+    stars: Optional[int]
     rate: float
+    page: int
     posts: list[TAPostData]
