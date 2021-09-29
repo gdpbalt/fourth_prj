@@ -22,10 +22,10 @@ RETURN_BLOCK = {
 
 
 def get_url_from_otpusk(hotel: int) -> Optional[str]:
-    expire = datetime.datetime.now() - datetime.timedelta(days=REPEATE_GET_TRIPADVISOR_URL_AFTER_DAYS)
-    data = db.session.query(OtpuskHotelTA).filter(OtpuskHotelTA.id == hotel, OtpuskHotelTA.updated >= expire).first()
-    if data is not None:
-        return data.url
+    # expire = datetime.datetime.now() - datetime.timedelta(days=REPEATE_GET_TRIPADVISOR_URL_AFTER_DAYS)
+    # data = db.session.query(OtpuskHotelTA).filter(OtpuskHotelTA.id == hotel, OtpuskHotelTA.updated >= expire).first()
+    # if data is not None:
+    #     return data.url
 
     url = "{}hotelId={}&data=extlinks&{}".format(get_method_link_prepend(method=API['method_hotel']),
                                                  hotel, get_method_link_append())
