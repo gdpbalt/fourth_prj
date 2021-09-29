@@ -24,11 +24,6 @@ SEARCH_INTERVAL_DAYS = 14
 
 REQUEST_HEADER = {
     "referer": "https://antonivtours.com/",
-    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-    "accept-encoding": "gzip, deflate, br",
-    "accept-language": "en-GB,en;q=0.9,en-US;q=0.8,ml;q=0.7",
-    "cache-control": "max-age=0",
-    "upgrade-insecure-requests": "1",
     "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " +
                   "Ubuntu Chromium/71.0.3578.80 Chrome/71.0.3578.80 Safari/537.36"
 }

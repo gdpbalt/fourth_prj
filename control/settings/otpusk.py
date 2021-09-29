@@ -20,4 +20,5 @@ API = {
     'method_from_cities': 'fromCities',
     'method_operators': 'operators',
     'method_ports': 'ports',
+    'method_hotel': 'hotel',
 }
