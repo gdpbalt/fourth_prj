@@ -18,7 +18,6 @@ class TAPostData(BaseModel):
 
 
 class TAReviewsData(BaseModel):
-    # url: str
     time: float
     number: int
     name_full: str
