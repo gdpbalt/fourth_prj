@@ -12,6 +12,7 @@ def get_html_content(url: str) -> Optional[str]:
         (socket.SOL_TCP, socket.TCP_KEEPINTVL, 10),
         (socket.SOL_TCP, socket.TCP_KEEPCNT, 6)
     ]
+    s = requests.session()
 
     header = {
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
@@ -25,7 +26,7 @@ def get_html_content(url: str) -> Optional[str]:
 
     try:
         print(f'GET {url}')
-        r = requests.get(url, headers=header, verify=True, timeout=10)
+        r = s.get(url, headers=header, verify=True, timeout=10)
     except Exception as e:
         msg = f'Network connection error'
         print(f"{msg}. {e}")
