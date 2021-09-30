@@ -34,12 +34,11 @@ class TAParse(TAParsePattern):
             "accept-language": "en-GB,en;q=0.9,en-US;q=0.8,ml;q=0.7",
             "cache-control": "max-age=0",
             "upgrade-insecure-requests": "1",
-            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " +
-                          "Ubuntu Chromium/71.0.3578.80 Chrome/71.0.3578.80 Safari/537.36"
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36"
         }
         try:
             app.logger.debug(f'GET {url}')
-            r = requests.get(url, headers=header)
+            r = requests.get(url, headers=header, timeout=10)
         except Exception as e:
             msg = f'Network connection error'
             app.logger.error(f"{msg}. {e}")
