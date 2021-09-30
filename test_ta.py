@@ -1,9 +1,18 @@
 from typing import Optional
+import socket
+from urllib3.connection import HTTPConnection
 
 import requests
 
 
 def get_html_content(url: str) -> Optional[str]:
+    HTTPConnection.default_socket_options = HTTPConnection.default_socket_options + [
+        (socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1),
+        (socket.SOL_TCP, socket.TCP_KEEPIDLE, 45),
+        (socket.SOL_TCP, socket.TCP_KEEPINTVL, 10),
+        (socket.SOL_TCP, socket.TCP_KEEPCNT, 6)
+    ]
+
     header = {
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
         "accept-encoding": "gzip, deflate, br",
@@ -16,7 +25,7 @@ def get_html_content(url: str) -> Optional[str]:
 
     try:
         print(f'GET {url}')
-        r = requests.get(url, headers=header, verify=False, timeout=10)
+        r = requests.get(url, headers=header, verify=True, timeout=10)
     except Exception as e:
         msg = f'Network connection error'
         print(f"{msg}. {e}")
@@ -32,8 +41,8 @@ def get_html_content(url: str) -> Optional[str]:
     return r.text
 
 
-URL = "https://www.tripadvisor.ru/" +\
+URL = "https://www.tripadvisor.ru/" + \
       "Hotel_Review-g609052-d650787-Reviews-Kolibri_Resort_Hotel-Avsallar_Alanya_Turkish_Mediterranean_Coast.html "
 html = get_html_content(url=URL)
-print(html[:1024])
+print(html[:256])
 print("Ok")
