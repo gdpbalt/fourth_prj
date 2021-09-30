@@ -38,7 +38,7 @@ def get_url_from_otpusk(hotel: int) -> Optional[str]:
 
 @app.route("/api/review/<int:hotel>")
 @app.route("/api/review/<int:hotel>/<int:page>")
-@cache.memoize(timeout=60*60)
+@cache.memoize()
 def get_ta_review(hotel: int, page: int = 0):
     return_data = copy.deepcopy(RETURN_BLOCK)
     return_error = False
