@@ -16,7 +16,7 @@ def get_html_content(url: str) -> Optional[str]:
 
     try:
         print(f'GET {url}')
-        r = requests.get(url, headers=header)
+        r = requests.get(url, headers=header, verify=False, timeout=10)
     except Exception as e:
         msg = f'Network connection error'
         print(f"{msg}. {e}")
