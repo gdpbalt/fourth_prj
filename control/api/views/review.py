@@ -4,7 +4,7 @@ from typing import Optional
 
 from flask import make_response, jsonify
 
-from control import app, db, cache
+from control import app, db
 from control.classes.api_otpusk_hotel import MethodHotel
 from control.classes.ta_review_parser import TAParse, TAParseExeption
 from control.models.api_optusk_hotel_ta import OtpuskHotelTA
@@ -38,7 +38,6 @@ def get_url_from_otpusk(hotel: int) -> Optional[str]:
 
 @app.route("/api/review/<int:hotel>")
 @app.route("/api/review/<int:hotel>/<int:page>")
-@cache.memoize(timeout=60*60)
 def get_ta_review(hotel: int, page: int = 0):
     return_data = copy.deepcopy(RETURN_BLOCK)
     return_error = False
@@ -50,11 +49,12 @@ def get_ta_review(hotel: int, page: int = 0):
         ta = TAParse(url=url, page=page)
         try:
             tripadvisor = ta.run()
-        except TAParseExeption:
+        except TAParseExeption as e:
+            app.logger.error(f"Some error occured ({e})")
             return_error = True
             return_data["message"] = MSG_GET_REVIEW_FAILED
         else:
-            return_data["data"] = tripadvisor.dict()
+            return_data["data"] = tripadvisor.dict(by_alias=True)
 
     if return_error:
         return_data["error"] = True
@@ -64,7 +64,9 @@ def get_ta_review(hotel: int, page: int = 0):
         return_data["error"] = False
         status_code = 200
         return_data["time"] = return_data["data"]["time"]
+        return_data["updated"] = return_data["data"]["updated"]
         del return_data["data"]["time"]
+        del return_data["data"]["updated"]
 
     response = make_response(jsonify(return_data), status_code)
     return response

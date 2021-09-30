@@ -1,3 +1,4 @@
+import datetime
 import re
 import time
 from typing import Optional
@@ -61,14 +62,14 @@ class TAParse(TAParsePattern):
         key = 'page'
         self.data[key] = self.ta_parse_page(key, response)
 
-        key = 'name_full'
+        key = 'nameFull'
         self.data[key] = self.ta_parse_hotel_name_full(key, response)
 
         key = 'name'
-        self.data[key] = self.ta_parse_hotel_name(key, self.data['name_full'])
+        self.data[key] = self.ta_parse_hotel_name(key, self.data['nameFull'])
 
         key = 'stars'
-        self.data[key] = self.ta_parse_hotel_stars(key, self.data['name_full'])
+        self.data[key] = self.ta_parse_hotel_stars(key, self.data['nameFull'])
 
     def parse_posts(self, response: BeautifulSoup) -> None:
         list_of_posts = list()
@@ -84,13 +85,13 @@ class TAParse(TAParsePattern):
                 key = 'author'
                 post[key] = self.ta_parse_post_author(key, author_block)
 
-                key = 'author_geo'
+                key = 'authorGeo'
                 post[key] = self.ta_parse_post_author_geo(key, author_block)
 
                 key = 'date'
                 post[key] = self.ta_parse_post_date(key, author_block)
 
-            key = 'date_stay'
+            key = 'dateStay'
             post[key] = self.ta_parse_post_date_stay(key, review)
 
             key = 'rate'
@@ -98,24 +99,24 @@ class TAParse(TAParsePattern):
 
             rate = int(post['rate'])
             if 5 >= rate >= 1:
-                post["rate_text"] = self.RATE_TEXT[rate]
+                post["rateText"] = self.RATE_TEXT[rate]
             else:
-                post["rate_text"] = None
+                post["rateText"] = None
 
             key = 'title'
             post[key] = self.ta_parse_post_title(key, review)
 
             text_list = self.ta_parse_post_text(key, review)
             if len(text_list) >= 1:
-                post["text_second"] = ''
+                post["textSecond"] = ''
                 for key, value in enumerate(text_list):
                     if key == 0:
-                        post["text_brief"] = value
+                        post["textBrief"] = value
                     elif key == 1:
-                        post["text_second"] = value
+                        post["textSecond"] = value
                     else:
                         break
-                post["text_full"] = post["text_brief"] + post["text_second"]
+                post["textFull"] = post["textBrief"] + post["textSecond"]
 
             list_of_posts.append(post)
 
@@ -153,10 +154,13 @@ class TAParse(TAParsePattern):
         self.parse_posts(bs)
 
         self.data['time'] = time.time() - time_start
+        self.data['updated'] = datetime.datetime.now()
         try:
             data = TAReviewsData(**self.data)
         except ValidationError as e:
             raise TAParseExeption(f"Error parse data from {url}. Validation error ({e})")
+        except Exception as e:
+            raise TAParseExeption(f"Error parse from {url}. Some error occured ({e})")
         return data
 
 
@@ -181,6 +185,6 @@ if __name__ == "__main__":
         for posts in arr['posts']:
             print("-" * 25)
             for arr_key, arr_value in posts.items():
-                if arr_key == 'text_second' or arr_key == 'text_full':
+                if arr_key == 'textSecond' or arr_key == 'textFull':
                     continue
                 print(f"{arr_key}: {arr_value}")
