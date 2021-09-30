@@ -4,7 +4,7 @@ from typing import Optional
 
 from flask import make_response, jsonify
 
-from control import app, db
+from control import app, db, cache
 from control.classes.api_otpusk_hotel import MethodHotel
 from control.classes.ta_review_parser import TAParse, TAParseExeption
 from control.models.api_optusk_hotel_ta import OtpuskHotelTA
@@ -22,10 +22,10 @@ RETURN_BLOCK = {
 
 
 def get_url_from_otpusk(hotel: int) -> Optional[str]:
-    # expire = datetime.datetime.now() - datetime.timedelta(days=REPEATE_GET_TRIPADVISOR_URL_AFTER_DAYS)
-    # data = db.session.query(OtpuskHotelTA).filter(OtpuskHotelTA.id == hotel, OtpuskHotelTA.updated >= expire).first()
-    # if data is not None:
-    #     return data.url
+    expire = datetime.datetime.now() - datetime.timedelta(days=REPEATE_GET_TRIPADVISOR_URL_AFTER_DAYS)
+    data = db.session.query(OtpuskHotelTA).filter(OtpuskHotelTA.id == hotel, OtpuskHotelTA.updated >= expire).first()
+    if data is not None:
+        return data.url
 
     url = "{}hotelId={}&data=extlinks&{}".format(get_method_link_prepend(method=API['method_hotel']),
                                                  hotel, get_method_link_append())
@@ -38,6 +38,7 @@ def get_url_from_otpusk(hotel: int) -> Optional[str]:
 
 @app.route("/api/review/<int:hotel>")
 @app.route("/api/review/<int:hotel>/<int:page>")
+@cache.memoize(timeout=60*60)
 def get_ta_review(hotel: int, page: int = 0):
     return_data = copy.deepcopy(RETURN_BLOCK)
     return_error = False
