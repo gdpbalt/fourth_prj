@@ -14,7 +14,6 @@ class TAPostData(BaseModel):
     rate_text: Optional[str] = Field(alias="rateText")
     title: Optional[str]
     text_brief: str = Field(alias="textBrief")
-    text_second: Optional[str] = Field(alias="textSecond")
     text_full: str = Field(alias="textFull")
 
 

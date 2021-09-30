@@ -43,6 +43,8 @@ def get_data_from_ta(hotel: int, page: int, url: str) -> Optional[dict]:
                                                          OtpuskHotelTACache.page == page,
                                                          DATE_NOW <= OtpuskHotelTACache.expired).first()
     if result is not None:
+        if result.content is None:
+            return
         content = json.loads(result.content)
         return content
 

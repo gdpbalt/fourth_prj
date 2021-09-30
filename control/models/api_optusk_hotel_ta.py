@@ -16,7 +16,7 @@ class OtpuskHotelTACache(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     page = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=True)
+    content = db.Column(db.Text(1048576), nullable=True)
     expired = db.Column(db.DateTime, nullable=False)
     updated = db.Column(db.DateTime, nullable=False,
                         server_default=db.text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
