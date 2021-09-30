@@ -1,29 +1,31 @@
 import copy
 import datetime
+import json
 from typing import Optional
 
-from flask import make_response, jsonify
+from flask import make_response, jsonify, request
 
-from control import app, db, cache
+from control import app, db
 from control.classes.api_otpusk_hotel import MethodHotel
 from control.classes.ta_review_parser import TAParse, TAParseExeption
-from control.models.api_optusk_hotel_ta import OtpuskHotelTA
+from control.models.api_optusk_hotel_ta import OtpuskHotelTA, OtpuskHotelTACache
 from control.settings import API
 from control.utils.request import get_method_link_prepend, get_method_link_append
 
 MSG_HOTEL_NOT_FOUND = "Hotel ID not found or wrong"
 MSG_GET_REVIEW_FAILED = "Getting review is failed"
-REPEATE_GET_TRIPADVISOR_URL_AFTER_DAYS = 30
 
 RETURN_BLOCK = {
     "error": False,
     "message": "",
 }
 
+DATE_NOW = datetime.datetime.now()
+
 
 def get_url_from_otpusk(hotel: int) -> Optional[str]:
-    expire = datetime.datetime.now() - datetime.timedelta(days=REPEATE_GET_TRIPADVISOR_URL_AFTER_DAYS)
-    data = db.session.query(OtpuskHotelTA).filter(OtpuskHotelTA.id == hotel, OtpuskHotelTA.updated >= expire).first()
+    data = db.session.query(OtpuskHotelTA).filter(OtpuskHotelTA.id == hotel,
+                                                  DATE_NOW <= OtpuskHotelTA.expired).first()
     if data is not None:
         return data.url
 
@@ -36,38 +38,100 @@ def get_url_from_otpusk(hotel: int) -> Optional[str]:
     return method.data["url"]
 
 
-@app.route("/api/review/<int:hotel>")
-@app.route("/api/review/<int:hotel>/<int:page>")
-@cache.memoize()
-def get_ta_review(hotel: int, page: int = 0):
-    return_data = copy.deepcopy(RETURN_BLOCK)
-    return_error = False
-    if (url := get_url_from_otpusk(hotel=hotel)) is None:
-        return_error = True
-        return_data["message"] = MSG_HOTEL_NOT_FOUND
+def get_data_from_ta(hotel: int, page: int, url: str) -> Optional[dict]:
+    result = db.session.query(OtpuskHotelTACache).filter(OtpuskHotelTACache.id == hotel,
+                                                         OtpuskHotelTACache.page == page,
+                                                         DATE_NOW <= OtpuskHotelTACache.expired).first()
+    if result is not None:
+        content = json.loads(result.content)
+        return content
 
+    ta = TAParse(hotel_id=hotel, url=url, page=page)
+    try:
+        tripadvisor = ta.run()
+    except TAParseExeption as e:
+        app.logger.error(f"Some error occured ({e})")
+        return
     else:
-        ta = TAParse(url=url, page=page)
+        return tripadvisor.dict(by_alias=True)
+
+
+def get_input_param(params: dict) -> dict:
+    output = dict()
+    output["error"] = False
+
+    value = params.get('access_token', None)
+    if value is None or value != app.config['TOKEN']:
+        output["message"] = 'No found partner!'
+        output["error"] = True
+        return output
+
+    value = params.get('hotelId', None)
+    if value is None:
+        output["message"] = 'No found hotel id!'
+        output["error"] = True
+        return output
+    else:
         try:
-            tripadvisor = ta.run()
-        except TAParseExeption as e:
-            app.logger.error(f"Some error occured ({e})")
-            return_error = True
-            return_data["message"] = MSG_GET_REVIEW_FAILED
-        else:
-            return_data["data"] = tripadvisor.dict(by_alias=True)
+            output["hotel"] = int(value)
+        except ValueError:
+            output["message"] = 'No found hotel id. Value is wrong!'
+            output["error"] = True
+            return output
 
-    if return_error:
-        return_data["error"] = True
-        status_code = 400
-        return_data["data"] = None
+    value = params.get('page', None)
+    if value is None:
+        output["page"] = 1
     else:
-        return_data["error"] = False
-        status_code = 200
-        return_data["time"] = return_data["data"]["time"]
-        return_data["updated"] = return_data["data"]["updated"]
-        del return_data["data"]["time"]
-        del return_data["data"]["updated"]
+        try:
+            output["page"] = int(value)
+        except ValueError:
+            output["message"] = 'No found page. Value is wrong!'
+            output["error"] = True
+            return output
 
-    response = make_response(jsonify(return_data), status_code)
+    if output["page"] == 0:
+        output["page"] = 1
+
+    return output
+
+
+def form_error_response(message: str) -> dict:
+    data = copy.deepcopy(RETURN_BLOCK)
+    data["error"] = True
+    data["message"] = message
+    data["data"] = None
+    return data
+
+
+@app.route("/api/review")
+def get_ta_review():
+    keys = get_input_param(params=request.args)
+    if keys["error"]:
+        output = form_error_response(keys["message"])
+        response = make_response(jsonify(output), 400)
+        return response
+
+    hotel = keys["hotel"]
+    page = keys["page"]
+
+    if (url := get_url_from_otpusk(hotel=hotel)) is None:
+        output = form_error_response(MSG_HOTEL_NOT_FOUND)
+        response = make_response(jsonify(output), 400)
+        return response
+
+    data_dict = get_data_from_ta(hotel=hotel, page=page, url=url)
+    if data_dict is None:
+        output = form_error_response(MSG_GET_REVIEW_FAILED)
+        response = make_response(jsonify(output), 400)
+        return response
+
+    output = copy.deepcopy(RETURN_BLOCK)
+    output["data"] = data_dict
+    output["time"] = output["data"]["time"]
+    output["updated"] = output["data"]["updated"]
+    del output["data"]["time"]
+    del output["data"]["updated"]
+
+    response = make_response(jsonify(output), 200)
     return response

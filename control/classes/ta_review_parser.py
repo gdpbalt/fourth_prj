@@ -6,10 +6,13 @@ from typing import Optional
 import requests
 from bs4 import BeautifulSoup
 from pydantic import ValidationError
+from sqlalchemy import exc
 
-from control import app
+from control import app, OtpuskHotelTACache, db
 from control.classes.ta_review_pattern import TAParsePattern
 from control.models.ta_review_data import TAReviewsData
+from control.settings import TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_NETWORK_ERROR_MINUTES, \
+    TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_PARSE_ERROR_MINUTES, TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_MINUTES
 
 
 class TAParseExeption(Exception):
@@ -20,9 +23,10 @@ class TAParse(TAParsePattern):
     NUM_POSTS_PER_PAGE = 5
     RATE_TEXT = [None, "Ужасно", "Плохо", "Неплохо", "Очень хорошо", "Отлично"]
 
-    def __init__(self, url: str, page: int = 0) -> None:
+    def __init__(self, hotel_id: int, url: str, page: int = 0) -> None:
         self.url = url
         self.page = page
+        self.hotel_id = hotel_id
 
         self.data = dict()
 
@@ -135,15 +139,42 @@ class TAParse(TAParsePattern):
             new_url = re.sub(pattern, "{}or{}-".format(pattern, (page - 1) * self.NUM_POSTS_PER_PAGE), new_url)
         return new_url
 
+    def save2dbase(self, is_error: bool, timeout: int, data: Optional[TAReviewsData] = None) -> None:
+        updated = datetime.datetime.now()
+        expired = updated + datetime.timedelta(minutes=timeout)
+        if is_error:
+            content = None
+        else:
+            content = data.json(by_alias=True)
+
+        result: OtpuskHotelTACache = OtpuskHotelTACache.query.get((self.hotel_id, self.page))
+        if result is None:
+            result = OtpuskHotelTACache(id=self.hotel_id, page=self.page, content=content,
+                                        expired=expired, updated=updated)
+            db.session.add(result)
+        else:
+            result.content = content
+            result.expired = expired
+            result.updated = updated
+
+        try:
+            db.session.commit()
+        except exc.SQLAlchemyError as e:
+            msg = f'Error work with database. {e}'
+            app.logger.error(msg)
+            raise ConnectionError(msg)
+
     def run(self) -> TAReviewsData:
         time_start = time.time()
         url = self.convert_url(url=self.url, page=self.page)
         self.data['url'] = url
 
         if (html := self.get_html_content(url=url)) is None:
+            self.save2dbase(is_error=True, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_NETWORK_ERROR_MINUTES)
             raise TAParseExeption(f"Error get data from {url}")
 
         if (bs := BeautifulSoup(html, 'html.parser')) is None:
+            self.save2dbase(is_error=True, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_PARSE_ERROR_MINUTES)
             raise TAParseExeption(f"Error parse data from {url}")
 
         self.parse_general(bs)
@@ -154,9 +185,13 @@ class TAParse(TAParsePattern):
         try:
             data = TAReviewsData(**self.data)
         except ValidationError as e:
+            self.save2dbase(is_error=True, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_PARSE_ERROR_MINUTES)
             raise TAParseExeption(f"Error parse data from {url}. Validation error ({e})")
         except Exception as e:
+            self.save2dbase(is_error=True, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_PARSE_ERROR_MINUTES)
             raise TAParseExeption(f"Error parse from {url}. Some error occured ({e})")
+
+        self.save2dbase(is_error=False, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_MINUTES, data=data)
         return data
 
 
@@ -165,7 +200,7 @@ if __name__ == "__main__":
           + "Hotel_Review-g297969-d1166801-Reviews-" + \
           "Pirate_s_Beach_Club-Tekirova_Kemer_Turkish_Mediterranean_Coast.html"
 
-    ta = TAParse(url=URL, page=0)
+    ta = TAParse(hotel_id=1, url=URL, page=0)
     try:
         tripadvisor = ta.run()
     except Exception as error:

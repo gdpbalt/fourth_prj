@@ -5,6 +5,7 @@ from sqlalchemy import exc
 from control import db, app
 from control.classes.api_otpusk import MethodOtpusk
 from control.models.api_optusk_hotel_ta import OtpuskHotelTA
+from control.settings import TRIPADVISER_GET_URL_FROM_OTPUSK_AFTER_DAYS
 
 
 class MethodHotel(MethodOtpusk):
@@ -36,13 +37,17 @@ class MethodHotel(MethodOtpusk):
         if len(self.data.keys()) == 0:
             return
 
+        updated = datetime.datetime.now()
+        expired = updated + datetime.timedelta(days=TRIPADVISER_GET_URL_FROM_OTPUSK_AFTER_DAYS)
+
         result: OtpuskHotelTA = OtpuskHotelTA.query.get(self.hotel_id)
         if result is None:
-            result = OtpuskHotelTA(id=self.hotel_id, url=self.data["url"])
+            result = OtpuskHotelTA(id=self.hotel_id, url=self.data["url"], expired=expired, updated=updated)
             db.session.add(result)
         else:
             result.url = self.data["url"]
-            result.update = datetime.datetime.now()
+            result.expired = expired
+            result.update = updated
 
         try:
             db.session.commit()

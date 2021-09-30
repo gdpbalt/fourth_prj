@@ -8,7 +8,7 @@ from .otpusk_data import OtpuskCoutries, OtpuskFromCities, OtpuskCities, OtpuskO
 
 from .showcases import Showcase, Tour, TourSearch, TourError
 
-from .api_optusk_hotel_ta import OtpuskHotelTA
+from .api_optusk_hotel_ta import OtpuskHotelTA, OtpuskHotelTACache
 
 
 pass
