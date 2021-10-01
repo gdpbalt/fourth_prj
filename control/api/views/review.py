@@ -27,7 +27,6 @@ def get_url_from_otpusk(hotel: int) -> Optional[str]:
     data = db.session.query(OtpuskHotelTA).filter(OtpuskHotelTA.id == hotel,
                                                   DATE_NOW <= OtpuskHotelTA.expired).first()
     if data is not None:
-        app.logger.warning("Hotel:{}. Get empty value from database".format(hotel))
         return data.url
 
     url = "{}hotelId={}&data=extlinks&{}".format(get_method_link_prepend(method=API['method_hotel']),
@@ -46,7 +45,7 @@ def get_data_from_ta(hotel: int, page: int, url: str) -> Optional[dict]:
                                                          DATE_NOW <= OtpuskHotelTACache.expired).first()
     if result is not None:
         if result.content is None:
-            app.logger.warning("Hotel:{}, Page:{}. Get empty value from database".format(hotel, page))
+            app.logger.warning("Hotel:{}, Page:{}. Tripadvisor. Get empty value from database".format(hotel, page))
             return
         content = json.loads(result.content)
         return content

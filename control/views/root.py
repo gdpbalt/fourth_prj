@@ -3,6 +3,7 @@ from flask_security import roles_accepted, current_user, url_for_security, auth_
 
 from config import basedir
 from control import app, user_datastore, db, config_name
+from control.clean_old import clean_old_data
 
 
 @app.route('/')
@@ -64,6 +65,8 @@ def status_check():
 @app.before_first_request
 def login_admin():
     app.logger.info("Run: before_first_request")
+    clean_old_data()
+
     user = user_datastore.find_user(email=app.config['DEFAULT_ADMIN_EMAIL'], case_insensitive=True)
     if user is None:
         role = user_datastore.find_role(app.config['DEFAULT_ADMIN_ROLE'])
