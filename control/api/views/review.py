@@ -14,6 +14,8 @@ from control.utils.request import get_method_link_prepend, get_method_link_appen
 
 MSG_HOTEL_NOT_FOUND = "Hotel ID not found or wrong"
 MSG_GET_REVIEW_FAILED = "Getting review is failed"
+STATUS_CODE_OK = 200
+STATUS_CODE_FAIL = 421
 
 RETURN_BLOCK = {
     "error": False,
@@ -114,7 +116,7 @@ def get_ta_review():
     keys = get_input_param(params=request.args)
     if keys["error"]:
         output = form_error_response(keys["message"])
-        response = make_response(jsonify(output), 400)
+        response = make_response(jsonify(output), STATUS_CODE_FAIL)
         return response
 
     hotel = keys["hotel"]
@@ -122,14 +124,14 @@ def get_ta_review():
 
     if (url := get_url_from_otpusk(hotel=hotel)) is None:
         output = form_error_response(MSG_HOTEL_NOT_FOUND)
-        response = make_response(jsonify(output), 400)
+        response = make_response(jsonify(output), STATUS_CODE_FAIL)
         app.logger.warning("Hotel:{}, Page:{}. Otpusk don't have tripadvisor's url".format(hotel, hotel))
         return response
 
     data_dict = get_data_from_ta(hotel=hotel, page=page, url=url)
     if data_dict is None:
         output = form_error_response(MSG_GET_REVIEW_FAILED)
-        response = make_response(jsonify(output), 400)
+        response = make_response(jsonify(output), STATUS_CODE_FAIL)
         app.logger.warning("Hotel:{}, Page:{}. Can't parse tripadvisor html".format(hotel, hotel))
         return response
 
@@ -140,5 +142,5 @@ def get_ta_review():
     del output["data"]["time"]
     del output["data"]["updated"]
 
-    response = make_response(jsonify(output), 200)
+    response = make_response(jsonify(output), STATUS_CODE_OK)
     return response
