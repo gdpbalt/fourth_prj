@@ -27,6 +27,7 @@ def get_url_from_otpusk(hotel: int) -> Optional[str]:
     data = db.session.query(OtpuskHotelTA).filter(OtpuskHotelTA.id == hotel,
                                                   DATE_NOW <= OtpuskHotelTA.expired).first()
     if data is not None:
+        app.logger.warning("Hotel:{}. Get empty value from database".format(hotel))
         return data.url
 
     url = "{}hotelId={}&data=extlinks&{}".format(get_method_link_prepend(method=API['method_hotel']),
@@ -34,6 +35,7 @@ def get_url_from_otpusk(hotel: int) -> Optional[str]:
     method = MethodHotel(link=url, lang_id=0, hotel=hotel)
     method.run()
     if len(method.data.keys()) == 0:
+        app.logger.warning("Hotel:{}. Get empty 'rb': value from Otpusk ({})".format(hotel, url))
         return
     return method.data["url"]
 
@@ -44,6 +46,7 @@ def get_data_from_ta(hotel: int, page: int, url: str) -> Optional[dict]:
                                                          DATE_NOW <= OtpuskHotelTACache.expired).first()
     if result is not None:
         if result.content is None:
+            app.logger.warning("Hotel:{}, Page:{}. Get empty value from database".format(hotel, page))
             return
         content = json.loads(result.content)
         return content
@@ -52,6 +55,7 @@ def get_data_from_ta(hotel: int, page: int, url: str) -> Optional[dict]:
     try:
         tripadvisor = ta.run()
     except TAParseExeption as e:
+        app.logger.warning("Hotel:{}, Page:{}. Get empty value from tripadvisor ({})".format(hotel, page, url))
         app.logger.error(f"Some error occured ({e})")
         return
     else:
@@ -120,12 +124,14 @@ def get_ta_review():
     if (url := get_url_from_otpusk(hotel=hotel)) is None:
         output = form_error_response(MSG_HOTEL_NOT_FOUND)
         response = make_response(jsonify(output), 400)
+        app.logger.warning("Hotel:{}, Page:{}. Otpusk don't have tripadvisor's url".format(hotel, hotel))
         return response
 
     data_dict = get_data_from_ta(hotel=hotel, page=page, url=url)
     if data_dict is None:
         output = form_error_response(MSG_GET_REVIEW_FAILED)
         response = make_response(jsonify(output), 400)
+        app.logger.warning("Hotel:{}, Page:{}. Can't parse tripadvisor html".format(hotel, hotel))
         return response
 
     output = copy.deepcopy(RETURN_BLOCK)

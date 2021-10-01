@@ -23,31 +23,32 @@ class TAParse(TAParsePattern):
     NUM_POSTS_PER_PAGE = 5
     RATE_TEXT = [None, "Ужасно", "Плохо", "Неплохо", "Очень хорошо", "Отлично"]
 
+    HEADER = {
+        "Connection": "Keep-Alive",
+        "Accept-Encoding": "identity",
+        "User-Agent": "Wget/1.19.4 (linux-gnu)",
+    }
+
     def __init__(self, hotel_id: int, url: str, page: int = 0) -> None:
         self.url = url
         self.page = page
         self.hotel_id = hotel_id
+        self.logprefix = "Hotel:{}, Page:{}".format(self.hotel_id, self.page)
 
         self.data = dict()
 
-    @staticmethod
-    def get_html_content(url: str) -> Optional[str]:
-        header = {
-            "Connection": "Keep-Alive",
-            "Accept-Encoding": "identity",
-            "User-Agent": "Wget/1.19.4 (linux-gnu)",
-        }
+    def get_html_content(self, url: str) -> Optional[str]:
         try:
             app.logger.debug(f'GET {url}')
-            r = requests.get(url, headers=header, timeout=10)
+            r = requests.get(url, headers=self.HEADER, timeout=10)
         except Exception as e:
             msg = f'Network connection error'
-            app.logger.error(f"{msg}. {e}")
+            app.logger.error(f"{self.logprefix}. {msg}. {e}")
             return
 
         if r.status_code != requests.codes.ok:
             msg = f'Network connection error'
-            app.logger.error(f'{msg}. Answer={r.status_code}')
+            app.logger.error(f'{self.logprefix}. {msg}. Answer={r.status_code}')
             return
 
         return r.text
@@ -143,16 +144,18 @@ class TAParse(TAParsePattern):
         updated = datetime.datetime.now()
         expired = updated + datetime.timedelta(minutes=timeout)
         if is_error:
-            content = None
+            content, name = None, None
         else:
             content = data.json(by_alias=True)
+            name = data.name
 
         result: OtpuskHotelTACache = OtpuskHotelTACache.query.get((self.hotel_id, self.page))
         if result is None:
-            result = OtpuskHotelTACache(id=self.hotel_id, page=self.page, content=content,
+            result = OtpuskHotelTACache(id=self.hotel_id, name=name, page=self.page, content=content,
                                         expired=expired, updated=updated)
             db.session.add(result)
         else:
+            result.name = name
             result.content = content
             result.expired = expired
             result.updated = updated
@@ -160,8 +163,8 @@ class TAParse(TAParsePattern):
         try:
             db.session.commit()
         except exc.SQLAlchemyError as e:
-            msg = f'Error work with database. {e}'
-            app.logger.error(msg)
+            msg = f'{self.logprefix}. Error work with database. {e}'
+            app.logger.error(f'{self.logprefix}. Error work with database. {e}')
             raise ConnectionError(msg)
 
     def run(self) -> TAReviewsData:
@@ -171,11 +174,11 @@ class TAParse(TAParsePattern):
 
         if (html := self.get_html_content(url=url)) is None:
             self.save2dbase(is_error=True, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_NETWORK_ERROR_MINUTES)
-            raise TAParseExeption(f"Error get data from {url}")
+            raise TAParseExeption(f"{self.logprefix}. Error get data from {url}")
 
         if (bs := BeautifulSoup(html, 'html.parser')) is None:
             self.save2dbase(is_error=True, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_PARSE_ERROR_MINUTES)
-            raise TAParseExeption(f"Error parse data from {url}")
+            raise TAParseExeption(f"{self.logprefix}. Error parse data from {url}")
 
         self.parse_general(bs)
         self.parse_posts(bs)
@@ -186,10 +189,10 @@ class TAParse(TAParsePattern):
             data = TAReviewsData(**self.data)
         except ValidationError as e:
             self.save2dbase(is_error=True, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_PARSE_ERROR_MINUTES)
-            raise TAParseExeption(f"Error parse data from {url}. Validation error ({e})")
+            raise TAParseExeption(f"{self.logprefix}. Error parse data from {url}. Validation error ({e})")
         except Exception as e:
             self.save2dbase(is_error=True, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_PARSE_ERROR_MINUTES)
-            raise TAParseExeption(f"Error parse from {url}. Some error occured ({e})")
+            raise TAParseExeption(f"{self.logprefix}. Error parse from {url}. Some error occured ({e})")
 
         self.save2dbase(is_error=False, timeout=TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_MINUTES, data=data)
         return data

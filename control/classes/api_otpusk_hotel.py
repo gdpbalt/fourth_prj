@@ -19,6 +19,8 @@ class MethodHotel(MethodOtpusk):
         if not isinstance(response, dict) or len(response.keys()) == 0:
             return dict()
 
+        name = response.get('nm')
+
         response = response.get('rb', dict())
         if not isinstance(response, dict) or len(response.keys()) == 0:
             return dict()
@@ -30,6 +32,7 @@ class MethodHotel(MethodOtpusk):
         output = dict()
         response = response.get('url')
         if response is not None:
+            output['name'] = name
             output['url'] = response
         return output
 
@@ -42,9 +45,11 @@ class MethodHotel(MethodOtpusk):
 
         result: OtpuskHotelTA = OtpuskHotelTA.query.get(self.hotel_id)
         if result is None:
-            result = OtpuskHotelTA(id=self.hotel_id, url=self.data["url"], expired=expired, updated=updated)
+            result = OtpuskHotelTA(id=self.hotel_id, name=self.data["name"], url=self.data["url"],
+                                   expired=expired, updated=updated)
             db.session.add(result)
         else:
+            result.name = self.data["name"]
             result.url = self.data["url"]
             result.expired = expired
             result.update = updated
