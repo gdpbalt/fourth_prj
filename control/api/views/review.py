@@ -15,7 +15,7 @@ from control.utils.request import get_method_link_prepend, get_method_link_appen
 MSG_HOTEL_NOT_FOUND = "Hotel ID not found or wrong"
 MSG_GET_REVIEW_FAILED = "Getting review is failed"
 STATUS_CODE_OK = 200
-STATUS_CODE_FAIL = 204
+STATUS_CODE_FAIL = 421
 
 RETURN_BLOCK = {
     "error": False,
