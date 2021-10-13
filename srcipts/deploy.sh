@@ -11,16 +11,13 @@ export FLASK_APP=myapp.py
 
 # login: gdpbalt
 # project: 
-/usr/bin/git fetch
+/usr/bin/git pull
 
 # install python modules
 /efs/var/www/control/flask/venv/bin/pip install -r requirements.txt
 
 # migrate
 /efs/var/www/control/flask/venv/bin/flask db upgrade
-
-
-
 
 # test
 /efs/var/www/control/flask/venv/bin/coverage run -m unittest discover
