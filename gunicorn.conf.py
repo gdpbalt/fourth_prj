@@ -2,8 +2,8 @@ import multiprocessing
 from tempfile import mkdtemp
 
 bind = 'localhost:8000'
-workers = 5
-max_requests = 1000
+workers = 15
+max_requests = 5000
 timeout = 300
 
 #syslog_addr = 'udp://10.0.0.188:514'
