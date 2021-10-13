@@ -142,7 +142,7 @@ class ProductionConfig(Config):
     LOG_FILE_USE = False
     LOG_FILE_ROTATE_USE = True
     LOG_FILE_ROTATE_NAME = os.environ.get('LOG_FILE_NAME') or '/var/log/flask/test.log'
-    LOG_SYSLOG_USE = True
+    LOG_SYSLOG_USE = False
     LOG_SENTRY_USE = True
 
     @classmethod
