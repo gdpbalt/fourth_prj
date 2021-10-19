@@ -28,7 +28,6 @@ class GetHotBlock:
         return response
 
     def run(self):
-        app.logger.warning(self.link)
         reuslt = get_data_from_request(self.link)
         self.data = self.parse_result(input_data=reuslt)
 
