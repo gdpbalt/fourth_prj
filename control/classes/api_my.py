@@ -22,10 +22,13 @@ class GetHotBlock:
 
     @staticmethod
     def parse_result(input_data: dict):
+        if not isinstance(input_data, dict):
+            return list()
         response = input_data.get('tours', list())
         return response
 
     def run(self):
+        app.logger.warning(self.link)
         reuslt = get_data_from_request(self.link)
         self.data = self.parse_result(input_data=reuslt)
 
