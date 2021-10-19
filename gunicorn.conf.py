@@ -2,7 +2,7 @@ import multiprocessing
 from tempfile import mkdtemp
 
 bind = 'localhost:8000'
-workers = 15
+workers = 10
 max_requests = 10000
 timeout = 300
 
