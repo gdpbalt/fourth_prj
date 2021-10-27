@@ -1,4 +1,5 @@
 import datetime
+import json
 import re
 import time
 from typing import Optional
@@ -72,7 +73,7 @@ class TAParse(TAParsePattern):
         key = 'stars'
         self.data[key] = self.ta_parse_hotel_stars(key, self.data['nameFull'])
 
-    def parse_posts(self, response: BeautifulSoup) -> None:
+    def parse_posts_from_html(self, response: BeautifulSoup) -> None:
         list_of_posts = list()
         tags = response.find_all('div', class_="cWwQK MC R2 Gi z Z BB dXjiy")
         for idx, review in enumerate(tags):
@@ -83,9 +84,6 @@ class TAParse(TAParsePattern):
 
             author_block = review.find("div", class_="xMxrO")
             if author_block is not None:
-                key = 'author'
-                post[key] = self.ta_parse_post_author(key, author_block)
-
                 key = 'authorGeo'
                 post[key] = self.ta_parse_post_author_geo(key, author_block)
 
@@ -95,33 +93,84 @@ class TAParse(TAParsePattern):
             key = 'dateStay'
             post[key] = self.ta_parse_post_date_stay(key, review)
 
-            key = 'rate'
-            post[key] = self.ta_parse_post_rate(key, review)
-
-            rate = int(post['rate'])
-            if 5 >= rate >= 1:
-                post["rateText"] = self.RATE_TEXT[rate]
+            value = self.ta_parse_post_text(key, review)
+            if value is not None:
+                post["textBrief"] = value
             else:
-                post["rateText"] = None
-
-            key = 'title'
-            post[key] = self.ta_parse_post_title(key, review)
-
-            text_list = self.ta_parse_post_text(key, review)
-            if len(text_list) >= 1:
-                post["textSecond"] = ''
-                for key, value in enumerate(text_list):
-                    if key == 0:
-                        post["textBrief"] = value
-                    elif key == 1:
-                        post["textSecond"] = value
-                    else:
-                        break
-                post["textFull"] = post["textBrief"] + post["textSecond"]
+                post["textBrief"] = ''
+            post["textFull"] = post["textBrief"]
 
             list_of_posts.append(post)
 
         self.data['posts'] = sorted(list_of_posts, key=lambda x: x['id'], reverse=True)
+
+    @staticmethod
+    def get_reviews_from_page_manifest(input_data: dict) -> Optional[list]:
+        if not isinstance(input_data, dict):
+            return
+
+        result = input_data.get("pageManifest")
+        if not isinstance(result, dict):
+            return
+
+        result = result.get("urqlCache")
+        if not isinstance(result, dict):
+            return
+
+        reviews = None
+        for review_key in result:
+            try:
+                reviews = result[review_key]['data']['locations'][0]['reviewListPage']['reviews']
+            except KeyError:
+                pass
+
+        if isinstance(reviews, list):
+            return reviews
+
+    def parse_posts_from_manifest(self, response: BeautifulSoup) -> None:
+        tag = response.find('script', text=re.compile('window.__WEB_CONTEXT__'))
+        if not tag:
+            self.print_error(f"__WEB_CONTEXT__: not found")
+            return
+
+        data = tag.text
+        data = data.replace("window.__WEB_CONTEXT__=", "")
+        data = data.replace('{pageManifest:', '{"pageManifest":')
+        data = re.sub(r";\(.*$", "", data)
+        page_reviews = self.get_reviews_from_page_manifest(json.loads(data))
+
+        for review in page_reviews:
+            index = review.get("id")
+            if index is None:
+                continue
+            index = int(index)
+
+            for ready_post in self.data['posts']:
+                if ready_post["id"] == index:
+                    break
+            else:
+                continue
+
+            ready_post["datePublished"] = review.get("publishedDate")
+            ready_post["rate"] = review.get("rating")
+            ready_post["title"] = review.get("title")
+            ready_post["textFull"] = review.get("text")
+
+            rate = int(ready_post['rate'])
+            if 5 >= rate >= 1:
+                ready_post["rateText"] = self.RATE_TEXT[rate]
+            else:
+                ready_post["rateText"] = None
+
+            try:
+                ready_post["author"] = review["userProfile"]["displayName"]
+            except KeyError:
+                ready_post["author"] = None
+
+            try:
+                ready_post["avatar"] = review["userProfile"]["avatar"]["photoSizes"][1]["url"]
+            except KeyError:
+                ready_post["avatar"] = None
 
     def convert_url(self, url: str, page: int) -> str:
         if url is None or len(url) == 1:
@@ -181,7 +230,9 @@ class TAParse(TAParsePattern):
             raise TAParseExeption(f"{self.logprefix}. Error parse data from {url}")
 
         self.parse_general(bs)
-        self.parse_posts(bs)
+        self.parse_posts_from_html(bs)
+        if isinstance(self.data['posts'], list) and len(self.data['posts']) > 0:
+            self.parse_posts_from_manifest(bs)
 
         self.data['time'] = time.time() - time_start
         self.data['updated'] = datetime.datetime.now()

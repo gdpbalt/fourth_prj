@@ -180,18 +180,12 @@ class TAParsePattern:
             return
         return tag.text
 
-    def ta_parse_post_text(self, key: str, response: BeautifulSoup) -> list:
-        texts = list()
-
+    def ta_parse_post_text(self, key: str, response: BeautifulSoup) -> Optional[str]:
         tag = response.find("q", class_="XllAv H4 _a")
         if not tag:
             self.print_error(f"{key}: not found")
-            return texts
+            return
 
         tags = tag.find_all("span")
-        for key, tag in enumerate(tags):
-            if key > 1:
-                break
-            texts.append(tag.text)
-
-        return texts
+        if len(tags) > 0:
+            return tags[0].text
