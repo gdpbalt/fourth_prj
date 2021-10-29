@@ -5,7 +5,7 @@ from control.models.api_optusk_hotel_ta import OtpuskHotelTA, OtpuskHotelTACache
 
 
 def clean_old_data():
-    date_remove = datetime.now() - timedelta(days=90)
+    date_remove = datetime.now()
 
     app.logger.info("Clear old data from table 'otpusk_hotel_ta'")
     db.session.query(OtpuskHotelTA).filter(date_remove > OtpuskHotelTA.expired).delete()
