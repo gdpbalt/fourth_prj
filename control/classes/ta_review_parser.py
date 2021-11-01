@@ -140,7 +140,7 @@ class TAParse(TAParsePattern):
         page_reviews = self.get_reviews_from_page_manifest(json.loads(data))
 
         for review in page_reviews:
-            if not isinstance(page_reviews, dict):
+            if not isinstance(review, dict):
                 continue
 
             index = review.get("id")
