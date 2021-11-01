@@ -140,6 +140,9 @@ class TAParse(TAParsePattern):
         page_reviews = self.get_reviews_from_page_manifest(json.loads(data))
 
         for review in page_reviews:
+            if not isinstance(page_reviews, dict):
+                continue
+
             index = review.get("id")
             if index is None:
                 continue
@@ -162,15 +165,15 @@ class TAParse(TAParsePattern):
             else:
                 ready_post["rateText"] = None
 
+            ready_post["author"] = None
+            ready_post["avatar"] = None
             try:
                 ready_post["author"] = review["userProfile"]["displayName"]
-            except KeyError:
-                ready_post["author"] = None
-
-            try:
                 ready_post["avatar"] = review["userProfile"]["avatar"]["photoSizes"][1]["url"]
             except KeyError:
-                ready_post["avatar"] = None
+                pass
+            except TypeError:
+                pass
 
     def convert_url(self, url: str, page: int) -> str:
         if url is None or len(url) == 1:
