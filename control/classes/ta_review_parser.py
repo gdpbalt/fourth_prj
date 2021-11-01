@@ -137,7 +137,11 @@ class TAParse(TAParsePattern):
         data = data.replace("window.__WEB_CONTEXT__=", "")
         data = data.replace('{pageManifest:', '{"pageManifest":')
         data = re.sub(r";\(.*$", "", data)
-        page_reviews = self.get_reviews_from_page_manifest(json.loads(data))
+        try:
+            page_reviews = self.get_reviews_from_page_manifest(json.loads(data))
+        except ValueError:
+            self.print_error(f"__WEB_CONTEXT__: json decode error")
+            return
 
         for review in page_reviews:
             if not isinstance(review, dict):
