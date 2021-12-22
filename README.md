@@ -1,4 +1,4 @@
-# control.antonivtours.com
+# control
 
 В рамках этого проекта ведется разработка на базе Flask
 

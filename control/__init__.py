@@ -42,7 +42,7 @@ assets.register(bundles)
 
 from control.models import *
 
-admin = Admin(app=app, name='AntonivTours', template_mode='bootstrap4', base_template='admin/admin-base.html',
+admin = Admin(app=app, name='ControlTours', template_mode='bootstrap4', base_template='admin/admin-base.html',
               index_view=MyAdminIndexView())
 admin.add_view(UserView(User, db.session, name='Пользователи'))
 admin.add_view(RoleView(Role, db.session, name='Роли'))

@@ -7,7 +7,8 @@ if os.path.exists(dotenv_path):
 
 LANGS = ['rus', 'ukr']
 
-OUR_SITE = 'https://antonivtours.com/tour'
+PROJECT_SITE = os.environ.get('PROJECT_SITE') or 'http://localhost:3001'
+OUR_SITE = PROJECT_SITE + '/tour'
 
 SEARCH_UPDATE_MINUTES = 2 * 60
 
@@ -29,7 +30,7 @@ TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_NETWORK_ERROR_MINUTES = 5
 TRIPADVISER_GET_CONTENT_FROM_SITE_AFTER_PARSE_ERROR_MINUTES = 60 * 24
 
 REQUEST_HEADER = {
-    "referer": "https://antonivtours.com/",
+    "referer": PROJECT_SITE + "/",
     "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) " +
                   "Ubuntu Chromium/71.0.3578.80 Chrome/71.0.3578.80 Safari/537.36"
 }
