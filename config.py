@@ -16,8 +16,7 @@ DATE_FORMAT = '%Y-%m-%d %H:%M'
 
 
 class Config:
-    CORS_ORIGINS = ["https://antonivtours.com", "https://dev.antonivtour.com", "https://antonivtour.com",
-                    "http://localhost:3001"]
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS') or 'http://localhost:3001'
 
     PROPAGATE_EXCEPTIONS = True
 
