@@ -9,7 +9,8 @@ All information about the tours is obtained from the Otpusk methods
 * Python 3.9
 * Flask
 * Gunicorn
-* Beautifulsoup4
+* Requests
+
 
 # Methods
 * /api/hotBlock - Show a list of tours for a specific hot tour showcase
