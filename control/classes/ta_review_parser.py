@@ -117,12 +117,16 @@ class TAParse(TAParsePattern):
         if not isinstance(result, dict):
             return
 
-        reviews = None
         for review_key in result:
             try:
-                reviews = result[review_key]['data']['locations'][0]['reviewListPage']['reviews']
+                data = json.loads(result[review_key]['data'])
+                reviews = data['locations'][0]['reviewListPage']['reviews']
             except KeyError:
-                pass
+                continue
+            else:
+                break
+        else:
+            reviews = None
 
         if isinstance(reviews, list):
             return reviews
