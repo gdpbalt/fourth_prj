@@ -18,7 +18,10 @@ DATE_FORMAT = '%Y-%m-%d %H:%M'
 class Config:
     PROJECT_SITE = os.environ.get('PROJECT_SITE') or 'http://localhost:3001'
 
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS') or 'http://localhost:3001'
+    if os.environ.get('CORS_ORIGINS') is not None:
+        CORS_ORIGINS = [x.strip() for x in os.environ.get('CORS_ORIGINS').split(',')]
+    else:
+        CORS_ORIGINS = 'http://localhost:3001'
 
     PROPAGATE_EXCEPTIONS = True
 
